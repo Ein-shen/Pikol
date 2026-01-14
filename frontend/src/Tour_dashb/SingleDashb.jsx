@@ -92,15 +92,18 @@ export const SingleDashb = () => {
   return (
     <div className="w-full flex flex-col gap-10">
       <div className="flex justify-between flex-row items-center">
-        <button onClick={() => navigate(-1)}>
+        <button 
+          className='theme-hover p-2 rounded-md'
+          onClick={() => navigate(-1)}>
           <ArrowLeft />
         </button>
 
         <h1 className="font-bold text-lg">Single Elimination</h1>
 
         <button
+          
           onClick={() => navigate('/dashboard/single')}
-          className="flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
+          className="flex flex-row   theme-hover p-2 rounded-md rounded-md p-2 items-center space-x-3 text-md font-bold"
         >
           <Plus size={20} />
         </button>
