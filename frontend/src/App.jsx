@@ -24,7 +24,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex flex-row gap-1 justify-center items-center text-2xl bg-gray-200 h-screen">
+      <div className="flex flex-row gap-1 justify-center items-center text-2xl theme-bg h-screen">
         Wait a sec
         <img src="/racket.png?v=5" alt="" className="h-5 w-5 animate-spin" />
         ...
