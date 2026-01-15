@@ -83,7 +83,7 @@ export const Sidebar = () => {
                 }`}
               >
                 <img src={iconSrc} alt="" className="w-4 h-4 shrink-0 theme-icon" />
-                <span className="text-xs">{label}</span>
+                <span className="text-md">{label}</span>
               </button>
             )
           })}
