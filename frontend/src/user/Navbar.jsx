@@ -57,7 +57,7 @@ export const Navbar = () => {
 
   return (
     <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full theme-gradient'>
-      <div className='h-16 border-b theme-border flex flex-row justify-between items-center p-3'>
+      <div className='h-16 border-b theme-border flex flex-row justify-between items-center py-3 px-1'>
         {/* Logo */}
         <button
           type='button'
@@ -65,7 +65,7 @@ export const Navbar = () => {
           aria-label='Pikol League home'
           className='pl-7 sm:pl-13 text-left'
         >
-          <h1 className='font-bold italic theme-text text-base sm:text-lg md:text-xl tracking-wide whitespace-nowrap'>
+          <h1 className='font-bold italic theme-text text-base sm:text-l md:text-xl tracking-wide whitespace-nowrap'>
             Pikol <span className='text-[#A8D38D]'>League</span>
           </h1>
         </button>
