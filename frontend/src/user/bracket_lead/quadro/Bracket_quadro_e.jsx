@@ -752,7 +752,7 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
             ))}
           </tbody>
         </table>
-        <p className="mt-1 text-xs theme-muted">Top {advance} (bold) advance to the playoffs.</p>
+        <p className="mt-1 py-5 text-xs theme-muted">Top {advance} (bold) advance to the playoffs.</p>
       </div>
 
       {/* List of this group's matches, each with two score inputs */}
@@ -1099,7 +1099,7 @@ export function Quadro_View({
       </div>
 
       {/* One card per group: 1 column on mobile, 2 on large screens (always 1 if there is a single group) */}
-      <div className={`grid gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+      <div className={`grid   gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
         {groups.map((g) => (
           <GroupCard
             key={g.name}
@@ -1117,7 +1117,7 @@ export function Quadro_View({
       {/* Playoff tree (only after the groups were locked) */}
       {bracket && (
         <>
-          <h3 className="text-lg font-bold">Playoffs (Single Elimination)</h3>
+          <h3 className="text-lg pt-10 font-bold">Playoffs (Single Elimination)</h3>
           {/* overflow-x-auto lets the wide tree scroll sideways on small screens */}
           <div className="overflow-x-auto rounded-xl p-6 theme-accent">
             <BracketTree
