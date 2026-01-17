@@ -695,6 +695,18 @@ function restoreScores(matchesByGroup, saved) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Standings legend: explains the abbreviations used in the tables     */
+/* ------------------------------------------------------------------ */
+const STANDINGS_LEGEND = [
+  { abbr: 'GP', label: 'Game Played', text: 'Total matches completed.' },
+  { abbr: 'W', label: 'Wins', text: 'Matches won.' },
+  { abbr: 'L', label: 'Losses', text: 'Matches lost.' },
+  { abbr: 'TP', label: 'Total Points', text: 'Total points scored.' },
+  { abbr: 'PA', label: 'Points Against', text: 'Total points scored by opponents.' },
+  { abbr: '+/-', label: 'Difference', text: 'Points For minus Points Against.' },
+]
+
+/* ------------------------------------------------------------------ */
 /* GroupCard: UI for one group (standings table + list of matches)     */
 /* ------------------------------------------------------------------ */
 // `advance` = how many teams of this group go to the playoffs (they are shown in bold)
@@ -710,10 +722,10 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
             <tr className="text-left text-xs theme-muted">
               <th className="py-1">#</th>
               <th>Team</th>
-              <th className="text-center">P</th>   {/* Played */}
+              <th className="text-center">GP</th>   {/* Games Played */}
               <th className="text-center">W</th>   {/* Wins */}
               <th className="text-center">L</th>   {/* Losses */}
-              <th className="text-center">PF</th>  {/* Points For */}
+              <th className="text-center">TP</th>  {/* Total Points   */}
               <th className="text-center">PA</th>  {/* Points Against */}
               <th className="text-center">+/-</th> {/* Point difference */}
             </tr>
@@ -1046,6 +1058,23 @@ export function Quadro_View({
           showThird={showThird}
         />
       )}
+
+      {/* Legend: explains the standings columns */}
+     <div className="border theme-border rounded-xl w-full">
+        <h3 className="px-4 pt-3 font-bold text-sm sm:text-base ">Standings key</h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 justify-items-center">
+          {STANDINGS_LEGEND.map(({ abbr, label }) => (
+            <div key={abbr} className="min-w-0 flex flex-col items-center gap-1 text-center">
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="font-mono font-bold text-[#A8D38D]">{abbr}</span>
+                <span>-</span>
+                <span className="font-bold text-xs sm:text-sm">{label}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Group stage title + Lock / Unlock button */}
       <div className="flex flex-wrap items-center justify-between gap-3">
