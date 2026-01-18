@@ -21,16 +21,26 @@ import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 import { Lead_Single_e } from './user/bracket_lead/Single/Lead_Single_e.jsx'
 import { Bracket_quadro_e } from './user/bracket_lead/quadro/Bracket_quadro_e.jsx'
+import { PulseLoader } from 'react-spinners'
 
 function App() {
   const { user, loading } = useAuth()
 
+ 
+
+
   if (loading) {
     return (
-      <div className="flex flex-row gap-1 justify-center items-center text-2xl theme-bg h-screen">
-        Wait a sec
-        <img src="/racket.png?v=5" alt="" className="h-5 w-5 animate-spin" />
-        ...
+      <div
+        role='status'
+        aria-live='polite'
+        className='flex flex-col items-center justify-center gap-6 theme-bg h-screen'
+      >
+        <h1 className='font-bold italic theme-text text-xl sm:text-2xl md:text-3xl tracking-wide whitespace-nowrap'>
+          Pikol <span className='text-[#A8D38D]'>League</span>
+        </h1>
+
+        <PulseLoader color='#A8D38D' size={12} margin={4} />
       </div>
     )
   }
