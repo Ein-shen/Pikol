@@ -429,35 +429,43 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
   )
 }
 
-// One small card of the final ranking (2nd, 3rd, 4th).
-// Shows "TBD" while that place is not decided yet.
-function PlaceCard({ label, team }) {
+function PlaceCard({ label, team, icon, featured = false }) {
   return (
-    <div className="min-w-[180px] max-w-[260px] flex-1 rounded-md border space-y-1 border-yellow-200 bg-white/60 p-3 text-center">
-      <p className="text-xs font-medium text-yellow-800">{label}</p>
-      
-      <p className="text-l font-bold capitalize  text-black">{team ? pairLabel(team) : ''}</p>
-      <p className={`mt-1 text-base  ${team ? 'text-gray-900' : 'text-gray-400'}`}>
+    <div
+      className={`rounded-md border space-y-1 border-yellow-200 bg-white/60 text-center ${
+        featured
+          ? 'w-full p-5'
+          : 'flex-1 min-w-[180px] max-w-[260px] p-3'
+      }`}
+    >
+      {icon}
+      <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>{label}</p>
+
+      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-l'}`}>
+        {team ? pairLabel(team) : ''}
+      </p>
+      <p
+        className={`mt-1 ${featured ? 'text-sm' : 'text-base'} ${
+          team ? 'text-gray-900' : 'text-gray-400'
+        }`}
+      >
         {team ? team.name : 'TBD'}
       </p>
     </div>
   )
 }
 
-// Yellow box shown when the final has a winner: the champion on top,
-// then 2nd / 3rd / 4th place below.
-//   champion = winner of the final          second = loser of the final
-//   third    = winner of the 3rd-place game fourth = loser of the 3rd-place game
-//   showThird = false when this bracket has no 3rd-place game (hides 3rd & 4th)
 function ChampionBanner({ champion, second, third, fourth, showThird }) {
   return (
-    <div className="rounded-md border border-yellow-300 bg-yellow-50 p-6 text-center">
-      <Trophy className="mx-auto mb-2 text-yellow-600" size={36} />
-      <p className="text-sm font-medium text-yellow-800">Tournament champion</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-900">{champion.name}</h2>
-      <p className="mt-2 text-sm text-gray-600">
-        {champion.player1} &amp; {champion.player2}
-      </p>
+    <div className="rounded-md border border-yellow-300 bg-yellow-100 text-l p-6">
+      {/* Champion: full width */}
+      <PlaceCard
+        featured
+        label="Champion"
+        team={champion}
+      
+        icon={<Trophy className="mx-auto mb-1 text-yellow-600  " size={36} />}
+      />
 
       {/* Rest of the ranking */}
       <div className="mt-4 flex flex-wrap justify-center gap-3">
