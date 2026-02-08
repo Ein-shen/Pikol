@@ -155,6 +155,7 @@ export const QuadroDashb = () => {
                       />
                       
                       <h3 className="text-base capitalize font-bold truncate pr-6"> {t.name}</h3>
+                      <p className="mt-1 text-xs theme-muted">{t.teams?.length || 20} teams</p>
                     </div>
 
                     <div className="relative" onClick={(e) => e.stopPropagation()}>
