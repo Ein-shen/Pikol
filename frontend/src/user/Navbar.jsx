@@ -58,9 +58,17 @@ export const Navbar = () => {
   return (
     <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full theme-gradient'>
       <div className='h-16 border-b theme-border flex flex-row justify-between items-center p-3'>
-        <span className='font-bold flex flex-row gap-2 text-lg pl-7 theme-text sm:pl-13'>
-          Pikol <h1 className='theme-text opacity-80'>league</h1>
-        </span>
+        {/* Logo */}
+        <button
+          type='button'
+          onClick={() => go('/dashboard/overview')}
+          aria-label='Pikol League home'
+          className='pl-7 sm:pl-13 text-left'
+        >
+          <h1 className='font-bold italic theme-text text-base sm:text-lg md:text-xl tracking-wide whitespace-nowrap'>
+            Pikol <span className='text-[#A8D38D]'>League</span>
+          </h1>
+        </button>
 
         <div ref={menuRef} className='relative flex flex-row gap-3 items-center'>
           <ThemeToggle />
@@ -97,9 +105,11 @@ export const Navbar = () => {
               <button type='button' onClick={() => go('/dashboard/hero')} className={`${itemClass} rounded-t-md border-b`}>
                 Profile
               </button>
-              <button type='button' onClick={() => go('/dashboard/support_components ')} className={`${itemClass} border-b`}>
+              {/* Fixed: removed the trailing space in the path */}
+              <button type='button' onClick={() => go('/dashboard/support_components')} className={`${itemClass} border-b`}>
                 Support
               </button>
+              {/* TODO: go('') stays on the current route. Point this at your About page. */}
               <button type='button' onClick={() => go('')} className={`${itemClass} border-b`}>
                 About
               </button>
