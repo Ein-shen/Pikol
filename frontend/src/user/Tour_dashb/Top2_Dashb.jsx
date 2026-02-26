@@ -90,32 +90,36 @@ export const Top2_Dashb = () => {
     setRenameValue('')
   }
 
-  // Number of teams to show on a tournament card.
-  // FIX: the old code showed "20" whenever `teams` was missing from the list response,
-  // so a 6-pair tournament looked like a 20-pair one.
-  // Order: the real teams array -> a count field from the server -> unknown.
-  // NOTE: `teamCount` is a guess at the field name - rename it to whatever your
-  // GET /quadro endpoint returns (or make the endpoint return one).
   const getTeamCount = (t) => t.teams?.length ?? t.teamCount ?? null
 
   return (
-    <div className="w-full flex flex-col gap-6">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    // CHANGED: added min-w-0 so wide children (like the bracket view) can't
+    // stretch this flex child past the screen width
+    <div className="flex w-full min-w-0 flex-col gap-4 sm:gap-6">
+      {/* CHANGED: gap-3 between title and button so they never touch on small screens */}
+      <header className="flex items-center justify-between gap-3">
+        {/* CHANGED: min-w-0 lets the title truncate instead of pushing the button off-screen */}
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
-            className="theme-hover p-2 rounded-md"
+            className="theme-hover shrink-0 rounded-md p-2" // CHANGED: shrink-0 keeps the back button from squishing
             onClick={() => navigate(-1)}
             aria-label="Go back"
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-xl font-bold">Top 2 Bracketing</h1>
+          {/* CHANGED: text-lg on mobile, text-xl from sm up; truncate for long titles */}
+          <h1 className="truncate text-lg font-bold sm:text-xl">Top 2 Bracketing</h1>
         </div>
         <button
           onClick={() => navigate('/dashboard/top2')}
-          className="theme-accent flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold"
+          // CHANGED: shrink-0 + whitespace-nowrap so the label never wraps to 2 lines;
+          // smaller padding on mobile
+          className="theme-accent flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold sm:gap-2 sm:px-4"
         >
-          <Plus size={16} /> New Tournament
+          <Plus size={16} />
+          {/* CHANGED: short label on phones, full label from sm up */}
+          <span className="sm:hidden">New</span>
+          <span className="hidden sm:inline">New Tournament</span>
         </button>
       </header>
 
@@ -123,8 +127,6 @@ export const Top2_Dashb = () => {
 
       {current ? (
         <Quadro_View
-          // FIX: key makes React rebuild the view (and its scores/bracket state)
-          // if a different tournament is opened without going back to the list first
           key={current.tournamentId}
           tournamentId={current.tournamentId}
           tournamentName={current.tournamentName}
@@ -134,42 +136,55 @@ export const Top2_Dashb = () => {
           onReset={() => navigate('/dashboard/quadrodashb', { replace: true, state: null })}
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        // CHANGED: smaller gap on mobile, and an xl:grid-cols-4 step for wide screens
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {tournaments.map((t) => {
             const teamCount = getTeamCount(t)
             return (
               <div
                 key={t.id}
                 onClick={() => openTournament(t.id)}
-                className="theme-card theme-hover relative flex flex-col justify-between rounded-xl border theme-border p-5 cursor-pointer shadow-sm"
+                // CHANGED: min-w-0 (stops long names from stretching the grid cell),
+                // p-4 on mobile / p-5 from sm up
+                className="theme-card theme-hover theme-border relative flex min-w-0 cursor-pointer flex-col justify-between rounded-xl border p-4 shadow-sm sm:p-5"
               >
                 <div>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <img
-                        src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
-                        alt="pikol"
-                        height={24}
-                        width={24}
-                        className="shrink-0 theme-icon"
-                      />
-                      
-                      <h3 className="text-base capitalize font-bold truncate pr-6"> {t.name}
-                        <p className="mt-1 text-xs theme-muted">{t.teams?.length || 20} teams</p>
-                      </h3>
-                      
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      {/* Row 1: img + name, aligned on the same line */}
+                      <div className="flex items-center gap-3">
+                        <img
+                          src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
+                          alt="pikol"
+                          height={24}
+                          width={24}
+                          className="theme-icon shrink-0"
+                        />
+                        <h3 className="truncate text-base font-bold capitalize">{t.name}</h3>
+                      </div>
+
+                      {/* Row 2: team count below the name.
+                          pl-9 = 24px image + 12px gap (gap-3), so it lines up under the name */}
+                      {teamCount !== null && (
+                        <p className="theme-muted mt-0.5 pl-9 text-xs">
+                          {teamCount} {teamCount === 1 ? 'team' : 'teams'}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                    {/* CHANGED: shrink-0 so the menu button never gets squished */}
+                    <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
-                        className="theme-hover p-1.5 rounded-md"
+                        // CHANGED: p-2 on mobile for a bigger touch target (~32px), p-1.5 on desktop
+                        className="theme-hover rounded-md p-2 sm:p-1.5"
                         onClick={() => setMenuId(menuId === t.id ? null : t.id)}
                         aria-label="Options"
                       >
                         <MoreHorizontal size={16} />
                       </button>
                       {menuId === t.id && (
-                        <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border theme-border theme-card shadow-lg py-1 flex flex-col">
+                        // CHANGED: top-9 (matches the bigger button), larger items on mobile
+                        <div className="theme-border theme-card absolute right-0 top-9 z-10 flex w-40 flex-col rounded-lg border py-1 shadow-lg sm:w-36">
                           <button
                             type="button"
                             onClick={() => {
@@ -177,7 +192,8 @@ export const Top2_Dashb = () => {
                               setRenameValue(t.name)
                               setMenuId(null)
                             }}
-                            className="w-full text-left px-4 py-2 text-xs theme-hover border-b theme-border"
+                            // CHANGED: py-3 on mobile for easier tapping, text-sm on mobile
+                            className="theme-hover theme-border w-full border-b px-4 py-3 text-left text-sm sm:py-2 sm:text-xs"
                           >
                             Rename
                           </button>
@@ -187,7 +203,7 @@ export const Top2_Dashb = () => {
                               setConfirmId(t.id)
                               setMenuId(null)
                             }}
-                            className="w-full text-left px-4 py-2 text-xs text-red-500 theme-hover"
+                            className="theme-hover w-full px-4 py-3 text-left text-sm text-red-500 sm:py-2 sm:text-xs"
                           >
                             Delete
                           </button>
@@ -195,12 +211,7 @@ export const Top2_Dashb = () => {
                       )}
                     </div>
                   </div>
-                  {/* Shows the real count; hides the line if the server doesn't send one */}
-                  {teamCount !== null && (
-                    <p className="mt-1 text-xs theme-muted">
-                      {teamCount} {teamCount === 1 ? 'team' : 'teams'}
-                    </p>
-                  )}
+                  
                 </div>
 
                 {renamingId === t.id ? (
@@ -212,20 +223,23 @@ export const Top2_Dashb = () => {
                     <input
                       value={renameValue}
                       onChange={(e) => setRenameValue(e.target.value)}
-                      className="theme-input w-full rounded-md p-1.5 text-xs mb-2"
+                      // CHANGED: text-base on mobile (iOS Safari zooms the page when an
+                      // input is under 16px), text-xs from sm up; more padding on mobile
+                      className="theme-input mb-2 w-full rounded-md p-2 text-base sm:p-1.5 sm:text-xs"
                       autoFocus
                     />
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
                         onClick={() => setRenamingId(null)}
-                        className="px-2 py-1 text-xs border theme-border rounded"
+                        // CHANGED: bigger tap area on mobile
+                        className="theme-border rounded border px-3 py-2 text-sm sm:px-2 sm:py-1 sm:text-xs"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
-                        className="px-2 py-1 text-xs theme-accent rounded font-semibold"
+                        className="theme-accent rounded px-3 py-2 text-sm font-semibold sm:px-2 sm:py-1 sm:text-xs"
                       >
                         Save
                       </button>
@@ -237,13 +251,15 @@ export const Top2_Dashb = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={(e) => deleteTournament(t.id, e)}
-                        className="px-3 py-1 bg-red-500 text-white rounded text-xs font-semibold"
+                        // CHANGED: flex-1 on mobile = two equal wide buttons that are easy to hit;
+                        // sm:flex-none goes back to compact buttons on desktop
+                        className="flex-1 rounded bg-red-500 px-3 py-2 text-sm font-semibold text-white sm:flex-none sm:py-1 sm:text-xs"
                       >
                         Yes
                       </button>
                       <button
                         onClick={() => setConfirmId(null)}
-                        className="px-3 py-1 border theme-border rounded text-xs"
+                        className="theme-border flex-1 rounded border px-3 py-2 text-sm sm:flex-none sm:py-1 sm:text-xs"
                       >
                         No
                       </button>
@@ -254,7 +270,7 @@ export const Top2_Dashb = () => {
             )
           })}
           {tournaments.length === 0 && (
-            <p className="col-span-full text-center text-sm theme-muted py-10">
+            <p className="theme-muted col-span-full py-10 text-center text-sm">
               No tournaments found. Create one to get started!
             </p>
           )}
