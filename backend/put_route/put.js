@@ -31,6 +31,24 @@ export async function isQuadro(id) {
     return rows.length > 0;
 }
 
+// CHANGED (new): is this tournament a top2 one?
+export async function isTop2(id) {
+    const { rows } = await pool.query(
+        "SELECT 1 FROM tournaments WHERE id = $1 AND type = 'top2'",
+        [id]
+    );
+    return rows.length > 0;
+}
+
+// CHANGED (new): is this tournament a top3 one?
+export async function isTop3(id) {
+    const { rows } = await pool.query(
+        "SELECT 1 FROM tournaments WHERE id = $1 AND type = 'top3'",
+        [id]
+    );
+    return rows.length > 0;
+}
+
 
 // =====================================================
 // SAVE A FINISHED MATCH (insert or update)
@@ -83,15 +101,16 @@ router.put("/tournaments/:id/matches", requireAuth, async (req, res) => {
 
 
 // =====================================================
-// QUADRO: constants
+// QUADRO / TOP2 / TOP3: constants
 // =====================================================
 const MAX_SCORE = 11;
 const validScore = (n) => Number.isInteger(n) && n >= 0 && n <= MAX_SCORE;
 
 
 // =====================================================
-// QUADRO: save / update a group-stage score
-// PUT /api/quadro/:id/group-matches
+// TOP2: save / update a group-stage score
+// PUT /api/top2/:id/group-matches
+// CHANGED: now checks isTop2 (it used isQuadro, so every top2 save was rejected)
 // =====================================================
 router.put("/top2/:id/group-matches", requireAuth, async (req, res) => {
     const { group, pair1Id, pair2Id, score1, score2, winnerPairId } = req.body;
@@ -101,8 +120,8 @@ router.put("/top2/:id/group-matches", requireAuth, async (req, res) => {
     }
 
     try {
-        if (!(await isQuadro(req.params.id))) {
-            return res.status(404).json({ message: "Quadro tournament not found." });
+        if (!(await isTop2(req.params.id))) {
+            return res.status(404).json({ message: "Top2 tournament not found." });
         }
 
         await pool.query(
@@ -124,6 +143,51 @@ router.put("/top2/:id/group-matches", requireAuth, async (req, res) => {
         res.status(500).json({ message: "Could not save the group match." });
     }
 });
+
+
+// =====================================================
+// TOP2: save / update a playoff score
+// (the 3rd-place match is saved as round = rounds + 1, match 1)
+// PUT /api/top2/:id/matches
+// CHANGED (new): this route was missing, which caused the 404s and
+// the lost champion / 2nd / 3rd / 4th results after leaving the page.
+//
+// NOTE: clearDownstream() is intentionally NOT called here.
+// It would treat the 3rd-place match (round = rounds + 1) as "what the final
+// feeds into" and delete it. The frontend already clears later matches itself.
+// =====================================================
+router.put("/top2/:id/matches", requireAuth, async (req, res) => {
+    const { round, matchNumber, pair1Id, pair2Id, score1, score2, winnerPairId } = req.body;
+
+    if (!validScore(score1) || !validScore(score2) || score1 === score2) {
+        return res.status(400).json({ message: "Scores must be 0 to 11 and cannot tie." });
+    }
+
+    try {
+        if (!(await isTop2(req.params.id))) {
+            return res.status(404).json({ message: "Top2 tournament not found." });
+        }
+
+        await pool.query(
+            `INSERT INTO matches
+                (tournament_id, round, match_number, pair1_id, pair2_id, score1, score2, winner_pair_id)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             ON CONFLICT (tournament_id, round, match_number) DO UPDATE SET
+                pair1_id = EXCLUDED.pair1_id,
+                pair2_id = EXCLUDED.pair2_id,
+                score1 = EXCLUDED.score1,
+                score2 = EXCLUDED.score2,
+                winner_pair_id = EXCLUDED.winner_pair_id`,
+            [req.params.id, round, matchNumber, pair1Id, pair2Id, score1, score2, winnerPairId]
+        );
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("SAVE TOP2 MATCH ERROR:", err);
+        res.status(500).json({ message: "Could not save the match." });
+    }
+});
+
+
 // =====================================================
 // TOP2: rename
 // PUT /api/top2/:id
@@ -143,6 +207,102 @@ router.put("/top2/:id", requireAuth, async (req, res) => {
         res.json({ ok: true });
     } catch (err) {
         console.error("RENAME TOP2 ERROR:", err);
+        res.status(500).json({ message: "Could not rename the tournament." });
+    }
+});
+
+
+// =====================================================
+// =====================================================
+//  TOP3 PUT ROUTES  (CHANGED: everything below is new)
+// =====================================================
+// =====================================================
+
+// TOP3: save / update a group-stage score
+// PUT /api/top3/:id/group-matches
+router.put("/top3/:id/group-matches", requireAuth, async (req, res) => {
+    const { group, pair1Id, pair2Id, score1, score2, winnerPairId } = req.body;
+
+    if (!validScore(score1) || !validScore(score2) || score1 === score2) {
+        return res.status(400).json({ message: "Scores must be 0 to 11 and cannot tie." });
+    }
+
+    try {
+        if (!(await isTop3(req.params.id))) {
+            return res.status(404).json({ message: "Top3 tournament not found." });
+        }
+
+        await pool.query(
+            `INSERT INTO group_matches
+                (tournament_id, group_name, pair1_id, pair2_id, score1, score2, winner_pair_id)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             ON CONFLICT (tournament_id, group_name, LEAST(pair1_id, pair2_id), GREATEST(pair1_id, pair2_id))
+             DO UPDATE SET
+                pair1_id = EXCLUDED.pair1_id,
+                pair2_id = EXCLUDED.pair2_id,
+                score1 = EXCLUDED.score1,
+                score2 = EXCLUDED.score2,
+                winner_pair_id = EXCLUDED.winner_pair_id`,
+            [req.params.id, group, pair1Id, pair2Id, score1, score2, winnerPairId]
+        );
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("SAVE TOP3 GROUP MATCH ERROR:", err);
+        res.status(500).json({ message: "Could not save the group match." });
+    }
+});
+
+// TOP3: save / update a playoff score (3rd-place match = round rounds+1, match 1)
+// PUT /api/top3/:id/matches
+// clearDownstream() is intentionally NOT called (see the top2 note above).
+router.put("/top3/:id/matches", requireAuth, async (req, res) => {
+    const { round, matchNumber, pair1Id, pair2Id, score1, score2, winnerPairId } = req.body;
+
+    if (!validScore(score1) || !validScore(score2) || score1 === score2) {
+        return res.status(400).json({ message: "Scores must be 0 to 11 and cannot tie." });
+    }
+
+    try {
+        if (!(await isTop3(req.params.id))) {
+            return res.status(404).json({ message: "Top3 tournament not found." });
+        }
+
+        await pool.query(
+            `INSERT INTO matches
+                (tournament_id, round, match_number, pair1_id, pair2_id, score1, score2, winner_pair_id)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+             ON CONFLICT (tournament_id, round, match_number) DO UPDATE SET
+                pair1_id = EXCLUDED.pair1_id,
+                pair2_id = EXCLUDED.pair2_id,
+                score1 = EXCLUDED.score1,
+                score2 = EXCLUDED.score2,
+                winner_pair_id = EXCLUDED.winner_pair_id`,
+            [req.params.id, round, matchNumber, pair1Id, pair2Id, score1, score2, winnerPairId]
+        );
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("SAVE TOP3 MATCH ERROR:", err);
+        res.status(500).json({ message: "Could not save the match." });
+    }
+});
+
+// TOP3: rename
+// PUT /api/top3/:id
+router.put("/top3/:id", requireAuth, async (req, res) => {
+    const name = String(req.body.name || "").trim();
+    if (!name) return res.status(400).json({ message: "Name is required." });
+
+    try {
+        const { rowCount } = await pool.query(
+            "UPDATE tournaments SET name = $1 WHERE id = $2 AND type = 'top3'",
+            [name, req.params.id]
+        );
+        if (rowCount === 0) {
+            return res.status(404).json({ message: "Top3 tournament not found." });
+        }
+        res.json({ ok: true });
+    } catch (err) {
+        console.error("RENAME TOP3 ERROR:", err);
         res.status(500).json({ message: "Could not rename the tournament." });
     }
 });
