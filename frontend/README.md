@@ -1,1 +1,0 @@
-pikol is a pickkle sport use to mange open play or tournament
