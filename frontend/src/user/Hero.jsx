@@ -164,7 +164,7 @@ export const Hero = () => {
            <button
               type="button"
               aria-label="Edit profile"
-              onClick={() => go('/edit-profile')}
+              onClick={() => go('')}
               className="flex items-center justify-center rounded-lg p-1 opacity-60 transition hover:opacity-100"
             >
               <img
