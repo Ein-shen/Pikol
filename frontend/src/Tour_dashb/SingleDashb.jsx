@@ -164,7 +164,7 @@ export const SingleDashb = () => {
                       width={24}
                       className="shrink-0 theme-icon"
                     />
-                    <h3 className="text-base font-bold truncate pr-6">{t.name}</h3>
+                    <h3 className="text-base capitalize  font-bold truncate pr-6">{t.name}</h3>
                   </div>
 
                   <div className="relative" onClick={(e) => e.stopPropagation()}>
