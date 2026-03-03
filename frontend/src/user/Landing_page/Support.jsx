@@ -19,7 +19,7 @@ const helpTopics = [
 ]
 
 const buttonClass =
-  'w-full sm:w-fit px-6 py-3 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/10 transition-colors text-center border border-white/10'
+  'w-full sm:w-fit px-6 py-3 font-bold rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/10 transition-colors text-center border border-white/10'
 
 export const Support = () => {
   return (
