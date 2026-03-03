@@ -402,18 +402,7 @@ export const Bracket_Single_VIew = ({
           Reset tournament
         </button>
 
-        <button
-          onClick={() => navigate('/dashboard/single_lead')}
-          className="flex flex-row items-center gap-1 border  rounded-md px-3 py-2 theme-border theme-hover theme-accent"
-        >
-          <img
-            src="https://img.icons8.com/?size=100&id=16951&format=png&color=000000"
-            alt="trop"
-            height={24}
-            width={24}
-          />
-          Leaderboards
-        </button>
+        
       </div>
 
       {champion && <ChampionBanner champion={champion} />}
