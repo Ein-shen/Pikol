@@ -161,18 +161,18 @@ export const Hero = () => {
             {user?.fullname}
 
             {/* CHANGED: span -> button so it's keyboard accessible and clickable */}
-            <button
+           <button
               type="button"
               aria-label="Edit profile"
-              onClick={() => go(' ')} // adjust the route
-              className="theme-hover flex items-center justify-center rounded p-2"
+              onClick={() => go('/edit-profile')}
+              className="flex items-center justify-center rounded-lg p-1 opacity-60 transition hover:opacity-100"
             >
               <img
                 src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000"
                 alt=""
                 height={18}
                 width={18}
-                className="theme-icon" // icon-only invert, as fixed earlier
+                className="theme-icon"
               />
             </button>
           </span>
