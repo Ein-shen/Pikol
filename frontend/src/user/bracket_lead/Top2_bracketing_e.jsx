@@ -18,14 +18,14 @@
  *
  * Scores are saved to the backend through `api` on every change.
  *
- * Main pieces, top to bottom:
- *   - constants / small helpers
- *   - knockout helpers (getWinner, propagate, computeLayout)
- *   - knockout UI (MatchCard, WaitCard, BracketTree, ChampionBanner)
- *   - group-stage helpers (split, round robin, standings, seeding)
- *   - GroupCard (UI for one group)
- *   - Quadro_View (the main logic + layout)
- *   - Bracket_quadro_e (loads data from the API, then renders Quadro_View)
+ * CHANGED (fix summary):
+ *   1. API base URL: /quadro/... -> /top2/...   (this was the cause of the 404s)
+ *   2. Top2_bracketing_e page: GET/DELETE now use /top2/:id
+ *   3. GroupCard <thead>: comments moved onto their own lines
+ *      (removes the "whitespace text nodes cannot be a child of <tr>" warning)
+ *   4. GroupCard <tbody>: indentation tidied
+ *   5. Removed the invalid `rounded: 'medium'` style key
+ *   6. Renamed Quadro_View -> Top2_View (alias kept at the bottom of the file)
  */
 
 import React, { useEffect, useMemo, useState } from 'react'
@@ -199,6 +199,7 @@ function getThirdPlaceTeams(bracket) {
 /* ------------------------------------------------------------------ */
 
 // Yellow score box used in the playoff cards
+// CHANGED: removed the invalid `rounded: 'medium'` key (borderRadius already does the job)
 const knockoutScoreBox = {
   width: 50,
   height: 24,
@@ -210,9 +211,6 @@ const knockoutScoreBox = {
   color: '#333',
   border: 'none',
   outline: 'none',
-  // NOTE: `rounded` is NOT a real CSS property, so React ignores it.
-  // `borderRadius` above already does the job - you can delete this line.
-  rounded: 'medium',
 }
 
 // Yellow score box used in the group (round robin) lists - a bit bigger
@@ -286,7 +284,7 @@ function MatchCard({ match, onScore }) {
       </div>
 
       {/* Names row:  Team 1 vs Team 2  (or "TBD" if not decided yet) */}
-      <div className="flex flex-row flex-wrap justify-center rounded-md  items-center gap-1 text-[13px]">
+      <div className="flex flex-row flex-wrap justify-center rounded-md items-center gap-1 text-[13px]">
         <span style={nameStyle(team1)}>{team1 ? pairLabel(team1) : 'TBD'}</span>
         <span className="text-gray-500">vs</span>
         <span style={nameStyle(team2)}>{team2 ? pairLabel(team2) : 'TBD'}</span>
@@ -336,12 +334,12 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
   const height = thirdPlace ? Math.max(treeHeight, thirdY + ROW_HEIGHT / 2) : treeHeight
 
   return (
-    <div className="relative rounded-md " style={{ width, height }}>
+    <div className="relative rounded-md" style={{ width, height }}>
       {/* Round titles ("Quarter-finals", "Semi-finals", "Final") */}
       {bracket.map((_, r) => (
         <h3
           key={r}
-          className="absolute text-center text-xs font-semibold  "
+          className="absolute text-center text-xs font-semibold"
           style={{ left: r * COLUMN, top: 0, width: CARD_WIDTH }}
         >
           {getRoundName(r, bracket.length)}
@@ -461,8 +459,7 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
         featured
         label="Champion"
         team={champion}
-      
-        icon={<Trophy className="mx-auto mb-1 text-yellow-600  " size={36} />}
+        icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
       />
 
       {/* Rest of the ranking */}
@@ -724,16 +721,24 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
       {/* Standings table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
+          {/* CHANGED: every comment is on its own line, so no whitespace text
+              nodes end up inside <tr> (fixes the React hydration warning) */}
           <thead>
             <tr className="text-left text-xs theme-muted">
               <th className="py-1">#</th>
               <th>Team</th>
-              <th className="text-center">GP</th>   {/* Games Played */}
-              <th className="text-center">W</th>   {/* Wins */}
-              <th className="text-center">L</th>   {/* Losses */}
-              <th className="text-center">TP</th>  {/* Total Points   */}
-              <th className="text-center">PA</th>  {/* Points Against */}
-              <th className="text-center">+/-</th> {/* Point difference */}
+              {/* GP = Games Played */}
+              <th className="text-center">GP</th>
+              {/* W = Wins */}
+              <th className="text-center">W</th>
+              {/* L = Losses */}
+              <th className="text-center">L</th>
+              {/* TP = Total Points */}
+              <th className="text-center">TP</th>
+              {/* PA = Points Against */}
+              <th className="text-center">PA</th>
+              {/* +/- = Point difference */}
+              <th className="text-center">+/-</th>
             </tr>
           </thead>
           <tbody>
@@ -744,9 +749,10 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
                 className={`border-t theme-border ${i < advance ? 'font-semibold' : 'opacity-70'}`}
               >
                 <td className="py-3 pr-3 align-top text-sm">{i + 1}</td>
-                  <td className="py-3 align-top">
-                    <div className="text-sm capitalize">{pairLabel(row.team)}</div>
-                    <div className="mt-0.5 text-xs font-normal capitalize theme-muted">{row.team.name}</div>
+                {/* CHANGED: indentation tidied */}
+                <td className="py-3 align-top">
+                  <div className="text-sm capitalize">{pairLabel(row.team)}</div>
+                  <div className="mt-0.5 text-xs font-normal capitalize theme-muted">{row.team.name}</div>
                 </td>
                 <td className="text-center">{row.played}</td>
                 <td className="text-center">{row.wins}</td>
@@ -802,9 +808,9 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
 }
 
 /* ------------------------------------------------------------------ */
-/* Quadro_View: the main component. Holds all the state and logic.     */
+/* Top2_View: the main component. Holds all the state and logic.     */
 /* ------------------------------------------------------------------ */
-export function Quadro_View({
+export function Top2_View({
   tournamentId,
   tournamentName,
   teams,
@@ -866,7 +872,8 @@ export function Quadro_View({
   const [error, setError] = useState('')
 
   // Base URL for all API calls of this tournament
-  const base = `/quadro/${tournamentId}`
+  // CHANGED: was `/quadro/${tournamentId}` - this was causing the 404s
+  const base = `/top2/${tournamentId}`
 
   // Live standings tables, updated whenever a score changes
   const standings = useMemo(
@@ -1066,8 +1073,8 @@ export function Quadro_View({
       )}
 
       {/* Legend: explains the standings columns */}
-     <div className="border theme-border rounded-xl w-full">
-        <h3 className="px-4 pt-3 font-bold text-sm sm:text-base ">Standings key</h3>
+      <div className="border theme-border rounded-xl w-full">
+        <h3 className="px-4 pt-3 font-bold text-sm sm:text-base">Standings key</h3>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 justify-items-center">
           {STANDINGS_LEGEND.map(({ abbr, label }) => (
@@ -1105,7 +1112,7 @@ export function Quadro_View({
       </div>
 
       {/* One card per group: 1 column on mobile, 2 on large screens (always 1 if there is a single group) */}
-      <div className={`grid   gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
+      <div className={`grid gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
         {groups.map((g) => (
           <GroupCard
             key={g.name}
@@ -1142,8 +1149,8 @@ export function Quadro_View({
 }
 
 /* ------------------------------------------------------------------ */
-/* Bracket_quadro_e: the page component (used by the router).          */
-/* Loads the tournament from the API and hands it to Quadro_View.      */
+/* Top2_bracketing_e: the page component (used by the router).         */
+/* Loads the tournament from the API and hands it to Top2_View.      */
 /* ------------------------------------------------------------------ */
 export const Top2_bracketing_e = () => {
   const { id } = useParams() // tournament id from the URL
@@ -1156,7 +1163,7 @@ export const Top2_bracketing_e = () => {
     let cancelled = false // protects against setting state after unmount
     setStatus('loading')
     api
-      .get(`/quadro/${id}`)
+      .get(`/top2/${id}`) // CHANGED: was /quadro/${id}
       .then((res) => {
         if (cancelled) return
         setData(res.data)
@@ -1173,7 +1180,7 @@ export const Top2_bracketing_e = () => {
   const handleReset = async () => {
     if (!window.confirm('Reset this tournament? All scores will be lost.')) return
     try {
-      await api.delete(`/quadro/${id}`)
+      await api.delete(`/top2/${id}`) // CHANGED: was /quadro/${id}
     } catch {
       // Ignore errors: we navigate away either way
     }
@@ -1199,8 +1206,8 @@ export const Top2_bracketing_e = () => {
 
   return (
     <div className="w-full px-10">
-      {/* key={id} makes React rebuild Quadro_View from scratch for a different tournament */}
-      <Quadro_View
+      {/* key={id} makes React rebuild Top2_View from scratch for a different tournament */}
+      <Top2_View
         key={id}
         tournamentId={data.id}
         tournamentName={data.name}
@@ -1212,3 +1219,7 @@ export const Top2_bracketing_e = () => {
     </div>
   )
 }
+
+// Backwards-compatible alias: Top2_Dashb.jsx still imports { Quadro_View }.
+// Once you change that import to { Top2_View }, you can delete this line.
+export const Quadro_View = Top2_View
