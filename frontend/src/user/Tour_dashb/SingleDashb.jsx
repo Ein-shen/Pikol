@@ -169,9 +169,9 @@ export const SingleDashb = () => {
                     </h3>
                   </div>
 
-                  <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <div className="relative " onClick={(e) => e.stopPropagation()}>
                     <button
-                      className="theme-hover p-1.5 rounded-md"
+                      className="theme-hover p-1.5 absolute right-0 rounded-md"
                       onClick={() => setMenuId(menuId === t.id ? null : t.id)}
                       aria-label="Options"
                     >
