@@ -97,7 +97,7 @@ export const Matching = () => {
               >
                 <span>{TYPE_LABELS[type] || `${type} Elimination`}</span>
 
-                <span className="flex flex-row items-center gap-1 pt-1 text-xs font-bold">
+                <span className="flex flex-row items-center gap-1 pt-5 text-xs font-bold">
                   <img
                     src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000"
                     alt="trophy"
