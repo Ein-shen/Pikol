@@ -113,7 +113,7 @@ export const Top3_Dashb = () => {
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-xl font-bold">Top 3 Tournaments</h1>
+          <h1 className="text-xl font-bold">Top 3 Bracketing</h1>
         </div>
         <button
           onClick={() => navigate(NEW_ROUTE)}
