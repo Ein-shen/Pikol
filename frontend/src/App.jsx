@@ -14,11 +14,11 @@ import { Overview } from './user/Overview.jsx'
 import { Leaderboards } from './user/Leaderboards.jsx'
 import { SingleElilmination } from './user/Create_select_game/SingleElilmination.jsx'
 import { DoubleElimination } from './user/Create_select_game/DoubleElimination.jsx'
-import { QuadroEliminations } from './user/Create_select_game/QuadroEliminations.jsx'
+import { Top2_Brackets } from './user/Create_select_game/Top2_Brackets.jsx'
 import { Top3_Brackets } from './user/Create_select_game/Top3_Brackets.jsx'
 import { OpenPlay } from './user/Create_select_game/OpenPlay.jsx'
 import { SingleDashb } from './user/Tour_dashb/SingleDashb.jsx'
-import { QuadroDashb } from './user/Tour_dashb/QuadroDashb.jsx'
+import { Top2_Dashb } from './user/Tour_dashb/Top2_Dashb.jsx'
 import { Top3_Dashb } from './user/Tour_dashb/Top3_Dashb.jsx'
 import { OpenplayDashb } from './user/Tour_dashb/OpenplayDashb.jsx'
 
@@ -68,11 +68,11 @@ function App() {
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
         <Route path="/dashboard/double" element={<DoubleElimination />} />
-        <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
+        <Route path="/dashboard/top2" element={<Top2_Brackets />} />
         <Route path="/dashboard/top3" element={<Top3_Brackets />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
         <Route path="/dashboard/overview" element={<Overview />} />
-        <Route path="/dashboard/quadrodashb" element={<QuadroDashb />} />
+        <Route path="/dashboard/top2dashb" element={<Top2_Dashb />} />
         <Route path="/dashboard/top3dashb" element={<Top3_Dashb />} />
         <Route path="/dashboard/singledashb" element={<SingleDashb />} />
         <Route path="/dashboard/openplaydashb" element={<OpenplayDashb />} />
