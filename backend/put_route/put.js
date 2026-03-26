@@ -93,7 +93,7 @@ const validScore = (n) => Number.isInteger(n) && n >= 0 && n <= MAX_SCORE;
 // QUADRO: save / update a group-stage score
 // PUT /api/quadro/:id/group-matches
 // =====================================================
-router.put("/quadro/:id/group-matches", requireAuth, async (req, res) => {
+router.put("/top2/:id/group-matches", requireAuth, async (req, res) => {
     const { group, pair1Id, pair2Id, score1, score2, winnerPairId } = req.body;
 
     if (!validScore(score1) || !validScore(score2) || score1 === score2) {
@@ -124,26 +124,25 @@ router.put("/quadro/:id/group-matches", requireAuth, async (req, res) => {
         res.status(500).json({ message: "Could not save the group match." });
     }
 });
-
 // =====================================================
-// QUADRO: rename
-// PATCH /api/quadro/:id
+// TOP2: rename
+// PUT /api/top2/:id
 // =====================================================
-router.patch("/quadro/:id", requireAuth, async (req, res) => {
+router.put("/top2/:id", requireAuth, async (req, res) => {
     const name = String(req.body.name || "").trim();
     if (!name) return res.status(400).json({ message: "Name is required." });
 
     try {
         const { rowCount } = await pool.query(
-            "UPDATE tournaments SET name = $1 WHERE id = $2 AND type = 'quadro'",
+            "UPDATE tournaments SET name = $1 WHERE id = $2 AND type = 'top2'",
             [name, req.params.id]
         );
         if (rowCount === 0) {
-            return res.status(404).json({ message: "Quadro tournament not found." });
+            return res.status(404).json({ message: "Top2 tournament not found." });
         }
         res.json({ ok: true });
     } catch (err) {
-        console.error("RENAME QUADRO ERROR:", err);
+        console.error("RENAME TOP2 ERROR:", err);
         res.status(500).json({ message: "Could not rename the tournament." });
     }
 });
