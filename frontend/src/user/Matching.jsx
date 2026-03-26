@@ -7,7 +7,7 @@ import api from '../api'
 const TYPE_ROUTES = {
   single: '/dashboard/singledashb',
   double: '/dashboard/double',
-  quadro: '/dashboard/quadrodashb',
+  top2: '/dashboard/quadrodashb',
   top3: '/dashboard/top3dashb',
 }
 
