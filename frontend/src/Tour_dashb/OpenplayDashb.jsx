@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const OpenplayDash = () => {
+export const OpenplayDashb = () => {
   return (
-    <div>OpenplayDash</div>
+    <div>OpenplayDashb</div>
   )
 }
