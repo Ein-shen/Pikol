@@ -14,6 +14,10 @@ import { SingleElilmination } from './user/gametype/SingleElilmination.jsx'
 import { DoubleElimination } from './user/gametype/DoubleElimination.jsx'
 import { QuadroEliminations } from './user/QuadroEliminations.jsx'
 import { OpenPlay } from './user/gametype/OpenPlay.jsx'
+import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
+import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
+import { OpenPlay } from './user/gametype/OpenPlay.jsx'
+import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 function App() {
   const { user, loading } = useAuth()
 
@@ -48,6 +52,9 @@ function App() {
         <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
         <Route path="overview" element={<Overview />} />
+        <Route path="singledashb" element={<QuadroDashb />} />
+        <Route path="quadrodashb" element={<SingleDashb />} />
+        <Route path="openplaydashb" element={<OpenplayDashb />} />
         <Route path="leaderboards" element={<Leaderboards />} />
       </Route>
 
