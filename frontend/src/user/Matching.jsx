@@ -75,10 +75,14 @@ export const Matching = () => {
             <div className="flex flex-row flex-wrap gap-4">
               {Object.entries(typeCounts).map(([type, count]) => (
                 <button
+                  onClick={() => navigate('/dashboard/singledashb')}
                   key={type}
                   className="p-6 border border-black/80 font-bold text-lg rounded-md capitalize"
                 >
-                  {type} Elimination
+                  <span>
+                    {type} Elimination
+                  </span>
+                  
                   <span className="font-bold text-md ml-2">
                     {count} {count === 1 ? 'tournament' : 'tournaments'}
                   </span>
