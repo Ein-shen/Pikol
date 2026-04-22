@@ -196,6 +196,19 @@ app.get("/api/leaderboard", requireAuth, async (req, res) => {
     }
 });
 
+// =====================================================
+// GET TOURNAMENTS MATCHES AND WHAT GAMETYPE
+// =====================================================
+
+app.get("/api/tournaments", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query("SELECT * FROM tournaments ORDER BY id DESC");
+        res.json(rows);
+    } catch (err) {
+        console.error("GET TOURNAMENTS ERROR:", err);
+        res.status(500).json({ message: "Could not load tournaments." });
+    }
+});
 
 // =====================================================
 // TEST ROUTES
