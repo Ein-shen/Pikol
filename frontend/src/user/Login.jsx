@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import api from '../api'
 import courtBg from '../assets/court.jpg'
+import { useAuth } from '../context/AuthContext'
 
-export const Login = ({ setUser }) => {
+export const Login = () => {
+  const {setUser } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
