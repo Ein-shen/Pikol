@@ -2,22 +2,22 @@ import React from 'react'
 
 const features = [
   {
-    icon: '🏓',
+    icon: '',
     title: 'Open Play',
     desc: 'Create open play sessions where players can join, rotate, and get matched automatically.',
   },
   {
-    icon: '🏆',
+    icon: '',
     title: 'Tournaments',
     desc: 'Run brackets with automatic scheduling and live score tracking from start to finish.',
   },
   {
-    icon: '👥',
+    icon: '',
     title: 'Player Management',
     desc: 'Keep track of players, teams, and standings in one organized place.',
   },
   {
-    icon: '⚖️',
+    icon: '',
     title: 'Fair Matchups',
     desc: 'Pick your matching type so every game stays balanced, fair and square.',
   },
