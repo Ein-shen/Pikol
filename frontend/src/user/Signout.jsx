@@ -2,9 +2,9 @@ import React from 'react'
 import { LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
-
-export const Signout = ({ setUser }) => {
- 
+import { useAuth } from '../context/AuthContext'
+export const Signout = () => {
+  const {setUser} = useAuth()
   const navigate = useNavigate()
 
   const handleSignout = async () => {
