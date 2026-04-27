@@ -15,7 +15,7 @@ export const Dashboard = () => {
       <Sidebar setUser={setUser} />
 
       {/* Content: pt-16 clears the navbar, md:ml-56 clears the sidebar */}
-      <main className='flex-1 pt-16 md:ml-56'>
+      <main className='flex-1 pt-24 md:ml-56'>
         <div className='p-6'>
           <Outlet />
         </div>
