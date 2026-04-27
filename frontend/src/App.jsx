@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import axios from 'axios'
+import { useAuth } from './context/AuthContext'
 import { Home } from './Home.jsx'
 import { Login } from './user/Login.jsx'
 import { Signup } from './user/Signup.jsx'
@@ -9,26 +8,8 @@ import { Dashboard } from './user/Dashboard.jsx'
 import { Hero } from './user/Hero.jsx'
 import { Settings } from './user/components/Settings.jsx'
 
-// Runs once, not on every render
-axios.defaults.withCredentials = true
-
 function App() {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/auth/me')
-        setUser(res.data)
-      } catch (err) {
-        setUser(null)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchUser()
-  }, [])
+  const { user, loading } = useAuth()
 
   if (loading) {
     return <div>Loading...</div>
@@ -40,18 +21,18 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route
         path="/login"
-        element={user ? <Navigate to="/dashboard" replace /> : <Login setUser={setUser} />}
+        element={user ? <Navigate to="/dashboard" replace /> : <Login />}
       />
       <Route
         path="/signup"
-        element={user ? <Navigate to="/dashboard" replace /> : <Signup setUser={setUser} />}
+        element={user ? <Navigate to="/dashboard" replace /> : <Signup />}
       />
-      <Route path="/signout" element={<Signout setUser={setUser} />} />
+      <Route path="/signout" element={<Signout />} />
 
       {/* PROTECTED DASHBOARD */}
       <Route
         path="/dashboard"
-        element={user ? <Dashboard setUser={setUser}/> : <Navigate to="/login" replace />}
+        element={user ? <Dashboard /> : <Navigate to="/login" replace />}
       >
         <Route path="hero" element={<Hero />} />
         <Route path="settings" element={<Settings />} />
