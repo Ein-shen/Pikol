@@ -6,7 +6,9 @@ import { Signup } from './user/Signup.jsx'
 import { Signout } from './user/Signout.jsx'
 import { Dashboard } from './user/Dashboard.jsx'
 import { Hero } from './user/Hero.jsx'
-import { Settings } from './user/components/Settings.jsx'
+import { Settings_components } from './user/components/Settings_components.jsx'
+import { About_components } from './user/components/About_components.jsx'
+import { Support_components }  from './user/components/Support_components.jsx'
 import { Matching } from './user/Matching.jsx'
 import { Overview } from './user/Overview.jsx'
 import { Leaderboards } from './user/Leaderboards.jsx'
@@ -53,7 +55,6 @@ function App() {
         element={user ? <Dashboard /> : <Navigate to="/login" replace />}
       >
         <Route path="/dashboard/hero" element={<Hero />} />
-        <Route path="/dashboard/settings" element={<Settings />} />
         <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
@@ -65,6 +66,11 @@ function App() {
         <Route path="/dashboard/singledashb" element={<SingleDashb />} />
         <Route path="/dashboard/openplaydashb" element={<OpenplayDashb />} />
         <Route path="/dashboard/leaderboards" element={<Leaderboards />} />
+        
+
+        <Route path="/dashboard/settings_components" element={<Settings_components />} />
+        <Route path="/dashboard/support_components" element={<Support_components />} />
+        <Route path="/dashboard/about_components" element={<About_components />} />
       </Route>
 
       {/* FALLBACK */}
