@@ -78,7 +78,7 @@ export const Matching = () => {
                   key={type}
                   className="p-6 border border-black/80 font-bold text-lg rounded-md capitalize"
                 >
-                  {type}
+                  {type} Elimination
                   <span className="font-bold text-md ml-2">
                     {count} {count === 1 ? 'tournament' : 'tournaments'}
                   </span>
