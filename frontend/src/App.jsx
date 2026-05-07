@@ -17,10 +17,10 @@ import { DoubleElimination } from './user/Create_select_game/DoubleElimination.j
 import { QuadroEliminations } from './user/Create_select_game/QuadroEliminations.jsx'
 import { Top3_Brackets } from './user/Create_select_game/Top3_Brackets.jsx'
 import { OpenPlay } from './user/Create_select_game/OpenPlay.jsx'
-import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
-import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
-import { Top3_Dashb } from './Tour_dashb/Top3_Dashb.jsx'
-import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
+import { SingleDashb } from './user/Tour_dashb/SingleDashb.jsx'
+import { QuadroDashb } from './user/Tour_dashb/QuadroDashb.jsx'
+import { Top3_Dashb } from './user/Tour_dashb/Top3_Dashb.jsx'
+import { OpenplayDashb } from './user/Tour_dashb/OpenplayDashb.jsx'
 
  
 import { PulseLoader } from 'react-spinners'
