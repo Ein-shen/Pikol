@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import api from '../api'
-import { Quadro_View } from '../user/bracket_lead/Bracket_quadro_e'
+import api from '../../api'
+import { Quadro_View } from '../bracket_lead/Bracket_quadro_e'
 
 export const QuadroDashb = () => {
   const [tournaments, setTournaments] = useState([])
