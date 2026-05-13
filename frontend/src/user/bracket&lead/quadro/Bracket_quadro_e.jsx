@@ -433,12 +433,13 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
 // Shows "TBD" while that place is not decided yet.
 function PlaceCard({ label, team }) {
   return (
-    <div className="min-w-[180px] max-w-[260px] flex-1 rounded-md border border-yellow-200 bg-white/60 p-3 text-center">
+    <div className="min-w-[180px] max-w-[260px] flex-1 rounded-md border space-y-1 border-yellow-200 bg-white/60 p-3 text-center">
       <p className="text-xs font-medium text-yellow-800">{label}</p>
-      <p className={`mt-1 text-base font-bold ${team ? 'text-gray-900' : 'text-gray-400'}`}>
+      
+      <p className="text-l font-bold text-black">{team ? pairLabel(team) : ''}</p>
+      <p className={`mt-1 text-base  ${team ? 'text-gray-900' : 'text-gray-400'}`}>
         {team ? team.name : 'TBD'}
       </p>
-      <p className="text-xs text-gray-600">{team ? pairLabel(team) : ''}</p>
     </div>
   )
 }
