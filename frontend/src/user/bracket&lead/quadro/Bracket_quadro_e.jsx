@@ -436,7 +436,7 @@ function PlaceCard({ label, team }) {
     <div className="min-w-[180px] max-w-[260px] flex-1 rounded-md border space-y-1 border-yellow-200 bg-white/60 p-3 text-center">
       <p className="text-xs font-medium text-yellow-800">{label}</p>
       
-      <p className="text-l font-bold text-black">{team ? pairLabel(team) : ''}</p>
+      <p className="text-l font-bold capitalize  text-black">{team ? pairLabel(team) : ''}</p>
       <p className={`mt-1 text-base  ${team ? 'text-gray-900' : 'text-gray-400'}`}>
         {team ? team.name : 'TBD'}
       </p>
