@@ -9,6 +9,7 @@ import { Hero } from './user/Hero.jsx'
 import { Settings } from './user/components/Settings.jsx'
 import { Matching } from './user/Matching.jsx'
 import { Overview } from './user/Overview.jsx'
+import { Leaderboards } from './user/Leaderboards.jsx'
 function App() {
   const { user, loading } = useAuth()
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="matching" element={<Matching />} />
 
         <Route path="overview" element={<Overview />} />
+        <Route path="leaderboards" element={<Leaderboards />} />
       </Route>
 
       {/* FALLBACK */}
