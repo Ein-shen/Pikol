@@ -50,7 +50,9 @@ function validateTournament(name, teams) {
   if (!name) return 'Please enter a tournament name.'
 
   const hasEmptyField = teams.some((t) => !t.name || !t.player1 || !t.player2)
-  if (hasEmptyField) return 'Please complete all 10 teams and their players.'
+  if (hasEmptyField) {
+    return `Please complete all ${TEAM_COUNT} teams and their players.`
+  }
 
   const players = teams.flatMap((t) => [
     t.player1.toLowerCase(),
@@ -95,8 +97,8 @@ function createMatch(team1 = null, team2 = null) {
   }
 }
 
-// Round 1: some matches have two teams, the rest are byes (one team only).
-// Byes are spread evenly so they don't all end up together.
+// Round 1: some matches have two teams, the rest have one team only
+// (that team goes straight to round 2). They are spread evenly.
 function buildFirstRound(teams) {
   const bracketSize = 2 ** Math.ceil(Math.log2(teams.length))
   const matchCount = bracketSize / 2
@@ -128,11 +130,11 @@ function buildAllRounds(firstRound) {
   return rounds
 }
 
-// Teams with a bye win automatically and move to round 2
-function advanceByes(rounds) {
+// Teams without an opponent win automatically and move to round 2
+function advanceSingles(rounds) {
   rounds[0].forEach((match, i) => {
-    const isBye = match.team1 && !match.team2
-    if (!isBye) return
+    const hasNoOpponent = match.team1 && !match.team2
+    if (!hasNoOpponent) return
 
     match.winner = match.team1
     rounds[1][i >> 1][slotFor(i)] = match.team1
@@ -141,7 +143,7 @@ function advanceByes(rounds) {
 
 function createBracket(teams) {
   const rounds = buildAllRounds(buildFirstRound(shuffle(teams)))
-  advanceByes(rounds)
+  advanceSingles(rounds)
   return rounds
 }
 
@@ -180,7 +182,7 @@ function getWinner(match) {
 ===================================================== */
 
 const scoreBoxStyle = {
-  width: 24,
+  width: 50,
   height: 24,
   borderRadius: 4,
   background: '#f1c84b',
@@ -190,30 +192,18 @@ const scoreBoxStyle = {
   color: '#333',
   border: 'none',
   outline: 'none',
-  MozAppearance: 'textfield',
 }
 
-function MatchCard({ match, date, onScore }) {
-  const { team1, team2, winner } = match
-  const isBye = team1 && !team2 && winner
-  const canEnterScore = team1 && team2
+function nameStyle(team) {
+  return {
+    fontWeight: team ? 600 : 400,
+    color: team ? '#222' : '#999',
+  }
+}
 
-  {/* Team names */}
-    <div
-    style={{
-        fontSize: 13,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: 2,
-    }}
-    >
-    <span style={nameStyle(team1)}>{team1 ? pairLabel(team1) : 'TBD'}</span>
-    <span style={{ color: '#777' }}>vs</span>
-    <span style={nameStyle(team2)}>
-        {team2 ? pairLabel(team2) : isBye ? 'BYE' : 'TBD'}
-    </span>
-    </div>
+function MatchCard({ match, onScore }) {
+  const { team1, team2 } = match
+  const canEnterScore = team1 && team2
 
   return (
     <div
@@ -223,58 +213,48 @@ function MatchCard({ match, date, onScore }) {
         padding: '10px 8px',
         textAlign: 'center',
         boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
-        opacity: isBye ? 0.6 : 1,
       }}
     >
-      <div style={{ fontSize: 12, color: '#9a9a9a' }}>{date}</div>
-
       {/* Scores */}
       <div
-        style={{
-          margin: '8px 0',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 6,
-        }}
+        className="flex justify-center items-center gap-1.5"
+        style={{ margin: '8px 0' }}
       >
         <input
-          type="number"
-          min="0"
+          type="text"
+          inputMode="numeric"
           aria-label="Score team 1"
           disabled={!canEnterScore}
           value={match.score1}
-          onChange={(e) => onScore('score1', e.target.value)}
+          onChange={(e) => onScore('score1', e.target.value.replace(/\D/g, ''))}
           placeholder="-"
           style={scoreBoxStyle}
         />
+
         <span style={{ color: '#666', fontSize: 12 }}>:</span>
+
         <input
-          type="number"
-          min="0"
+          type="text"
+          inputMode="numeric"
           aria-label="Score team 2"
           disabled={!canEnterScore}
           value={match.score2}
-          onChange={(e) => onScore('score2', e.target.value)}
+          onChange={(e) => onScore('score2', e.target.value.replace(/\D/g, ''))}
           placeholder="-"
           style={scoreBoxStyle}
         />
       </div>
 
       {/* Team names */}
-      <div
-        style={{
-          fontSize: 13,
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 4,
-          flexWrap: 'wrap',
-        }}
-      >
-        <span style={nameStyle(team1)}>{team1 ? team1.name : 'TBD'}</span>
-        <span style={{ color: '#777' }}>vs</span>
+      <div className="flex flex-row flex-wrap justify-center items-center gap-1 text-[13px]">
+        <span style={nameStyle(team1)}>
+          {team1 ? pairLabel(team1) : 'TBD'}
+        </span>
+
+        <span className="text-gray-500">vs</span>
+
         <span style={nameStyle(team2)}>
-          {team2 ? team2.name : isBye ? 'BYE' : 'TBD'}
+          {team2 ? pairLabel(team2) : 'TBD'}
         </span>
       </div>
     </div>
@@ -335,7 +315,7 @@ function LineOut({ isTopMatch }) {
 }
 
 // One column of the bracket
-function Round({ round, roundIndex, totalRounds, date, onScore }) {
+function Round({ round, roundIndex, totalRounds, onScore }) {
   // Each round is twice as tall per slot, so cards line up with the previous round
   const slotHeight = SLOT_HEIGHT * 2 ** roundIndex
   const isLastRound = roundIndex === totalRounds - 1
@@ -349,23 +329,29 @@ function Round({ round, roundIndex, totalRounds, date, onScore }) {
         {getRoundName(roundIndex, totalRounds)}
       </h3>
 
-      {round.map((match, matchIndex) => (
-        <div
-          key={match.id}
-          className="relative flex items-center"
-          style={{ height: slotHeight }}
-        >
-          {roundIndex > 0 && <LineIn />}
+      {round.map((match, matchIndex) => {
+        // A match with only one team is not shown (that team already moved on)
+        const hasNoOpponent = match.team1 && !match.team2
 
-          <MatchCard
-            match={match}
-            date={date}
-            onScore={(key, value) => onScore(roundIndex, matchIndex, key, value)}
-          />
+        return (
+          <div
+            key={match.id}
+            className="relative flex items-center"
+            style={{ height: slotHeight }}
+          >
+            {roundIndex > 0 && <LineIn />}
 
-          {!isLastRound && <LineOut isTopMatch={matchIndex % 2 === 0} />}
-        </div>
-      ))}
+            {!hasNoOpponent && (
+              <MatchCard
+                match={match}
+                onScore={(key, value) => onScore(roundIndex, matchIndex, key, value)}
+              />
+            )}
+
+            {!isLastRound && <LineOut isTopMatch={matchIndex % 2 === 0} />}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -383,7 +369,7 @@ function ChampionBanner({ champion }) {
   )
 }
 
-// The card where you type the tournament name and the 10 teams
+// The card where you type the tournament name and the teams
 function TeamsForm({
   tournamentName,
   onNameChange,
@@ -483,7 +469,6 @@ export const SingleElilmination = () => {
 
   // Tournament
   const [tournamentId, setTournamentId] = useState(null) // id from the database
-  const [tournamentDate, setTournamentDate] = useState('')
   const [bracket, setBracket] = useState(null) // null = form is showing
   const [champion, setChampion] = useState(null)
 
@@ -522,7 +507,6 @@ export const SingleElilmination = () => {
       setTeams(savedTeams)
       setTournamentId(data.tournamentId)
       setBracket(createBracket(savedTeams))
-      setTournamentDate(new Date().toISOString().slice(0, 10))
       setChampion(null)
       setError('')
     } catch (err) {
@@ -647,7 +631,6 @@ export const SingleElilmination = () => {
                   round={round}
                   roundIndex={roundIndex}
                   totalRounds={bracket.length}
-                  date={tournamentDate}
                   onScore={updateScore}
                 />
               ))}
@@ -656,7 +639,7 @@ export const SingleElilmination = () => {
 
           <p className="text-sm text-gray-500">
             Enter the score in the yellow boxes. The team with the higher score
-            advances to the next round. Teams with a bye advance automatically.
+            advances to the next round.
           </p>
 
           {error && (
