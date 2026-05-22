@@ -74,7 +74,7 @@ export const Matching = () => {
               <button
                 onClick={() => navigate(TYPE_ROUTES[type] || '/dashboard/singledashb')}
                 key={type}
-                className="flex flex-col theme-border rounded-md border border-black/80 theme-hover p-6 text-md font-bold capitalize  text-input theme-accent"
+                className="flex flex-col theme-card theme-hover  rounded-md border theme-border   p-6 text-md font-bold capitalize  text-input  "
               >
                 <span>{type} Elimination</span>
 
