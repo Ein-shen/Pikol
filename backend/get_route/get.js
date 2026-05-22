@@ -71,7 +71,7 @@ router.get("/tournaments/:id", requireAuth, async (req, res) => {
 
 
 // =====================================================
-// GET HERO/profile
+// GET HERO/profile (/me)
 // =====================================================
 router.get("/me", requireAuth, async (req, res) => {
     try {
@@ -88,6 +88,106 @@ router.get("/me", requireAuth, async (req, res) => {
     } catch (err) {
         console.error("GET ME ERROR:", err);
         res.status(500).json({ message: "Could not load user." });
+    }
+});
+
+
+// =====================================================
+// GET USERS (Fixed to support Navbar.jsx api.get('/users'))
+// =====================================================
+router.get("/users", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT id, username, email, COALESCE(photo_url, '') AS "photoUrl" FROM users WHERE id = $1`,
+            [req.user.id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.json(rows[0]);
+    } catch (err) {
+        console.error("GET USERS ERROR:", err);
+        // Fallback if photo_url column doesn't exist yet in the database schema
+        try {
+            const { rows } = await pool.query(
+                "SELECT id, username, email FROM users WHERE id = $1",
+                [req.user.id]
+            );
+            if (rows.length > 0) {
+                return res.json({ ...rows[0], photoUrl: "" });
+            }
+        } catch (fallbackErr) {}
+        res.status(500).json({ message: "Could not load user profile." });
+    }
+});
+
+
+// =====================================================
+// QUADRO: list quadro tournaments
+// GET /api/quadro
+// =====================================================
+router.get("/quadro", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT id, name, type, created_at
+             FROM tournaments WHERE type = 'quadro' ORDER BY id DESC`
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error("LIST QUADRO ERROR:", err);
+        res.status(500).json({ message: "Could not load tournaments." });
+    }
+});
+
+
+// =====================================================
+// QUADRO: load one (teams + group scores + knockout scores)
+// GET /api/quadro/:id
+// =====================================================
+router.get("/quadro/:id", requireAuth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const t = await pool.query(
+            "SELECT id, name, type FROM tournaments WHERE id = $1 AND type = 'quadro'",
+            [id]
+        );
+        if (t.rows.length === 0) {
+            return res.status(404).json({ message: "Tournament not found." });
+        }
+
+        const teams = await pool.query(
+            `SELECT p.id, p.id AS "pairId", p.name, p.player1, p.player2
+             FROM tournament_pairs tp
+             JOIN pairs p ON p.id = tp.pair_id
+             WHERE tp.tournament_id = $1
+             ORDER BY tp.position`,
+            [id]
+        );
+
+        const groupMatches = await pool.query(
+            `SELECT group_name AS "group", pair1_id AS "pair1Id", pair2_id AS "pair2Id",
+                    score1, score2
+             FROM group_matches WHERE tournament_id = $1`,
+            [id]
+        );
+
+        const matches = await pool.query(
+            `SELECT round, match_number AS "matchNumber", score1, score2
+             FROM matches WHERE tournament_id = $1`,
+            [id]
+        );
+
+        res.json({
+            ...t.rows[0],
+            teams: teams.rows,
+            groupMatches: groupMatches.rows,
+            matches: matches.rows,
+        });
+    } catch (err) {
+        console.error("LOAD QUADRO ERROR:", err);
+        res.status(500).json({ message: "Could not load the tournament." });
     }
 });
 
