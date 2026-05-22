@@ -3,6 +3,13 @@ import { Plus, X, Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 
+// Where each tournament type's list page lives
+const TYPE_ROUTES = {
+  single: '/dashboard/singledashb',
+  double: '/dashboard/double',        // change if you have a double list route
+  quadro: '/dashboard/quadrodashb',
+}
+
 export const Matching = () => {
   const [show, setShow] = useState(false)
   const [dataTournament, setDataTournament] = useState([])
@@ -65,7 +72,7 @@ export const Matching = () => {
           <div className="flex flex-col w-full flex-wrap gap-4">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button
-                onClick={() => navigate('/dashboard/singledashb')}
+                onClick={() => navigate(TYPE_ROUTES[type] || '/dashboard/singledashb')}
                 key={type}
                 className="flex flex-col theme-border rounded-md border border-black/80 theme-hover p-6 text-md font-bold capitalize  text-input theme-accent"
               >
@@ -88,64 +95,64 @@ export const Matching = () => {
 
       {/* POPUP */}
       {show && (
-  // Overlay scrolls if the screen is very short (e.g. phone in landscape)
-  <div className="fixed inset-0 z-50 flex overflow-y-auto bg-black/75 p-4">
-    {/* m-auto centers the box and still lets it scroll when it is taller than the screen */}
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Select your game management"
-      className="relative m-auto w-full max-w-sm space-y-4 rounded-xl theme-bg theme-text p-5 shadow-lg sm:max-w-2xl sm:p-8 lg:max-w-3xl lg:p-10"
-    >
-      <button
-        type="button"
-        onClick={() => setShow(false)}
-        aria-label="Close"
-        className="absolute right-3 top-3 theme-muted hover:opacity-70"
-      >
-        <X size={20} />
-      </button>
-
-      <div className="flex items-center justify-center">
-        {/* pr-6 keeps the title from running under the close button */}
-        <h2 className="pr-6 text-center text-base font-semibold sm:pr-0 sm:text-lg">
-          Select your game management
-        </h2>
-      </div>
-
-          {/* Stacked on phones, side by side from the sm breakpoint up */}
-          <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
+        // Overlay scrolls if the screen is very short (e.g. phone in landscape)
+        <div className="fixed inset-0 z-50 flex overflow-y-auto bg-black/75 p-4">
+          {/* m-auto centers the box and still lets it scroll when it is taller than the screen */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Select your game management"
+            className="relative m-auto w-full max-w-sm space-y-4 rounded-xl theme-bg theme-text p-5 shadow-lg sm:max-w-2xl sm:p-8 lg:max-w-3xl lg:p-10"
+          >
             <button
-              onClick={() => navigate('/dashboard/single')}
-              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              type="button"
+              onClick={() => setShow(false)}
+              aria-label="Close"
+              className="absolute right-3 top-3 theme-muted hover:opacity-70"
             >
-              Single elimination
+              <X size={20} />
             </button>
 
-            <button
-              onClick={() => navigate('/dashboard/double')}
-              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
-            >
-              Double Elimination
-            </button>
+            <div className="flex items-center justify-center">
+              {/* pr-6 keeps the title from running under the close button */}
+              <h2 className="pr-6 text-center text-base font-semibold sm:pr-0 sm:text-lg">
+                Select your game management
+              </h2>
+            </div>
 
-            <button
-              onClick={() => navigate('/dashboard/quadro')}
-              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
-            >
-              Quadro Elimination
-            </button>
+            {/* Stacked on phones, side by side from the sm breakpoint up */}
+            <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
+              <button
+                onClick={() => navigate('/dashboard/single')}
+                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Single elimination
+              </button>
 
-            {/* <button
-              onClick={() => navigate('/dashboard/openplay')}
-              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
-            >
-              Open play
-            </button> */}
+              <button
+                onClick={() => navigate('/dashboard/double')}
+                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Double Elimination
+              </button>
+
+              <button
+                onClick={() => navigate('/dashboard/quadro')}
+                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Quadro Elimination
+              </button>
+
+              {/* <button
+                onClick={() => navigate('/dashboard/openplay')}
+                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Open play
+              </button> */}
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
     </div>
   )
 }
