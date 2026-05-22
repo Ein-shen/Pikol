@@ -1,15 +1,229 @@
-import React from 'react'
-import { Plus } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import api from '../api'
+import { Quadro_View } from '../user/bracket&lead/quadro/Bracket_quadro_e'
+
 export const QuadroDashb = () => {
+  const [tournaments, setTournaments] = useState([])
+  const [openError, setOpenError] = useState('')
+  const [menuId, setMenuId] = useState(null)
+  const [confirmId, setConfirmId] = useState(null)
+  const [renamingId, setRenamingId] = useState(null)
+  const [renameValue, setRenameValue] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const current = location.state
+
+  const fetchTournaments = async () => {
+    try {
+      const res = await api.get('/quadro')
+      setTournaments(res.data)
+    } catch (err) {
+      console.error('Get quadro tournaments error:', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchTournaments()
+  }, [])
+
+  useEffect(() => {
+    const close = () => {
+      setMenuId(null)
+    }
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [])
+
+  const openTournament = async (id) => {
+    try {
+      const res = await api.get(`/quadro/${id}`)
+      navigate('', {
+        state: {
+          tournamentId: res.data.id,
+          tournamentName: res.data.name,
+          teams: res.data.teams,
+          savedGroupMatches: res.data.groupMatches,
+          savedKnockout: res.data.matches,
+        },
+      })
+    } catch (err) {
+      setOpenError('Could not open tournament.')
+    }
+  }
+
+  const deleteTournament = async (id, e) => {
+    e.stopPropagation()
+    try {
+      await api.delete(`/quadro/${id}`)
+      setTournaments((prev) => prev.filter((t) => t.id !== id))
+      if (current?.tournamentId === id) {
+        navigate('/dashboard/quadrodashb', { replace: true, state: null })
+      }
+    } catch (err) {
+      console.error('Delete tournament error:', err)
+    }
+    setConfirmId(null)
+    setMenuId(null)
+  }
+
+  const renameTournament = async (id, e) => {
+    e.preventDefault()
+    if (!renameValue.trim()) return
+    try {
+      await api.put(`/quadro/${id}`, { name: renameValue.trim() })
+      setTournaments((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, name: renameValue.trim() } : t))
+      )
+      if (current?.tournamentId === id) {
+        navigate('/dashboard/quadrodashb', {
+          replace: true,
+          state: { ...current, tournamentName: renameValue.trim() },
+        })
+      }
+    } catch (err) {
+      console.error('Rename tournament error:', err)
+    }
+    setRenamingId(null)
+    setRenameValue('')
+  }
+
   return (
-   <div className='w-full flex flex-col  px-10'>
-      <div className='flex  flex justify-between flex-row items-center'>
-        <h1 className='font-bold text-lg '> Single Elimination</h1>
-        <button className='flex flex-row border border-black/80 rounded-md  p-2 items-center  space-x-3 text-md font-bold right-0' >
-          <span>Create</span>
-          <Plus size={20} />
+    <div className="w-full flex flex-col gap-6 p-6">
+      <header className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            className="theme-hover p-2 rounded-md"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
+            <ArrowLeft />
+          </button>
+          <h1 className="text-xl font-bold">Quadro Tournaments</h1>
+        </div>
+        <button
+          onClick={() => navigate('/dashboard/quadrodashb/new')}
+          className="theme-accent flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold"
+        >
+          <Plus size={16} /> New Tournament
         </button>
-      </div>
+      </header>
+
+      {openError && <p role="alert" className="text-sm text-red-500">{openError}</p>}
+
+      {current ? (
+        <Quadro_View
+          tournamentId={current.tournamentId}
+          tournamentName={current.tournamentName}
+          teams={current.teams}
+          savedGroupMatches={current.groupMatches || current.savedGroupMatches || []}
+          savedKnockout={current.matches || current.savedKnockout || []}
+          onReset={() => navigate('/dashboard/quadrodashb', { replace: true, state: null })}
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {tournaments.map((t) => (
+            <div
+              key={t.id}
+              onClick={() => openTournament(t.id)}
+              className="theme-card theme-hover relative flex flex-col justify-between rounded-xl border theme-border p-5 cursor-pointer shadow-sm"
+            >
+              <div>
+                <div className="flex items-start justify-between">
+                  <h3 className="text-base font-bold truncate pr-6">{t.name}</h3>
+                  <div className="relative" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="theme-hover p-1.5 rounded-md"
+                      onClick={() => setMenuId(menuId === t.id ? null : t.id)}
+                      aria-label="Options"
+                    >
+                      <MoreHorizontal size={16} />
+                    </button>
+                    {menuId === t.id && (
+                      <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border theme-border theme-card shadow-lg py-1">
+                        <button
+                          onClick={() => {
+                            setRenamingId(t.id)
+                            setRenameValue(t.name)
+                            setMenuId(null)
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs theme-hover"
+                        >
+                          Rename
+                        </button>
+                        <button
+                          onClick={() => {
+                            setConfirmId(t.id)
+                            setMenuId(null)
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs text-red-500 theme-hover"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="mt-1 text-xs theme-muted">{t.teams?.length || 20} teams</p>
+              </div>
+
+              {renamingId === t.id ? (
+                <form
+                  onSubmit={(e) => renameTournament(t.id, e)}
+                  className="mt-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    value={renameValue}
+                    onChange={(e) => setRenameValue(e.target.value)}
+                    className="theme-input w-full rounded-md p-1.5 text-xs mb-2"
+                    autoFocus
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setRenamingId(null)}
+                      className="px-2 py-1 text-xs border theme-border rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-2 py-1 text-xs theme-accent rounded font-semibold"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              ) : confirmId === t.id ? (
+                <div className="mt-4 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+                  <p className="text-xs font-medium text-red-500">Delete this tournament?</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => deleteTournament(t.id, e)}
+                      className="px-3 py-1 bg-red-500 text-white rounded text-xs font-semibold"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => setConfirmId(null)}
+                      className="px-3 py-1 border theme-border rounded text-xs"
+                    >
+                      No
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          ))}
+          {tournaments.length === 0 && (
+            <p className="col-span-full text-center text-sm theme-muted py-10">
+              No tournaments found. Create one to get started!
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 }
