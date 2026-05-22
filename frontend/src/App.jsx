@@ -18,6 +18,7 @@ import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 import { Lead_Single_e } from './user/bracket&lead/Single/Lead_Single_e.jsx'
+import { Bracket_quadro_e } from './user/bracket&lead/quadro/Bracket_quadro_e.jsx'
 
 function App() {
   const { user, loading } = useAuth()
