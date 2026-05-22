@@ -2,11 +2,10 @@ import React, { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
-import { createBracket } from '../bracket&lead/Single/Bracket_Single_VIew'
 
-// Even numbers only, so every team has an opponent in round 1
-const TEAM_COUNT_OPTIONS = [4, 6, 8, 10, 12, 14, 16, 20, 24, 32]
-const DEFAULT_TEAM_COUNT = 10
+// Multiples of 4, so the teams split evenly into groups A-D
+const TEAM_COUNT_OPTIONS = [12, 16, 20, 24, 28, 32]
+const DEFAULT_TEAM_COUNT = 20
 
 function createEmptyTeam(id) {
   return { id, name: `Team ${id}`, player1: '', player2: '' }
@@ -58,6 +57,7 @@ function TeamsForm({
   error,
   onSubmit,
   onCancel,
+  saving,
 }) {
   return (
     <form
@@ -77,6 +77,7 @@ function TeamsForm({
             onChange={(e) => onNameChange(e.target.value)}
             placeholder="e.g. Doubles Championship"
             className="theme-input w-full rounded-lg p-3"
+            disabled={saving}
           />
         </div>
 
@@ -87,6 +88,7 @@ function TeamsForm({
               <button
                 key={count}
                 type="button"
+                disabled={saving}
                 onClick={() => onCountChange(count)}
                 className={`rounded-lg border px-4 py-2 text-sm font-medium ${
                   teamCount === count
@@ -99,29 +101,38 @@ function TeamsForm({
             ))}
           </div>
           <p className="mt-2 text-xs theme-muted">
-            4, 8, 16 and 32 give a bracket where nobody ever waits a round. Other counts show a
-            "Waiting" card for the team with no opponent.
+            Teams are split evenly into 4 groups (A-D). {teamCount} teams = {teamCount / 4} per
+            group. Everyone plays everyone in their group, then the top 2 of each group go to
+            the quarter-finals.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {teams.map((team, index) => (
             <div key={team.id} className="space-y-3 rounded-lg border theme-border p-3">
-              <label className="block text-sm font-bold">Team {index + 1}</label>
+              <label className="block text-sm font-bold">
+                Team {index + 1}
+                <span className="ml-2 text-xs font-normal theme-muted">
+                  Group {'ABCD'[Math.floor(index / (teamCount / 4))]}
+                </span>
+              </label>
               <input
                 value={team.name}
+                disabled={saving}
                 onChange={(e) => onTeamChange(team.id, 'name', e.target.value)}
                 placeholder="Team name"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
                 value={team.player1}
+                disabled={saving}
                 onChange={(e) => onTeamChange(team.id, 'player1', e.target.value)}
                 placeholder="Player 1"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
                 value={team.player2}
+                disabled={saving}
                 onChange={(e) => onTeamChange(team.id, 'player2', e.target.value)}
                 placeholder="Player 2"
                 className="theme-input w-full rounded-md p-2 text-sm"
@@ -137,15 +148,17 @@ function TeamsForm({
         <button
           type="button"
           onClick={onCancel}
-          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2"
+          disabled={saving}
+          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2 disabled:opacity-50"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold"
+          disabled={saving}
+          className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold disabled:opacity-50"
         >
-          Generate bracket
+          {saving ? 'Generating...' : 'Generate groups'}
         </button>
       </div>
     </form>
@@ -158,6 +171,7 @@ export const QuadroEliminations = () => {
   const [teams, setTeams] = useState(() => createEmptyTeams(DEFAULT_TEAM_COUNT))
   const [tournamentName, setTournamentName] = useState('')
   const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
 
   const changeTeamCount = (count) => {
     setTeamCount(count)
@@ -171,28 +185,36 @@ export const QuadroEliminations = () => {
 
   const generateBracket = async (e) => {
     e.preventDefault()
+    if (saving) return
 
     const cleanTeams = teams.map(trimTeam)
     const name = tournamentName.trim()
     const problem = validateTournament(name, cleanTeams)
     if (problem) return setError(problem)
 
+    setSaving(true)
     try {
       const { data } = await api.post('/tournaments', { name, type: 'quadro', teams: cleanTeams })
 
-      const savedTeams = cleanTeams.map((team) => ({ ...team, pairId: data.pairs[team.id] }))
+      // Same shape that the dashboard builds when you click a card
+      const savedTeams = cleanTeams.map((team) => ({
+        ...team,
+        id: data.pairs?.[team.id] ?? team.id,
+        pairId: data.pairs?.[team.id] ?? team.id,
+      }))
 
-      // Go to the dashboard and hand it the new bracket
       navigate('/dashboard/quadrodashb', {
         state: {
           tournamentId: data.tournamentId,
           tournamentName: name,
           teams: savedTeams,
-          bracket: createBracket(savedTeams),
+          groupMatches: [],
+          matches: [],
         },
       })
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save the tournament.')
+      setSaving(false)
     }
   }
 
@@ -222,7 +244,8 @@ export const QuadroEliminations = () => {
         onTeamChange={updateTeam}
         error={error}
         onSubmit={generateBracket}
-        onCancel={() => navigate('/dashboard/quadro')}
+        onCancel={() => navigate('/dashboard/quadrodashb')}
+        saving={saving}
       />
     </div>
   )
