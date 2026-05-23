@@ -1,10 +1,15 @@
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 export const Lead_Single_e = () => {
+  const navigate = useNavigate()
+
   return (
     <div w-full>
       <header className="flex justify-between flex-row items-center">
-        <button  >
+        <button 
+          onClick={() => navigate(-1)}
+         >
           <ArrowLeft />
       
         </button>
