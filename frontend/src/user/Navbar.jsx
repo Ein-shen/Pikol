@@ -11,32 +11,9 @@ export const Navbar = () => {
   return (
     <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full bg-background'>
       <div className='navbar h-16 border-b flex flex-row justify-between items-center p-3'>
-        <h1 className='font-bold text-lg pl-7 sm:pl-15'>
+        <h1 className='font-bold text-lg pl-7 sm:pl-13'>
           Pikol league
         </h1>
-
-        <div className='flex flex-row gap-6 pr-4 items-center'>
-          <form className='flex items-center space-x-2'>
-            <div className='relative flex items-center'>
-              <img
-                src={searchBg}
-                alt="Search"
-                className='absolute left-3 w-4 h-4 object-contain pointer-events-none'
-              />
-              <input
-                type="text"
-                className='border pl-9 pr-4 py-1 rounded-md w-23 sm:w-48 focus:outline-none'
-                placeholder='Search'
-              />
-            </div>
-
-            <button
-              className='border px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-mono text-sm'
-              type='submit'
-            >
-              Search
-            </button>
-          </form>
 
           {/* Profile + dropdown (relative so the dropdown anchors to this) */}
           <div className='relative flex flex-row gap-1 items-center'>
@@ -96,6 +73,6 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
-    </div>
+    
   )
 }
