@@ -22,7 +22,7 @@ export const Hero = () => {
 
   return (
     <div className="flex flex-col w-full gap-20">
-      <div className="flex flex-row items-center justify-between">
+      <header className="flex flex-row items-center justify-between">
         <button onClick={() => navigate(-1)}>
           <ArrowLeft />
         </button>
@@ -30,7 +30,7 @@ export const Hero = () => {
         <h1 className="font-bold text-lg">Hero section</h1>
 
         <div className="w-6" />
-      </div>
+      </header>
 
       <div className='flex flex-row items-center justify-center gap-5'>
 
