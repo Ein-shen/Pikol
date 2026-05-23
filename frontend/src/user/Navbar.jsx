@@ -44,7 +44,7 @@ export const Navbar = () => {
           </button>
 
           {showDropdown && (
-            <div className='absolute right-0 top-full mt-2 w-40 theme-card theme-text border theme-border rounded-md shadow-md z-50'>
+            <div className='absolute right-0 top-full mt-2 w-40 theme-accent theme-input border theme-border rounded-md shadow-md z-50'>
               <div className='flex flex-col'>
                 <button
                   type='button'
