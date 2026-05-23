@@ -67,7 +67,7 @@ export const Matching = () => {
               <button
                 onClick={() => navigate('/dashboard/singledashb')}
                 key={type}
-                className="flex flex-col rounded-md border border-black/80 p-6 text-md font-bold capitalize  text-input theme-accent"
+                className="flex flex-col theme-border rounded-md border border-black/80 theme-hover p-6 text-md font-bold capitalize  text-input theme-accent"
               >
                 <span>{type} Elimination</span>
 
