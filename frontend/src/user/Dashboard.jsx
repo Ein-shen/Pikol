@@ -4,6 +4,7 @@ import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 
 export const Dashboard = ({ user, setUser }) => {
+  console.log('setUser in Dashboard:', setUser)
   return (
     <div className='bg-green-100 min-h-screen flex flex-col'>
       {/* Top Navigation */}
