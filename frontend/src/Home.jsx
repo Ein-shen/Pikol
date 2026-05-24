@@ -3,7 +3,7 @@ import pikolBg from './assets/pikol.jpg';
 import pikolVideo from './assets/pikol-bg.mp4';
 import { Link } from 'react-router-dom';
 import { About } from './user/About';
-import { Support } from './user/components/Support';
+import { Support } from './user/Support';
 import { Footer } from './user/Footer';
 
 const navLinks = [
