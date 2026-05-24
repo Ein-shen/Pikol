@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { LayoutDashboard, Settings, Sliders, Trophy, Menu, X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-
+import { Signout } from './Signout'
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/hero' },
   { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
@@ -9,7 +9,7 @@ const navItems = [
   { label: 'Leaderboards', icon: Trophy, path: '/dashboard/leaderboards' },
 ]
 
-export const Sidebar = () => {
+export const Sidebar = ({ setUser }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -82,6 +82,7 @@ export const Sidebar = () => {
               </button>
             )
           })}
+          <Signout setUser={setUser} />
         </nav>
       </aside>
     </>
