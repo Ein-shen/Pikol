@@ -51,7 +51,7 @@ function App() {
       {/* PROTECTED DASHBOARD */}
       <Route
         path="/dashboard"
-        element={user ? <Dashboard user={user} /> : <Navigate to="/login" replace />}
+        element={user ? <Dashboard setUser={setUser}/> : <Navigate to="/login" replace />}
       >
         <Route path="hero" element={<Hero />} />
         <Route path="settings" element={<Settings />} />
