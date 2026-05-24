@@ -85,7 +85,7 @@ export const Signup = () => {
         </button>
 
         <p className="text-center text-xs sm:text-sm text-white mt-4">
-          Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Log in</Link>
+          Already have an account? <Link to="/login" className="text-blue-300 hover:underline">Log in</Link>
         </p>
       </div>
     </div>
