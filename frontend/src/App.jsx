@@ -18,7 +18,6 @@ import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 import { Lead_Single_e } from './user/bracket&lead/Single/Lead_Single_e.jsx'
-import { Support } from './user/components/Support.jsx'
 
 function App() {
   const { user, loading } = useAuth()
@@ -54,7 +53,6 @@ function App() {
       >
         <Route path="/dashboard/hero" element={<Hero />} />
         <Route path="/dashboard/settings" element={<Settings />} />
-        <Route path="/dashboard/support" element={<Support />} />
         <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
