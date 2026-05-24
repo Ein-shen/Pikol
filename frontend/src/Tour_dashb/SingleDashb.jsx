@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Plus, ArrowLeft, MoreHorizontal, Trophy } from 'lucide-react'
+import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../api'
 import {
@@ -90,13 +90,9 @@ export const SingleDashb = () => {
   const showList = !current?.bracket
 
   return (
-    <div className="w-full flex flex-col gap-10 theme-text">
+    <div className="w-full flex flex-col gap-10">
       <div className="flex justify-between flex-row items-center">
-        <button
-          onClick={() => navigate(-1)}
-          aria-label="Go back"
-          className="theme-hover rounded-md p-2"
-        >
+        <button onClick={() => navigate(-1)}>
           <ArrowLeft />
         </button>
 
@@ -104,8 +100,7 @@ export const SingleDashb = () => {
 
         <button
           onClick={() => navigate('/dashboard/single')}
-          aria-label="New tournament"
-          className="theme-hover flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
+          className="flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
         >
           <Plus size={20} />
         </button>
@@ -123,45 +118,49 @@ export const SingleDashb = () => {
       )}
 
       {showList && openError && (
-        <p role="alert" className="text-sm text-red-500">{openError}</p>
+        <p role="alert" className="text-sm text-red-600">{openError}</p>
       )}
 
       {showList && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {tournaments.map((tournament) => (
             <div
               key={tournament.id}
               onClick={() => openTournament(tournament.id)}
-              className="theme-accent relative cursor-pointer text-md flex flex-row items-center gap-2 border border-theme-accent-text/30 p-4 pr-10 rounded-md font-bold capitalize"
+              className="relative cursor-pointer text-md flex flex-row items-center gap-1 border border-black/80 p-4 pr-10 rounded-md font-bold capitalize  theme-hover theme-accent "
             >
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setMenuId((prev) => (prev === tournament.id ? null : tournament.id))
                 }}
-                className="absolute top-1 right-1 p-1 rounded hover:bg-black/10"
+                className="absolute top-1 right-1 p-1 rounded     "
                 aria-label="More options"
               >
                 <MoreHorizontal size={20} />
               </button>
 
-              {/* Lucide icon follows the text color in both themes */}
-              <Trophy size={24} className="shrink-0" />
+              <img
+                src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
+                alt="pikol"
+                height={24}
+                width={24}
+              />
 
               {tournament.name}
 
               {menuId === tournament.id && (
                 <div
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute right-1 top-9 w-36 theme-card theme-text border theme-border rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
+                  className="absolute right-1 top-9 w-36 theme-bg theme-hover border border-black/80 rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
                 >
-                  <button
+                  <button 
                     type="button"
                     onClick={() => {
                       setMenuId(null)
                       renameTournament(tournament.id, tournament.name)
                     }}
-                    className="theme-hover text-left text-xs px-4 py-2 border-b theme-border rounded-t-md"
+                    className="text-left text-xs px-4 py-2 border-b border-black/80 rounded-t-md theme-hover theme-input theme-accent"
                   >
                     Rename
                   </button>
@@ -171,7 +170,7 @@ export const SingleDashb = () => {
                       setMenuId(null)
                       deleteTournament(tournament.id)
                     }}
-                    className="theme-hover text-left text-xs px-4 py-2 rounded-b-md text-red-500"
+                    className="text-left text-xs px-4 py-2 rounded-b-md text-red-600 theme-hover theme-input theme-accent"
                   >
                     Delete
                   </button>
