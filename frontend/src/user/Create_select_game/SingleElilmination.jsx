@@ -59,10 +59,13 @@ function TeamsForm({
   onCancel,
 }) {
   return (
-    <form onSubmit={onSubmit} className="rounded-xl border border-gray-200 bg-white shadow-sm">
-      <div className="border-b p-5">
+    <form
+      onSubmit={onSubmit}
+      className="theme-card theme-text rounded-xl border theme-border shadow-sm"
+    >
+      <div className="border-b theme-border p-5">
         <h2 className="text-lg font-bold capitalize">Single elimination</h2>
-        <p className="text-sm text-gray-500">Register {teamCount} teams with 2 players each.</p>
+        <p className="text-sm theme-muted">Register {teamCount} teams with 2 players each.</p>
       </div>
 
       <div className="space-y-4 p-5">
@@ -72,7 +75,7 @@ function TeamsForm({
             value={tournamentName}
             onChange={(e) => onNameChange(e.target.value)}
             placeholder="e.g. Doubles Championship"
-            className="w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-black"
+            className="theme-input w-full rounded-lg p-3"
           />
         </div>
 
@@ -86,15 +89,15 @@ function TeamsForm({
                 onClick={() => onCountChange(count)}
                 className={`rounded-lg border px-4 py-2 text-sm font-medium ${
                   teamCount === count
-                    ? 'bg-black text-white'
-                    : 'bg-white hover:bg-gray-100'
+                    ? 'theme-accent border-transparent'
+                    : 'theme-text theme-hover theme-border'
                 }`}
               >
                 {count}
               </button>
             ))}
           </div>
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs theme-muted">
             4, 8, 16 and 32 give a bracket where nobody ever waits a round. Other counts show a
             "Waiting" card for the team with no opponent.
           </p>
@@ -102,40 +105,44 @@ function TeamsForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {teams.map((team, index) => (
-            <div key={team.id} className="space-y-3 rounded-lg border p-3">
+            <div key={team.id} className="space-y-3 rounded-lg border theme-border p-3">
               <label className="block text-sm font-bold">Team {index + 1}</label>
               <input
                 value={team.name}
                 onChange={(e) => onTeamChange(team.id, 'name', e.target.value)}
                 placeholder="Team name"
-                className="w-full rounded-md border p-2 text-sm"
+                className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
                 value={team.player1}
                 onChange={(e) => onTeamChange(team.id, 'player1', e.target.value)}
                 placeholder="Player 1"
-                className="w-full rounded-md border p-2 text-sm"
+                className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
                 value={team.player2}
                 onChange={(e) => onTeamChange(team.id, 'player2', e.target.value)}
                 placeholder="Player 2"
-                className="w-full rounded-md border p-2 text-sm"
+                className="theme-input w-full rounded-md p-2 text-sm"
               />
             </div>
           ))}
         </div>
 
-        {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+        {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
       </div>
 
-      <div className="flex justify-end gap-3 border-t p-5">
-        <button type="button" onClick={onCancel} className="rounded-lg border px-4 py-2">
+      <div className="flex justify-end gap-3 border-t theme-border p-5">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2 "
+        >
           Cancel
         </button>
         <button
           type="submit"
-          className="rounded-lg bg-black px-5 py-2 text-white hover:bg-gray-800"
+          className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold"
         >
           Generate bracket
         </button>
