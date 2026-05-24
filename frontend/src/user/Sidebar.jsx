@@ -10,6 +10,7 @@ const navItems = [
 ]
 
 export const Sidebar = ({ setUser }) => {
+  console.log('setUser in Dashboard:', setUser)
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
