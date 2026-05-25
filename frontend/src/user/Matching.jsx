@@ -13,7 +13,11 @@ const TYPE_ROUTES = {
 
 // Name shown on each card (types not listed here show "<type> Elimination")
 const TYPE_LABELS = {
+  single: 'Single Elimination',
+  double: 'Double Elimination',
+  quadro: 'Top 2 Bracketing',
   top3: 'Top 3 Brackets',
+  
 }
 
 export const Matching = () => {
@@ -138,15 +142,10 @@ export const Matching = () => {
                 onClick={() => navigate('/dashboard/single')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover text/30 p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
-                Top 1 Bracketing
+                Single Elimination
               </button>
 
-              <button
-                onClick={() => navigate('/dashboard/double')}
-                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold   sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
-              >
-                Double Elimination
-              </button>
+              
 
               <button
                 onClick={() => navigate('/dashboard/quadro')}
@@ -160,6 +159,13 @@ export const Matching = () => {
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Top 3 Bracketing
+              </button>
+
+              <button
+                onClick={() => navigate('/dashboard/double')}
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold   sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Open Play to All
               </button>
             </div>
           </div>
