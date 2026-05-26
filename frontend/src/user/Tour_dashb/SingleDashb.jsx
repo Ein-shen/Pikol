@@ -120,7 +120,7 @@ export const SingleDashb = () => {
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-xl font-bold">Single Elimination</h1>
+          <h1 className="text-xl font-bold">Top 1 Single elimination</h1>
         </div>
         <button
           onClick={() => navigate('/dashboard/single')}
