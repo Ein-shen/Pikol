@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import api from '../api'
+import api from '../../api'
 import {
   Bracket_Single_VIew,
   createBracket,
   applyResults,
-} from '../user/bracket_lead/Bracket_Single_VIew'
+} from '../bracket_lead/Bracket_Single_VIew'
 
 export const SingleDashb = () => {
   const [tournaments, setTournaments] = useState([])
