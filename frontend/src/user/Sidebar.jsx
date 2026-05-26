@@ -21,28 +21,36 @@ export const Sidebar = () => {
 
   return (
     <>
-      {/* Menu button - mobile only, under the navbar. Hidden while the drawer is open */}
+      {/* Menu button - mobile only, hidden while the drawer is open */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           aria-label="Open menu"
-          className="md:hidden fixed left-4 top-[4.75rem] z-30 flex items-center gap-2 rounded-md border border-border bg-background px-2 py-2 font-mono text-sm"
+          style={{ zIndex: 30 }}
+          className="md:hidden fixed left-4 top-[4.75rem] flex items-center gap-2 rounded-md border border-border bg-background px-2 py-2 font-mono text-sm"
         >
           <Menu className="w-4 h-4" />
         </button>
       )}
 
-      {/* Overlay - mobile only, starts right below the navbar */}
+      {/* Overlay - mobile only, darkens only the page behind the sidebar */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50 z-30"
+          style={{ zIndex: 30 }}
+          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50"
         />
       )}
 
-      {/* Sidebar: always starts right below the navbar */}
+      {/* Sidebar: solid background, borders on top and right, always above the overlay */}
       <aside
-        className={`theme-card theme-text w-64 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center border-x border-black/80 z-40 transform transition-transform duration-300 overflow-y-auto ${
+        style={{
+          zIndex: 40,
+          backgroundColor: '#dcfce7',
+          borderTop: '1px solid rgba(0,0,0,0.8)',
+          borderRight: '1px solid rgba(0,0,0,0.8)',
+        }}
+        className={`theme-card theme-text w-64 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center transform transition-transform duration-300 overflow-y-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
