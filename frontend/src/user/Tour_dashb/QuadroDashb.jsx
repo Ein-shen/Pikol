@@ -109,7 +109,7 @@ export const QuadroDashb = () => {
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-xl font-bold">Quadro Tournaments</h1>
+          <h1 className="text-xl font-bold">Top 2 Bracketing</h1>
         </div>
         <button
           onClick={() => navigate('/dashboard/quadro')}
