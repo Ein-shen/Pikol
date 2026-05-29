@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 const navItems = [
   { label: 'Overview', icon: LayoutDashboard, path: '/dashboard/overview' },
   { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
-  { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
+  { label: 'Leaderbords', icon: Settings, path: '/dashboard/leaderboards' },
 ]
 
 export const Sidebar = () => {
