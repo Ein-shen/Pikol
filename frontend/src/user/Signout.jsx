@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../api'
 
 export const Signout = ({ setUser }) => {
-  console.log('setUser in Dashboard:', setUser)
+ 
   const navigate = useNavigate()
 
   const handleSignout = async () => {
