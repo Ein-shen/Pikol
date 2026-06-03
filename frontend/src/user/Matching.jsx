@@ -31,7 +31,7 @@ export const Matching = () => {
 
         <button
           onClick={() => setShow(true)}
-          className="flex items-center gap-2 rounded-md bg-black px-4 py-2 text-white hover:bg-gray-800"
+          className="flex items-center gap-2 rounded-md  theme-accent px-4 py-2 text-white "
         >
           <Plus size={18} />
           Create tournament
@@ -50,7 +50,7 @@ export const Matching = () => {
           </p>
           <button
             onClick={() => setShow(true)}
-            className="mt-5 rounded-lg bg-black px-5 py-3 text-white"
+            className="mt-5 rounded-lg theme-muted px-5 py-3 text-white"
           >
             Create your first bracket
           </button>
