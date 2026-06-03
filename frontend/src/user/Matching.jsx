@@ -98,11 +98,11 @@ export const Matching = () => {
               <X size={20} />
             </button>
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center ">
               <h2 className="text-lg font-semibold">Select your game management</h2>
             </div>
 
-            <div className="grid grid-cols-2 items-center justify-center gap-3">
+            <div className=" flex flex-row items-center justify-center gap-3 pt-10">
               <button
                 onClick={() => navigate('/dashboard/single')}
                 className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
@@ -124,12 +124,12 @@ export const Matching = () => {
                 Quadro Elimination
               </button>
 
-              <button
+              {/* <button
                 onClick={() => navigate('/dashboard/openplay')}
                 className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
               >
                 Open play
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
