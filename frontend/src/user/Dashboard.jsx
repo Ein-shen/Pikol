@@ -5,7 +5,7 @@ import { Sidebar } from './Sidebar'
 
 export const Dashboard = () => {
   return (
-    <div className='bg-green-100 min-h-screen flex flex-col'>
+    <div className='theme-card bg-fixed theme-text min-h-screen flex flex-col'>
       {/* Top Navigation (fixed) */}
       <Navbar />
 
