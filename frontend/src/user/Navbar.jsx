@@ -68,7 +68,7 @@ export const Navbar = () => {
           {/* Profile photo (default icon if the user has none) */}
           <div
             onClick={() => go('/dashboard/hero')}
-            className='flex items-center justify-center w-10 h-10 rounded-full border theme-border theme-card overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
+            className='flex items-center justify-center w-10 h-10 rounded-full border theme-border theme-accent overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
           >
             {photo ? (
               <img src={photo} alt='Profile' className='h-full w-full object-cover' />
