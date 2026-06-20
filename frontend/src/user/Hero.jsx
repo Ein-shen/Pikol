@@ -35,7 +35,8 @@ export const Hero = () => {
       <div className='flex flex-row items-center justify-center gap-5'>
 
         {/* Circle */}
-        <div className='rounded-xl w-23 h-23 border border-black/80 p-6'>
+        <div className='rounded-xl items-center w-23 h-23 theme-border theme-accent border border-black/80 p-6'>
+        <img src="https://img.icons8.com/?size=100&id=12438&format=png&color=000000" alt="default" height={52}  width={52} className='theme-icon'/>
         </div>
 
         {/* text name */}
