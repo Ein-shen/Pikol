@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
 import { createBracket } from '../bracket&lead/Single/Bracket_Single_VIew'
@@ -136,7 +137,7 @@ function TeamsForm({
         <button
           type="button"
           onClick={onCancel}
-          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2 "
+          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2"
         >
           Cancel
         </button>
@@ -196,7 +197,22 @@ export const SingleElilmination = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col gap-10">
+      <header className="flex justify-between flex-row items-center">
+        <button
+          className="theme-hover p-2 rounded-md"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+        >
+          <ArrowLeft />
+        </button>
+
+        <h1 className="font-bold text-lg">Single Elimination</h1>
+
+        {/* Empty spacer, same width as the back button, so the title stays centered */}
+        <div className="w-10" />
+      </header>
+
       <TeamsForm
         tournamentName={tournamentName}
         onNameChange={setTournamentName}
