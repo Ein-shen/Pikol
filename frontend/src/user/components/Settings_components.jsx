@@ -1,7 +1,7 @@
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
- export const Settings = () => {
+ export const Settings_components = () => {
 
   const navigate = useNavigate()
   return (
