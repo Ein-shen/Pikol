@@ -16,7 +16,7 @@ const contacts = [
   },
 ]
 
-export const Support = () => {
+export const Support_components = () => {
   const navigate = useNavigate()
   return (
     <div w-full>
