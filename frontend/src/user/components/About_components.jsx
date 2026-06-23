@@ -2,7 +2,7 @@ import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export const About = () => {
+export const About_components = () => {
   const navigate = useNavigate()
   return (
     <div w-full>
