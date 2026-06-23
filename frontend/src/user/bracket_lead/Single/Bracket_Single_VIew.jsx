@@ -313,10 +313,11 @@ function ChampionBanner({ champion }) {
     <div className="rounded-xl border border-yellow-300 bg-yellow-50 p-6 text-center">
       <Trophy className="mx-auto mb-2 text-yellow-600" size={36} />
       <p className="text-sm font-medium text-yellow-800">Tournament champion</p>
-      <h2 className="mt-1 text-2xl font-bold text-gray-900">{champion.name}</h2>
-      <p className="mt-2 text-sm text-gray-600">
+     
+      <p className="mt-2 text-xl font-bold text-black">
         {champion.player1} &amp; {champion.player2}
       </p>
+       <h2 className="mt-1 text-ms text-black">{champion.name}</h2>
     </div>
   )
 }
