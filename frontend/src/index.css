@@ -1,37 +1,119 @@
 @import "tailwindcss";
 
+/* =========================
+   Theme variables (dark = default)
+   ========================= */
 
+:root {
+  color-scheme: dark;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  --bg-color: #101e2c;
+  --text-color: #cdeffb;
+  --muted-color: #7fb6d4;
+  --card-color: #0e3355;
 
+  /* RGB values so Tailwind opacity works */
+  --border-color: 125 211 245;
 
-.autofill-fix:-webkit-autofill,
-.autofill-fix:-webkit-autofill:hover,
-.autofill-fix:-webkit-autofill:focus,
-.autofill-fix:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
-  -webkit-text-fill-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
-  caret-color: white;
+  --hover-color: #0a4260;
+  --hover-text-color: #ffffff;
+
+  --accent-color: #50c4f2;
+  --accent-text-color: #08212f;
+
+  --bg-gradient: linear-gradient(135deg, #08212f 0%, #101e2c 45%, #0e3355 100%);
+  --overlay-color: rgb(8 33 47 / 70%);
 }
 
+:root.light {
+  color-scheme: light;
 
-.navbar {
-  background-color: aqua;
-  
+  --bg-color: #cfeaf8;      /* light blue page */
+  --text-color: #0e3355;
+  --muted-color: #3f6f94;
+  --card-color: #e4f4fc;    /* light blue cards and sidebar (was white) */
 
+  --border-color: 17 88 154;
+
+  --hover-color: #b5dff2;
+  --hover-text-color: #0e3355;
+
+  --accent-color: #2682c6;
+  --accent-text-color: #ffffff;
+
+  --bg-gradient: linear-gradient(135deg, #e0f4fb 0%, #bfe3f5 50%, #8fd0f0 100%);
+  --overlay-color: rgb(207 234 248 / 65%);
 }
 
-.div-theme{
-  background-color: blue;
+/* =========================
+   Tailwind theme colors
+   ========================= */
+
+@theme inline {
+  --color-theme-border: rgb(var(--border-color));
+  --color-theme-bg: var(--bg-color);
+  --color-theme-card: var(--card-color);
+  --color-theme-text: var(--text-color);
+  --color-theme-muted: var(--muted-color);
+  --color-theme-accent: var(--accent-color);
+  --color-theme-accent-text: var(--accent-text-color);
 }
 
-.card-theme {
-  background-color: yellow;
+/* =========================
+   Base (no color transition = no text delay)
+   ========================= */
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
 }
 
-.nav-theme{
-  background-color: beige;
+/* =========================
+   Custom theme classes
+   ========================= */
+
+.theme-bg { background-color: var(--bg-color); }
+.theme-gradient { background-image: var(--bg-gradient); }
+.theme-card { background-color: var(--card-color); }
+.theme-text { color: var(--text-color); }
+.theme-muted { color: var(--muted-color); }
+.theme-border { border-color: rgb(var(--border-color) / 20%); }
+.theme-overlay { background-color: var(--overlay-color); }
+
+.theme-hover:hover {
+  background-color: var(--hover-color);
+  color: var(--hover-text-color);
+}
+
+.theme-accent {
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+}
+.theme-accent:hover {
+  filter: brightness(1.1);
+}
+
+/* Black icons (icons8): invert in dark mode only */
+.theme-icon { filter: invert(1); }
+:root.light .theme-icon { filter: none; }
+
+/* Form inputs */
+.theme-input {
+  background-color: var(--card-color);
+  color: var(--text-color);
+  border: 1px solid rgb(var(--border-color) / 30%);
+}
+.theme-input::placeholder { color: var(--muted-color); }
+.theme-input:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 1px;
+}
+
+/* Backgrounds fade, text changes instantly */
+.theme-card,
+.theme-hover,
+.theme-accent,
+.theme-input {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
