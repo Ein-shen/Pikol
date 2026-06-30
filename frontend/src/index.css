@@ -2,47 +2,49 @@
 
 /* =========================
    Theme variables (dark = default)
+   Dark green
    ========================= */
 
 :root {
   color-scheme: dark;
 
-  --bg-color: #101e2c;
-  --text-color: #cdeffb;
-  --muted-color: #7fb6d4;
-  --card-color: #0e3355;
+  --bg-color: #0f1f17;
+  --text-color: #d9f5e1;
+  --muted-color: #86c39a;
+  --card-color: #123524;
 
   /* RGB values so Tailwind opacity works */
-  --border-color: 125 211 245;
+  --border-color: 134 214 160;
 
-  --hover-color: #0a4260;
+  --hover-color: #1a4a32;
   --hover-text-color: #ffffff;
 
-  --accent-color: #50c4f2;
-  --accent-text-color: #08212f;
+  --accent-color: #6fcf8e;
+  --accent-text-color: #072015;
 
-  --bg-gradient: linear-gradient(135deg, #08212f 0%, #101e2c 45%, #0e3355 100%);
-  --overlay-color: rgb(8 33 47 / 70%);
+  --bg-gradient: linear-gradient(135deg, #07170f 0%, #0f1f17 45%, #123524 100%);
+  --overlay-color: rgb(7 23 15 / 70%);
 }
 
+/* Light green */
 :root.light {
   color-scheme: light;
 
-  --bg-color: #cfeaf8;      /* light blue page */
-  --text-color: #0e3355;
-  --muted-color: #3f6f94;
-  --card-color: #e4f4fc;    /* light blue cards and sidebar (was white) */
+  --bg-color: #d4efd9;      /* light green page */
+  --text-color: #12391f;
+  --muted-color: #3d6b4d;
+  --card-color: #e8f7ec;    /* light green cards and sidebar */
 
-  --border-color: 17 88 154;
+  --border-color: 31 107 58;
 
-  --hover-color: #b5dff2;
-  --hover-text-color: #0e3355;
+  --hover-color: #b9e2c4;
+  --hover-text-color: #12391f;
 
-  --accent-color: #2682c6;
+  --accent-color: #26804d;
   --accent-text-color: #ffffff;
 
-  --bg-gradient: linear-gradient(135deg, #e0f4fb 0%, #bfe3f5 50%, #8fd0f0 100%);
-  --overlay-color: rgb(207 234 248 / 65%);
+  --bg-gradient: linear-gradient(135deg, #e6f7e9 0%, #c5ebcd 50%, #94d9a6 100%);
+  --overlay-color: rgb(212 239 217 / 65%);
 }
 
 /* =========================
