@@ -28,44 +28,48 @@ export const Sidebar = () => {
 
   return (
     <>
-      {/* Menu button - mobile only, hidden while the drawer is open */}
+      {/* Menu button - mobile only, small, under the navbar. Hidden while the drawer is open */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           aria-label="Open menu"
-          style={{ zIndex: 30 }}
-          className="md:hidden fixed left-4 top-[4.75rem] flex items-center gap-2 rounded-md border theme-border theme-card theme-text px-2 py-2 font-mono text-sm"
+          className="md:hidden fixed left-4 top-[4.75rem] z-30 flex items-center gap-2 rounded-md border theme-border theme-card theme-text px-2 py-2 font-mono text-sm"
         >
           <Menu className="w-4 h-4" />
         </button>
       )}
 
-      {/* Overlay - mobile only */}
+      {/* Overlay - mobile only, starts right below the navbar */}
       {isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          style={{ zIndex: 30 }}
-          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50"
+          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50 z-30"
         />
       )}
 
-      {/* Sidebar: solid on mobile drawer, transparent on desktop so the page gradient shows */}
-      <aside
-        className={`theme-card md:bg-transparent theme-text w-56 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 border-r theme-border flex flex-col items-center text-center transform transition-transform duration-300 overflow-y-auto ${
+      {/* Sidebar: always starts right below the navbar */}
+      <div
+        className={`theme-card w-56 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center theme-text border-r theme-border z-40 transform overflow-y-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
+        // Slide in from the left. Tailwind v4 moves the drawer with the CSS `translate`
+        // property (not `transform`), so `translate` is what has to be transitioned.
+        style={{
+          transition:
+            'translate 400ms cubic-bezier(0.4, 0, 0.2, 1), transform 400ms cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, border-color 0.3s ease',
+        }}
       >
-        {/* Close button - mobile only */}
+        {/* Close button - mobile only. Brings the Menu button back */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden absolute top-2 right-2 theme-text"
+          className="md:hidden absolute top-1 right-1 theme-text   "
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
         </button>
 
-        {/* Main navigation */}
-        <nav className="w-full space-y-4 px-6 pt-5">
+        {/* Main Navigation */}
+        <div className="w-full space-y-4 px-6 pt-5">
           {navItems.map(({ label, iconSrc, path }) => {
             const isActive =
               location.pathname === path || location.pathname.startsWith(path + '/')
@@ -74,21 +78,17 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex items-center gap-2 font-mono text-md rounded-md p-2 ${
-                  isActive ? 'theme-accent' : 'theme-hover'
+                className={`w-full flex items-center gap-2 font-mono rounded-md p-2 transition-colors theme-hover ${
+                  isActive ? 'border border-theme-border/10 theme-bg' : ''
                 }`}
               >
-                <img
-                  src={iconSrc}
-                  alt=""
-                  className={`w-4 h-4 shrink-0 ${isActive ? '' : 'theme-icon'}`}
-                />
-                {label}
+                <img src={iconSrc} alt="" className="w-4 h-4 shrink-0 theme-icon" />
+                <span className="text-xs">{label}</span>
               </button>
             )
           })}
-        </nav>
-      </aside>
+        </div>
+      </div>
     </>
   )
 }
