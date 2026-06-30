@@ -62,7 +62,7 @@ export const Sidebar = () => {
         {/* Close button - mobile only. Brings the Menu button back */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden absolute top-1 right-1 theme-text   "
+          className="md:hidden absolute top-1 p-1 rounded-md theme-hover right-1 theme-text   "
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
