@@ -8,6 +8,7 @@ export const About = () => {
     <div w-full>
       <header className="flex justify-between flex-row items-center">
         <button 
+          className='theme-hover p-2 rounded-md '
            onClick={() => navigate(-1)}
            >
            <ArrowLeft />
