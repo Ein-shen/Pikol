@@ -62,6 +62,13 @@ export const Navbar = () => {
                 </button>
                 <button
                   type='button'
+                  onClick={() => go('/dashboard/about')}
+                  className={`${itemClass} border-b theme-border theme-card  theme-hover `}
+                >
+                  About
+                </button>
+                <button
+                  type='button'
                   onClick={() => go('/dashboard/settings')}
                   className={`${itemClass} border-b theme-border theme-card  theme-hover `}
                 >
