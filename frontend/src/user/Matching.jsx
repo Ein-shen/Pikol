@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { Plus, X, Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -23,7 +24,6 @@ export const Matching = () => {
       .finally(() => setLoading(false))
   }, [])
 
-  // Counts tournaments per type (e.g. { "single": 10, "quadro": 1 })
   const typeCounts = dataTournament.reduce((acc, t) => {
     const key = t.type || 'single'
     acc[key] = (acc[key] || 0) + 1
@@ -34,15 +34,22 @@ export const Matching = () => {
 
   return (
     <div className="w-full flex flex-col gap-10">
-      <header className="flex flex-wrap items-center justify-between gap-4">
+      {/* Header */}
+      <header className="flex flex-row items-center justify-between">
+        {/* Left spacer */}
+        <div className="w-10 shrink-0" />
+
+        {/* Centered heading */}
         <h1 className="text-lg font-bold">Matching brackets</h1>
 
+        {/* Create tournament button */}
         <button
+          type="button"
           onClick={() => setShow(true)}
-          className="flex items-center gap-2 rounded-md theme-hover theme-accent px-4 py-2 text-white"
+          className="theme-hover rounded-md p-2"
+          aria-label="Create tournament"
         >
-          <Plus size={18} />
-          Create tournament
+          <Plus size={24} />
         </button>
       </header>
 
@@ -58,24 +65,26 @@ export const Matching = () => {
           </p>
           <button
             onClick={() => setShow(true)}
-            className="mt-5 rounded-lg theme-muted px-5 py-3 text-white"
+            className="mt-5 rounded-lg theme-muted px-4 py-2 text-white"
           >
             Create your first bracket
           </button>
         </div>
       )}
 
-      {/* HAS DATA: renders a card for each type present in the database */}
+      {/* HAS DATA */}
       {!loading && hasTournaments && (
         <div className="flex flex-col gap-6">
           <h2 className="text-lg font-bold">Used match for tournaments</h2>
 
-          <div className="flex flex-col w-full flex-wrap gap-4">
+          <div className="flex w-full flex-col flex-wrap gap-4">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button
-                onClick={() => navigate(TYPE_ROUTES[type] || '/dashboard/singledashb')}
+                onClick={() =>
+                  navigate(TYPE_ROUTES[type] || '/dashboard/singledashb')
+                }
                 key={type}
-                className="flex flex-col theme-card theme-hover rounded-md border theme-border p-6 text-md font-bold capitalize text-input"
+                className="flex flex-col rounded-md border theme-border theme-card theme-hover p-6 text-left text-md font-bold capitalize text-input"
               >
                 <span>{type} Elimination</span>
 
@@ -86,6 +95,7 @@ export const Matching = () => {
                     height={10}
                     width={15}
                   />
+                  
                   {count} {count === 1 ? 'tournament' : 'tournaments'}
                 </span>
               </button>
@@ -121,21 +131,21 @@ export const Matching = () => {
             <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
               <button
                 onClick={() => navigate('/dashboard/single')}
-                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover text/30 p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Single elimination
               </button>
 
               <button
                 onClick={() => navigate('/dashboard/double')}
-                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold   sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Double Elimination
               </button>
 
               <button
                 onClick={() => navigate('/dashboard/quadro')}
-                className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Quadro Elimination
               </button>
