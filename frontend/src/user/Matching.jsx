@@ -88,52 +88,64 @@ export const Matching = () => {
 
       {/* POPUP */}
       {show && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
-          <div className="relative space-y-4 rounded-xl theme-bg p-10 shadow-lg">
+  // Overlay scrolls if the screen is very short (e.g. phone in landscape)
+  <div className="fixed inset-0 z-50 flex overflow-y-auto bg-black/75 p-4">
+    {/* m-auto centers the box and still lets it scroll when it is taller than the screen */}
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Select your game management"
+      className="relative m-auto w-full max-w-sm space-y-4 rounded-xl theme-bg theme-text p-5 shadow-lg sm:max-w-2xl sm:p-8 lg:max-w-3xl lg:p-10"
+    >
+      <button
+        type="button"
+        onClick={() => setShow(false)}
+        aria-label="Close"
+        className="absolute right-3 top-3 theme-muted hover:opacity-70"
+      >
+        <X size={20} />
+      </button>
+
+      <div className="flex items-center justify-center">
+        {/* pr-6 keeps the title from running under the close button */}
+        <h2 className="pr-6 text-center text-base font-semibold sm:pr-0 sm:text-lg">
+          Select your game management
+        </h2>
+      </div>
+
+          {/* Stacked on phones, side by side from the sm breakpoint up */}
+          <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
             <button
-              type="button"
-              onClick={() => setShow(false)}
-              className="absolute right-3 top-3 text-gray-500 hover:text-black"
+              onClick={() => navigate('/dashboard/single')}
+              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
             >
-              <X size={20} />
+              Single elimination
             </button>
 
-            <div className="flex items-center justify-center ">
-              <h2 className="text-lg font-semibold">Select your game management</h2>
-            </div>
+            <button
+              onClick={() => navigate('/dashboard/double')}
+              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+            >
+              Double Elimination
+            </button>
 
-            <div className=" flex flex-row items-center justify-center gap-3 pt-10">
-              <button
-                onClick={() => navigate('/dashboard/single')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent"
-              >
-                Single elimination
-              </button>
+            <button
+              onClick={() => navigate('/dashboard/quadro')}
+              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+            >
+              Quadro Elimination
+            </button>
 
-              <button
-                onClick={() => navigate('/dashboard/double')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent "
-              >
-                Double Elimination
-              </button>
-
-              <button
-                onClick={() => navigate('/dashboard/quadro')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent"
-              >
-                Quadro Elimination
-              </button>
-
-              {/* <button
-                onClick={() => navigate('/dashboard/openplay')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
-              >
-                Open play
-              </button> */}
-            </div>
+            {/* <button
+              onClick={() => navigate('/dashboard/openplay')}
+              className="h-16 w-full rounded-md border border-theme-accent-text/30 p-3 text-center text-sm font-semibold theme-accent sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+            >
+              Open play
+            </button> */}
           </div>
         </div>
-      )}
+      </div>
+    )}
     </div>
   )
 }
