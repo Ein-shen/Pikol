@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronDown } from 'lucide-react'
 import { Signout } from './Signout'
@@ -11,6 +11,7 @@ export const Navbar = () => {
   const [photo, setPhoto] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
   const navigate = useNavigate()
+  const menuRef = useRef(null) // wraps the photo, chevron and dropdown
 
   // Get the profile photo. If it fails or is empty, the default photo is used.
   useEffect(() => {
@@ -26,6 +27,27 @@ export const Navbar = () => {
     fetchProfile()
   }, [])
 
+  // Close the dropdown when clicking outside of it or pressing Escape
+  useEffect(() => {
+    if (!showDropdown) return
+
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowDropdown(false)
+      }
+    }
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setShowDropdown(false)
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [showDropdown])
+
   const go = (path) => {
     setShowDropdown(false)
     navigate(path)
@@ -40,7 +62,7 @@ export const Navbar = () => {
           Pikol <h1 className='theme-text opacity-80'>league</h1>
         </span>
 
-        <div className='relative flex flex-row gap-3 items-center'>
+        <div ref={menuRef} className='relative flex flex-row gap-3 items-center'>
           <ThemeToggle />
 
           {/* Profile photo (default icon if the user has none) */}
@@ -55,13 +77,19 @@ export const Navbar = () => {
             )}
           </div>
 
+          {/* Chevron: smaller, softer, and rotates when the menu is open */}
           <button
             type='button'
-            aria-label='Toggle menu'
             onClick={() => setShowDropdown((prev) => !prev)}
-            className='theme-text'
+            aria-label='Toggle menu'
+            aria-haspopup='menu'
+            aria-expanded={showDropdown}
+            className='theme-text rounded-lg p-1 opacity-60 transition hover:opacity-100'
           >
-            <ChevronDown />
+            <ChevronDown
+              size={20}
+              className={`transition-transform duration-200 ${showDropdown ? 'rotate-180' : ''}`}
+            />
           </button>
 
           {showDropdown && (
@@ -69,7 +97,7 @@ export const Navbar = () => {
               <button type='button' onClick={() => go('/dashboard/hero')} className={`${itemClass} rounded-t-md border-b`}>
                 Profile
               </button>
-              <button type='button' onClick={() => go(' ')} className={`${itemClass} border-b`}>
+              <button type='button' onClick={() => go('/dashboard/support')} className={`${itemClass} border-b`}>
                 Support
               </button>
               <button type='button' onClick={() => go('/dashboard/about')} className={`${itemClass} border-b`}>
