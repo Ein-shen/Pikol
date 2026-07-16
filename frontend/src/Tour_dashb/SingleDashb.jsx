@@ -92,18 +92,20 @@ export const SingleDashb = () => {
   return (
     <div className="w-full flex flex-col gap-10">
       <div className="flex justify-between flex-row items-center">
-        <button 
-          className='theme-hover p-2 rounded-md'
-          onClick={() => navigate(-1)}>
+        <button
+          className="theme-hover p-2 rounded-md"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+        >
           <ArrowLeft />
         </button>
 
         <h1 className="font-bold text-lg">Single Elimination</h1>
 
         <button
-          
           onClick={() => navigate('/dashboard/single')}
-          className="flex flex-row   theme-hover p-2 rounded-md rounded-md p-2 items-center space-x-3 text-md font-bold"
+          className="theme-hover flex flex-row p-2 rounded-md items-center space-x-3 font-bold"
+          aria-label="New tournament"
         >
           <Plus size={20} />
         </button>
@@ -125,19 +127,20 @@ export const SingleDashb = () => {
       )}
 
       {showList && (
-        <div className="grid grid-cols-3 gap-4">
+        // 1 column on phones, 2 on small tablets, 3 on large screens
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {tournaments.map((tournament) => (
             <div
               key={tournament.id}
               onClick={() => openTournament(tournament.id)}
-              className="relative cursor-pointer text-md flex flex-row items-center gap-1 border border-black/80 p-4 pr-10 rounded-md font-bold capitalize  theme-hover theme-accent "
+              className="relative min-w-0 cursor-pointer flex flex-row items-center gap-2 border border-black/80 p-3 pr-10 sm:p-4 sm:pr-10 rounded-md text-sm sm:text-base font-bold capitalize theme-hover theme-accent"
             >
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setMenuId((prev) => (prev === tournament.id ? null : tournament.id))
                 }}
-                className="absolute top-1 right-1 p-1 rounded     "
+                className="absolute top-1 right-1 p-1 rounded"
                 aria-label="More options"
               >
                 <MoreHorizontal size={20} />
@@ -148,16 +151,18 @@ export const SingleDashb = () => {
                 alt="pikol"
                 height={24}
                 width={24}
+                className="shrink-0"
               />
 
-              {tournament.name}
+              {/* min-w-0 + break-words: a long name wraps inside the card instead of overflowing */}
+              <span className="min-w-0 flex-1 break-words">{tournament.name}</span>
 
               {menuId === tournament.id && (
                 <div
                   onClick={(e) => e.stopPropagation()}
                   className="absolute right-1 top-9 w-36 theme-bg theme-hover border border-black/80 rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
                 >
-                  <button 
+                  <button
                     type="button"
                     onClick={() => {
                       setMenuId(null)
