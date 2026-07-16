@@ -40,13 +40,30 @@ export const Hero = () => {
 
         {/* text name */}
          <div className='flex flex-col items-left justify-top gap-1'>
+           
+          
           <span className='text-lg font-bold capitalize'>@{user?.username}</span>
+         
+       
+         
           <span className='text-lg  text-gray-400'>{user?.email}</span>
 
+          <span className="theme-accent flex flex-row items-center justify-center gap-2 p-1 rounded-md">
+            Edit Profile
+            <img src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000" alt="edit" height={21} width={21} />
+          </span>
         </div>
+          
+       
+       
 
        
       </div>
+      
+
+
+       
+
     </div>
   )
 }
