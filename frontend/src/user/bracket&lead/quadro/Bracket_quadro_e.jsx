@@ -5,7 +5,8 @@
  * This file renders a two-stage tournament for pairs of players:
  *
  *   STAGE 1 - "Brackets" (round robin groups)
- *     Teams are split into groups (A/B, or A/B/C/D). Inside each group
+ *     Teams are split into 1, 2 or 4 groups depending on how many pairs
+ *     there are (see FORMATS). Inside each group
  *     every team plays every other team once. A standings table is
  *     computed live from the scores.
  *
@@ -469,19 +470,53 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
 
 /* ------------------------------------------------------------------ */
 /* Group stage: splitting teams into groups                            */
-/* (2 groups up to MAX_PAIRS_FOR_SEMIS pairs, 4 groups above that)     */
+/* (how many groups / who advances depends on the pairs: see FORMATS)  */
 /* ------------------------------------------------------------------ */
 
-// Pair-count limit for the smaller format:
-//   up to this many pairs -> 2 groups (A, B) -> top 2 of each = 4 teams -> SEMI-FINALS
-//   more than this        -> 4 groups (A-D)  -> top 2 of each = 8 teams -> QUARTER-FINALS
-// (20 pairs and below = semi-finals, 32 pairs and up = quarter-finals)
-const MAX_PAIRS_FOR_SEMIS = 20
+// The tournament format for each size. The FIRST row whose `maxPairs` fits is used.
+// To change a limit, just edit the numbers here.
+//   groups  = group letters (how many round-robin groups there are)
+//   advance = how many teams of EACH group go to the playoffs
+const FORMATS = [
+  // 2-3 pairs : 1 group, top 2 play the Final (no semi-finals, no 3rd place)
+  { maxPairs: 3, groups: ['A'], advance: 2 },
+  // 4-5 pairs : 1 group, top 4 -> Semi-finals (1st vs 4th, 2nd vs 3rd)
+  { maxPairs: 5, groups: ['A'], advance: 4 },
+  // 6-10 pairs: 2 groups, top 2 of each = 4 teams -> Semi-finals
+  { maxPairs: 10, groups: ['A', 'B'], advance: 2 },
+  // 11+ pairs : 4 groups, top 2 of each = 8 teams -> Quarter-finals
+  { maxPairs: Infinity, groups: ['A', 'B', 'C', 'D'], advance: 2 },
+]
+
+const getFormat = (teamsCount) => FORMATS.find((f) => teamsCount <= f.maxPairs)
+
+// One-line description of the format for a team count, e.g. for the
+// "new tournament" page, so its helper text always matches the real bracket:
+//   getFormatSummary(10) -> "10 teams are split into 2 groups (A-B), up to 5 per group. The top 4 qualify for the semi-finals."
+export function getFormatSummary(teamsCount) {
+  const f = getFormat(teamsCount)
+  const perGroup = Math.ceil(teamsCount / f.groups.length)
+  const groupText =
+    f.groups.length === 1
+      ? 'one group'
+      : `${f.groups.length} groups (${f.groups[0]}-${f.groups[f.groups.length - 1]})`
+  const qualifiers = f.groups.length * f.advance
+  const roundText = { 2: 'Final', 4: 'semi-finals', 8: 'quarter-finals' }[qualifiers]
+  return `${teamsCount} teams are split into ${groupText}, up to ${perGroup} per group. The top ${qualifiers} qualify for the ${roundText}.`
+}
 
 // Which group letters to use for this many teams
 function getGroupNamesForTeams(teamsCount) {
-  if (teamsCount <= MAX_PAIRS_FOR_SEMIS) return ['A', 'B']
-  return ['A', 'B', 'C', 'D']
+  return getFormat(teamsCount).groups
+}
+
+// Which group a team ends up in, from its position in the team list (0 = first team).
+// Uses the same slicing as splitIntoGroups(), so the registration form can show
+// "Group A/B/C/D" next to each team and it always matches the real bracket.
+export function getGroupLabel(index, teamsCount) {
+  const names = getGroupNamesForTeams(teamsCount)
+  const size = Math.ceil(teamsCount / names.length)
+  return names[Math.floor(index / size)]
 }
 
 // Cuts the team list into equal slices, one per group.
@@ -603,6 +638,15 @@ const standingsFor = (groups, matchesByGroup, scores) =>
 function seedQualifiers(standingsByGroup) {
   const groupNames = Object.keys(standingsByGroup)
 
+  // 1 group (few pairs): everybody is in group A
+  if (groupNames.length === 1) {
+    const T = standingsByGroup['A'].map((r) => r.team)
+    // 4+ pairs -> top 4 -> semi-finals: 1st vs 4th, 2nd vs 3rd
+    if (T.length >= 4) return [T[0], T[3], T[1], T[2]]
+    // 2-3 pairs -> top 2 go straight to the final
+    return [T[0], T[1]]
+  }
+
   if (groupNames.length === 2) {
     // 2 groups -> 4 playoff teams -> semi-finals
     //   Semi 1: A1 vs B2     Semi 2: B1 vs A2
@@ -652,7 +696,8 @@ function restoreScores(matchesByGroup, saved) {
 /* ------------------------------------------------------------------ */
 /* GroupCard: UI for one group (standings table + list of matches)     */
 /* ------------------------------------------------------------------ */
-function GroupCard({ group, matches, standings, scores, locked, onScore }) {
+// `advance` = how many teams of this group go to the playoffs (they are shown in bold)
+function GroupCard({ group, matches, standings, scores, locked, onScore, advance }) {
   return (
     <div className="theme-card rounded-xl border theme-border p-4 space-y-4">
       <h3 className="text-lg font-bold">Bracket {group.name}</h3>
@@ -676,8 +721,8 @@ function GroupCard({ group, matches, standings, scores, locked, onScore }) {
             {standings.map((row, i) => (
               <tr
                 key={row.team.id}
-                // Top 2 rows (the qualifiers) are bold, the rest are faded
-                className={`border-t theme-border ${i < 2 ? 'font-semibold' : 'opacity-70'}`}
+                // The qualifying rows are bold, the rest are faded
+                className={`border-t theme-border ${i < advance ? 'font-semibold' : 'opacity-70'}`}
               >
                 <td className="py-1.5">{i + 1}</td>
                 <td>
@@ -694,7 +739,7 @@ function GroupCard({ group, matches, standings, scores, locked, onScore }) {
             ))}
           </tbody>
         </table>
-        <p className="mt-1 text-xs theme-muted">Top 2 (bold) advance to the playoffs.</p>
+        <p className="mt-1 text-xs theme-muted">Top {advance} (bold) advance to the playoffs.</p>
       </div>
 
       {/* List of this group's matches, each with two score inputs */}
@@ -815,6 +860,7 @@ export function Quadro_View({
   const doneCount = allMatches.filter((m) => getResult(m, scores)).length // finished matches
   const groupsDone = doneCount === allMatches.length // true when every group match has a result
   const locked = !!bracket // groups are locked once playoffs exist
+  const advance = getFormat(teams.length).advance // teams per group that qualify
 
   // ---- 3rd place match (derived from the bracket) ----
   const showThird = !!bracket && hasThirdPlace(bracket)
@@ -977,7 +1023,7 @@ export function Quadro_View({
         <div>
           <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">
-            {teams.length} teams · {groups.length} Brackets of {Math.ceil(teams.length / groups.length)} · Group matches{' '}
+            {teams.length} teams · {groups.length} {groups.length === 1 ? 'Bracket' : 'Brackets'} of {Math.ceil(teams.length / groups.length)} · Group matches{' '}
             {doneCount}/{allMatches.length}
           </p>
         </div>
@@ -1022,8 +1068,8 @@ export function Quadro_View({
         )}
       </div>
 
-      {/* One card per group: 1 column on mobile, 2 columns on large screens */}
-      <div className="grid grid-cols-1 gap-4  lg:grid-cols-2">
+      {/* One card per group: 1 column on mobile, 2 on large screens (always 1 if there is a single group) */}
+      <div className={`grid gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
         {groups.map((g) => (
           <GroupCard
             key={g.name}
@@ -1033,6 +1079,7 @@ export function Quadro_View({
             scores={scores}
             locked={locked}
             onScore={updateGroupScore}
+            advance={advance}
           />
         ))}
       </div>
