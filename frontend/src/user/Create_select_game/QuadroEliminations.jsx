@@ -2,9 +2,16 @@ import React, { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
+// getFormatSummary: one-line text describing the format for a team count
+// getGroupLabel:    which group (A-D) a team falls in, from its position in the list
+// Both come from the bracket file, so this page always matches the real bracket rules.
+// TODO: adjust this path to where Bracket_quadro_e.jsx lives relative to THIS file.
+import { getFormatSummary, getGroupLabel } from '../bracket&lead/quadro/Bracket_quadro_e'
 
-// Multiples of 4, so the teams split evenly into groups A-D
-const TEAM_COUNT_OPTIONS = [12, 16, 20, 24, 28, 32]
+// Team counts the user can pick.
+// 10 = 2 groups of 5 (semi-finals). 12 and up = 4 groups (quarter-finals).
+// Other sizes work too (see FORMATS in Bracket_quadro_e.jsx): just add them here.
+const TEAM_COUNT_OPTIONS = [10, 12, 16, 20, 24, 28, 32]
 const DEFAULT_TEAM_COUNT = 20
 
 function createEmptyTeam(id) {
@@ -100,10 +107,9 @@ function TeamsForm({
               </button>
             ))}
           </div>
+          {/* Text comes from the bracket rules, so it can't get out of date */}
           <p className="mt-2 text-xs theme-muted">
-            Teams are split evenly into 4 groups (A-D). {teamCount} teams = {teamCount / 4} per
-            group. Everyone plays everyone in their group, then the top 2 of each group go to
-            the quarter-finals.
+            {getFormatSummary(teamCount)} Everyone plays everyone in their group first.
           </p>
         </div>
 
@@ -113,7 +119,8 @@ function TeamsForm({
               <label className="block text-sm font-bold">
                 Team {index + 1}
                 <span className="ml-2 text-xs font-normal theme-muted">
-                  Group {'ABCD'[Math.floor(index / (teamCount / 4))]}
+                  {/* Group letter uses the same rule as the bracket (works for 10, 20, ...) */}
+                  Group {getGroupLabel(index, teamCount)}
                 </span>
               </label>
               <input
