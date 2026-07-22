@@ -457,7 +457,7 @@ function PlaceCard({ label, team, icon, featured = false }) {
 
 function ChampionBanner({ champion, second, third, fourth, showThird }) {
   return (
-    <div className="rounded-md border border-yellow-300 bg-yellow-100 text-l p-6">
+    <div className="mx-auto rounded-md border border-yellow-300 bg-yellow-100 text-l p-6">
       {/* Champion: full width */}
       <PlaceCard
         featured
@@ -745,10 +745,10 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
                 // The qualifying rows are bold, the rest are faded
                 className={`border-t theme-border ${i < advance ? 'font-semibold' : 'opacity-70'}`}
               >
-                <td className="py-1.5">{i + 1}</td>
-                <td>
-                  {row.team.name}
-                  <div className="text-xs font-normal theme-muted">{pairLabel(row.team)}</div>
+                <td className="py-3 pr-3 align-top text-sm">{i + 1}</td>
+                  <td className="py-3 align-top">
+                    <div className="text-sm capitalize">{pairLabel(row.team)}</div>
+                    <div className="mt-0.5 text-xs font-normal capitalize theme-muted">{row.team.name}</div>
                 </td>
                 <td className="text-center">{row.played}</td>
                 <td className="text-center">{row.wins}</td>
