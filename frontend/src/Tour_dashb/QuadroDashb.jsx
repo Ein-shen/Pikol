@@ -155,7 +155,6 @@ export const QuadroDashb = () => {
                       />
                       
                       <h3 className="text-base capitalize font-bold truncate pr-6"> {t.name}
-
                         <p className="mt-1 text-xs theme-muted">{t.teams?.length || 20} teams</p>
                       </h3>
                       
