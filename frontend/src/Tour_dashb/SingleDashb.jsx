@@ -6,7 +6,7 @@ import {
   Bracket_Single_VIew,
   createBracket,
   applyResults,
-} from '../user/bracket&lead/Single/Bracket_Single_VIew'
+} from '../user/bracket_lead/Single/Bracket_Single_VIew'
 
 export const SingleDashb = () => {
   const [tournaments, setTournaments] = useState([])
