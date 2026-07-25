@@ -6,7 +6,7 @@ import api from '../../api'
 // getGroupLabel:    which group (A-D) a team falls in, from its position in the list
 // Both come from the bracket file, so this page always matches the real bracket rules.
 // TODO: adjust this path to where Bracket_quadro_e.jsx lives relative to THIS file.
-import { getFormatSummary, getGroupLabel } from '../bracket&lead/quadro/Bracket_quadro_e'
+import { getFormatSummary, getGroupLabel } from '../bracket_lead/quadro/Bracket_quadro_e'
 
 // Team counts the user can pick.
 // 10 = 2 groups of 5 (semi-finals). 12 and up = 4 groups (quarter-finals).
