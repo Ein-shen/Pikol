@@ -97,7 +97,7 @@ export const Navbar = () => {
               <button type='button' onClick={() => go('/dashboard/hero')} className={`${itemClass} rounded-t-md border-b`}>
                 Profile
               </button>
-              <button type='button' onClick={() => go('/dashboard/support')} className={`${itemClass} border-b`}>
+              <button type='button' onClick={() => go(' ')} className={`${itemClass} border-b`}>
                 Support
               </button>
               <button type='button' onClick={() => go('/dashboard/about')} className={`${itemClass} border-b`}>
