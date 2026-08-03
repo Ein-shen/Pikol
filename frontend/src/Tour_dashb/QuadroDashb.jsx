@@ -90,7 +90,7 @@ export const QuadroDashb = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6 p-6">
+    <div className="w-full flex flex-col gap-6">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
@@ -131,7 +131,17 @@ export const QuadroDashb = () => {
             >
               <div>
                 <div className="flex items-start justify-between">
-                  <h3 className="text-base font-bold truncate pr-6">{t.name}</h3>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <img
+                      src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
+                      alt="pikol"
+                      height={24}
+                      width={24}
+                      className="shrink-0 theme-icon"
+                    />
+                    <h3 className="text-base font-bold truncate pr-6">{t.name}</h3>
+                  </div>
+
                   <div className="relative" onClick={(e) => e.stopPropagation()}>
                     <button
                       className="theme-hover p-1.5 rounded-md"
@@ -141,18 +151,20 @@ export const QuadroDashb = () => {
                       <MoreHorizontal size={16} />
                     </button>
                     {menuId === t.id && (
-                      <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border theme-border theme-card shadow-lg py-1">
+                      <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border theme-border theme-card shadow-lg py-1 flex flex-col">
                         <button
+                          type="button"
                           onClick={() => {
                             setRenamingId(t.id)
                             setRenameValue(t.name)
                             setMenuId(null)
                           }}
-                          className="w-full text-left px-4 py-2 text-xs theme-hover"
+                          className="w-full text-left px-4 py-2 text-xs theme-hover border-b theme-border"
                         >
                           Rename
                         </button>
                         <button
+                          type="button"
                           onClick={() => {
                             setConfirmId(t.id)
                             setMenuId(null)
