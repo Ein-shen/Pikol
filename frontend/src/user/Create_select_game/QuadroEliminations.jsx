@@ -222,7 +222,7 @@ export const QuadroEliminations = () => {
         onTeamChange={updateTeam}
         error={error}
         onSubmit={generateBracket}
-        onCancel={() => navigate('/dashboard/matching')}
+        onCancel={() => navigate('/dashboard/quadro')}
       />
     </div>
   )
