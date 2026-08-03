@@ -2,6 +2,12 @@ import React from 'react'
 
 export const Overview = () => {
   return (
-    <div>Overview</div>
+    <div>
+      <div>
+        <h1 className='text-lg font-bold items-center '>
+          This is overview
+        </h1>
+      </div>
+    </div>
   )
 }
