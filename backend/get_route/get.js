@@ -21,12 +21,15 @@ router.get("/leaderboard", requireAuth, async (req, res) => {
 });
 
 // =====================================================
-// GET TOURNAMENTS MATCHES AND WHAT GAMETYPE
+// GET ALL TOURNAMENTS
+// GET /api/tournaments
 // =====================================================
 
 router.get("/tournaments", requireAuth, async (req, res) => {
     try {
-        const { rows } = await pool.query("SELECT * FROM tournaments ORDER BY id DESC");
+        const { rows } = await pool.query(
+            "SELECT * FROM tournaments ORDER BY id DESC"
+        );
         res.json(rows);
     } catch (err) {
         console.error("GET TOURNAMENTS ERROR:", err);
