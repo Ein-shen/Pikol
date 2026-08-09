@@ -17,12 +17,14 @@ export const SingleDashb = () => {
   const [renameValue, setRenameValue] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
-  const current = location.state
+  const current = location.state // set by the form page or by openTournament
 
   const fetchTournaments = async () => {
     try {
       const res = await api.get('/tournaments')
-      setTournaments(res.data)
+      // Filter out quadro tournaments so only single elimination is shown
+      const singleTournaments = res.data.filter((t) => t.type !== 'quadro')
+      setTournaments(singleTournaments)
     } catch (err) {
       console.error('Get tournaments error:', err)
     }
@@ -32,12 +34,14 @@ export const SingleDashb = () => {
     fetchTournaments()
   }, [])
 
+  // Close the card menu when clicking anywhere else
   useEffect(() => {
     const close = () => setMenuId(null)
     window.addEventListener('click', close)
     return () => window.removeEventListener('click', close)
   }, [])
 
+  // Clears the screen only. Saved matches stay in the database.
   const resetTournament = () => {
     navigate(location.pathname, { replace: true, state: null })
     fetchTournaments()
@@ -252,7 +256,7 @@ export const SingleDashb = () => {
           ))}
           {tournaments.length === 0 && (
             <p className="col-span-full text-center text-sm theme-muted py-10">
-              No tournaments found. Create one to get started!
+              No single elimination tournaments found. Create one to get started!
             </p>
           )}
         </div>
