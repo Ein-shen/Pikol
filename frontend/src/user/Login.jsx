@@ -53,7 +53,8 @@ export const Login = () => {
           />
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 rounded-lg text-sm sm:text-base hover:bg-blue-600"
+            onClick={() => navigate(`/dashboard`)}
+            className="bg-blue-500 hover:bg-blue-400 text-white py-2 rounded-lg text-sm sm:text-base hover:bg-blue-600"
           >
             Login
           </button>
@@ -67,7 +68,7 @@ export const Login = () => {
 
         <button
           type="button"
-          className="w-full border border-black py-2 rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base hover:bg-gray-50"
+          className="w-full border bg-white/10 hover:bg-white/20 border-black py-2 rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base hover:bg-gray-50"
         >
           <img src="https://www.google.com/favicon.ico" className="w-4 h-4 sm:w-5 sm:h-5" alt="Google" />
           Continue with Google
