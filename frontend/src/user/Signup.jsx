@@ -62,6 +62,8 @@ export const Signup = () => {
           />
           <button
             type="submit"
+           
+            onClick={() => navigate(`/dashboard`)}
             className="bg-blue-500 text-white py-2 rounded-lg text-sm sm:text-base hover:bg-blue-600"
           >
             Sign Up
