@@ -1,7 +1,8 @@
 import pikolBg from './assets/pikol.jpg';
 import pikolVideo from './assets/pikol-bg.mp4';
 import { Link } from 'react-router-dom';
-
+import { About } from './user/About';
+import { Support } from './user/components/Support';
 export const Home = () => {
   return (
     <div className='min-h-screen w-full bg-[#5A9F68] relative overflow-hidden flex flex-col justify-between'>
@@ -98,10 +99,22 @@ export const Home = () => {
 
           </div>
 
+          
+          
+
+         
+
         </div>
+        
+       
 
       </main>
 
+      <div className='pt-20  relative overflow-hidden '>
+            <About/>
+            <Support />
+      </div>
+        
     </div>
   );
 };
