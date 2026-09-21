@@ -1,14 +1,29 @@
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { Home } from './Home.jsx'
+import { Login } from './user/Login.jsx'
+import { Signup } from './user/Signup.jsx'
+import { Signout } from './user/Signout.jsx'
+import { Dashboard } from './user/Dashboard.jsx'
 
-import './index.css'
 
 function App() {
-  
-
   return (
-    <div className='font-bold h-screen bg-red-500'>
-      APp
-    </div>
-    
+    <Routes>
+      {/* PUBLIC ROUTES */}
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/signout" element={<Signout />} />
+      
+
+      {/* USER DASHBOARD */}
+      <Route path="/dashboard" element={<Dashboard />}>
+        
+      </Route>
+
+      {/* FALLBACK ROUTE */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
