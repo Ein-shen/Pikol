@@ -1,11 +1,11 @@
 
-import './App.css'
+import './index.css'
 
 function App() {
   
 
   return (
-    <div>
+    <div className='font-bold h-screen bg-red-500'>
       APp
     </div>
     
