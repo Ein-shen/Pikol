@@ -8,7 +8,7 @@ export const Signup = () => {
 
         <div className="flex flex-col items-center gap-2 mb-6">
           
-          <p className="font-bold">Welcome to</p>
+          <p className="font-bold">Welcome to Pikol League</p>
         </div>
 
         <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
