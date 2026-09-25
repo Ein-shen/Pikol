@@ -1,5 +1,7 @@
 
 import pikolBg from './assets/pikol.jpg';
+import { Link } from 'react-router-dom';
+
 
 export const Home = () => {
   return (
@@ -22,9 +24,11 @@ export const Home = () => {
             Pikol League
           </h1>
 
-          <button className='px-4 sm:px-5 py-2 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/20 transition-colors'>
+          <Link 
+          to="/login"
+          className='px-4 sm:px-5 py-2 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/20 transition-colors'>
             Sign in
-          </button>
+          </Link>
 
         </div>
 
@@ -44,9 +48,11 @@ export const Home = () => {
             management — all in one place.
           </p>
 
-          <button className='w-fit px-6 py-3 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/10 transition-colors'>
+          <Link 
+          to="/signup"
+          className='w-fit px-6 py-3 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/10 transition-colors'>
             Create Account
-          </button>
+          </Link>
 
         </div>
 
