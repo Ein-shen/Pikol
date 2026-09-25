@@ -18,7 +18,7 @@ export const Home = () => {
         {/* Header: logo + sign in */}
         <div className='relative z-10 flex flex-row items-center justify-between px-5 sm:px-8 md:px-12 lg:px-20 py-5 sm:py-8'>
 
-          <h1 className='font-bold text-gray-300 text-base sm:text-lg md:text-xl'>
+          <h1 className='font-bold italic text-gray-300 text-base sm:text-lg md:text-xl'>
             Pikol League
           </h1>
 
