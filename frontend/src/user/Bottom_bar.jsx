@@ -5,8 +5,8 @@ export const Bottom_bar = () => {
    <div> 
         <div className='flex flex-row'> 
             <button className=''> f </button> 
-            <button className=''> <bdi></bdi> 
-            </button> <button className=''> b </button> 
+            
+            <button className=''> b </button> 
         </div> 
     </div>
   )
