@@ -26,7 +26,7 @@ export const Home = () => {
         </div>
 
         {/* Second section: header text */}
-        <div className='w-full max-w-3xl relative flex flex-col px-10 pt-20'>
+        <div className='w-full max-w-5xl relative flex flex-col px-30  items-between text-between pt-20'>
           <h1 className='text-gray-100 text-5xl font-bold leading-tight pb-6'>
             One platform that can manage{' '}
             <span className='text-[#08A045]'>
