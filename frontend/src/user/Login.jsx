@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import pikolBg from '../assets/pikol.jpg';
+
 export const Login = () => {
 
   
@@ -7,8 +9,8 @@ export const Login = () => {
   
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-400 overflow-y-auto py-8">
-      <div className="bg-green-200 p-8 rounded-xl shadow-md w-full max-w-md">
+    <div className="min-h-screen bg-green-100 flex items-center justify-center bg-gray-400 overflow-y-auto py-8">
+      <div className="bg-green-200 p-8 border-black border-r-1  rounded-l-md shadow-md w-full max-w-md">
 
         <div className="flex flex-col items-center gap-2 mb-6">
           
@@ -63,6 +65,12 @@ export const Login = () => {
         <p className="text-center text-sm text-gray-500 mt-4">
           Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Sign up</Link>
         </p>
+      </div>
+
+      <div className="bg-white/30 h-113 p-8 shadow-md w-full max-w-md rounded-r-md ">
+          <h1>
+            hello madafcuker
+          </h1>
       </div>
     </div>
   )
