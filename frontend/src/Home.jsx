@@ -33,7 +33,7 @@ export const Home = () => {
 
           <h1 className='text-gray-100 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight pb-6'>
             One platform that can manage{' '}
-            <span className='text-[#08A045]'>
+            <span className='text-[#A8D38D]'>
               your open play & tournaments
             </span>{' '}
             efficiently
