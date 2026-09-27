@@ -15,8 +15,8 @@ export const Home = () => {
       {/* Dark tint overlay */}
       <div className='absolute inset-0 bg-black/30' />
 
-      {/* Header: logo + sign in */}
-      <div className='relative z-10 flex flex-row border-white/30 border-b items-center justify-between px-5 sm:px-8 md:px-12 lg:px-20 py-4 sm:py-6'>
+      {/* 📍 1. ADJUST HEADER PADDING HERE: Change 'py-2' to 'py-1' or 'py-0' to move header up */}
+      <div className='relative z-10 flex flex-row border-white/30 border-b items-center justify-between px-5 sm:px-8 md:px-12 lg:px-20 py-2'>
         <h1 className='font-bold italic text-gray-300 text-base sm:text-lg md:text-xl'>
           Pikol League
         </h1>
@@ -29,10 +29,10 @@ export const Home = () => {
         </Link>
       </div>
 
-      {/* Hero section */}
-      <div className='relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center px-5 sm:px-8 md:px-12 py-6 sm:py-10 gap-8 md:gap-12 flex-1'>
+      {/* 📍 2. ADJUST HERO PADDING HERE: 'pt-0' removes ALL top space between header line and content */}
+      <div className='relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-start justify-center px-5 sm:px-8 md:px-12 pt-15 pb-8 gap-8 md:gap-12 flex-1'>
         
-        {/* Left Text Content */}
+        {/* Left Text Content — 📍 Add 'mt-2' or 'mt-4' here if you want ONLY the text pushed down */}
         <div className='w-full md:flex-1 max-w-xl'>
           <h1 className='text-gray-100 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight pb-4'>
             One platform that can manage{' '}
@@ -64,8 +64,8 @@ export const Home = () => {
           </div>
         </div>
 
-        {/* Right Content: Video wrapped in a Terminal/Browser Window */}
-        <div className='w-full md:flex-1 max-w-xl flex flex-col relative drop-shadow-2xl'>
+        {/* Right Content: Video — 📍 Add 'mt-2' or 'mt-4' here if you want ONLY the video pushed down */}
+        <div className='w-full pt-5  md:flex-1 max-w-xl flex flex-col relative drop-shadow-2xl'>
           
           {/* Window Container */}
           <div className='w-full bg-[#1e1e1e] border-2 border-gray-700/60 rounded-xl overflow-hidden shadow-2xl'>
@@ -73,7 +73,6 @@ export const Home = () => {
             {/* Title Bar with Window Controls */}
             <div className='w-full h-8 bg-[#1a1a1a] flex items-center px-4 border-b border-gray-700/60'>
               <div className='flex items-center gap-1.5'>
-                {/* Red, Yellow, Green controls */}
                 <div className='w-3 h-3 rounded-full bg-[#FF5F57] border border-black/10' />
                 <div className='w-3 h-3 rounded-full bg-[#FEB024] border border-black/10' />
                 <div className='w-3 h-3 rounded-full bg-[#28C840] border border-black/10' />
