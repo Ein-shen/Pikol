@@ -41,7 +41,7 @@ export const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className=" border-1 border-white/50 bg-transparent text-white rounded-lg px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="autofill-fix border-1 bg-transparent border-white/50 text-white rounded-lg px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <input
             type="password"
@@ -49,7 +49,7 @@ export const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="border-1 border-white/50 rounded-lg text-white px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="autofill-fix border-1 bg-transparent border-white/50 rounded-lg text-white px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           <button
             type="submit"
