@@ -68,7 +68,7 @@ export const Login = () => {
 
         <button
           type="button"
-          className="w-full border-1 border-white/50 bg-white/10 hover:bg-white/20 border-black py-2 rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base hover:bg-gray-50"
+          className="w-full border-1 text-white border-white/50 bg-white/10 hover:bg-white/20 border-black py-2 rounded-lg flex items-center justify-center gap-2 text-sm sm:text-base hover:bg-gray-50"
         >
           <img src="https://www.google.com/favicon.ico" className="w-4 text-white h-4 sm:w-5 sm:h-5" alt="Google" />
           Continue with Google
