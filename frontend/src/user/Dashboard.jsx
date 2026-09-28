@@ -2,7 +2,7 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Bottom_bar } from './Bottom_bar'
 import { Upperbar } from './Upperbar'
-
+import { Sidebar } from './Sidebar'
 export const Dashboard = () => {
   return (
     <div className='bg-green-100 h-screen overflow-y-auto'>
@@ -13,6 +13,7 @@ export const Dashboard = () => {
       </main>
 
       <Bottom_bar />
+      <Sidebar />
     </div>
   )
 }
