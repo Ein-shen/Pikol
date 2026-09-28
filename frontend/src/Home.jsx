@@ -30,7 +30,7 @@ export const Home = () => {
       </header>
 
       {/* Hero section */}
-      <main className='relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-center px-4 sm:px-8 md:px-12 pt-4 sm:pt-8 md:pt-12 pb-8 gap-8 md:gap-10 lg:gap-12 flex-1'>
+      <main className='relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-center px-4 sm:px-8 md:px-12 pt-6 sm:pt-8 md:pt-12 pb-8 gap-8 md:gap-10 lg:gap-12 flex-1'>
         
         {/* Left Text Content */}
         <div className='w-full md:flex-1 max-w-xl text-center md:text-left flex flex-col items-center md:items-start'>
