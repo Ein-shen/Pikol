@@ -1,25 +1,30 @@
 import React from 'react'
+import { LayoutDashboard, Settings, Sliders, Trophy } from 'lucide-react'
 
 export const Sidebar = () => {
   return (
-    <div className='h-full w-46 border-r border-black'>
-      <div className='py-6 space-y-5 flex flex-col px-5'>
-          <button className='border border-1 rounded-md p-1'>
-              Dashboard
-          </button>
+    <aside className='theme-card theme-text w-54 min-h-screen border-r border-black/30 py-5 px-4 flex flex-col'>
+      <div className='space-y-3 w-full'>
+        <button className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'>
+          <LayoutDashboard className='w-4 h-4 shrink-0' />
+          Dashboard
+        </button>
 
-          <button className='border border-1 rounded-md p-1'>
-              Settings
-          </button>
+        <button className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'>
+          <Settings className='w-4 h-4 shrink-0' />
+          Settings
+        </button>
 
-          <button className='border border-1 rounded-md p-1'>
-              Matching
-          </button>
+        <button className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'>
+          <Sliders className='w-4 h-4 shrink-0' />
+          Matching
+        </button>
 
-          <button className='border border-1 rounded-md p-1'>
-              Leaderboards
-          </button>
+        <button className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'>
+          <Trophy className='w-4 h-4 shrink-0' />
+          Leaderboards
+        </button>
       </div>
-    </div>
+    </aside>
   )
 }

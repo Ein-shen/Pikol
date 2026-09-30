@@ -12,7 +12,7 @@ export const Navbar = () => {
         <div className='flex flex-row gap-6 pr-4'>
             <form className='flex items-center space-x-2'>
               <input 
-                className='border px-4 py-1 rounded-md w-23'
+                className='border px-4 py-1 rounded-md w-23 sm:w-48 '
                 placeholder='Search'
               />
               <button 
