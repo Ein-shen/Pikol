@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Bottom_bar } from './Bottom_bar'
-import { Navbar } from '../Navbar'
+import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 export const Dashboard = () => {
   return (
