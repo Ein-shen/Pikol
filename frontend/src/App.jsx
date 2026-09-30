@@ -19,7 +19,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />}>
         {/* Renders at /dashboard/hero inside Dashboard's <Outlet /> */}
         <Route path="hero" element={<Hero />} />
-        <Route path="settings" element={<Hero />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
 
       {/* FALLBACK ROUTE */}
