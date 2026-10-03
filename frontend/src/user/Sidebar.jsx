@@ -28,7 +28,7 @@ export const Sidebar = () => {
 
         {/* Matching */}
         <button 
-          onClick={() => navigate('/dashboard/matching')}
+          onClick={() => navigate('')}
           className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
         >
           <Sliders className='w-4 h-4 shrink-0' />
@@ -37,7 +37,7 @@ export const Sidebar = () => {
 
         {/* Leaderboards */}
         <button 
-          onClick={() => navigate('/dashboard/leaderboard')}
+          onClick={() => navigate('')}
           className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
         >
           <Trophy className='w-4 h-4 shrink-0' />
