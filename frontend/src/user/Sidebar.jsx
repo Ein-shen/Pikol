@@ -1,49 +1,81 @@
-import React from 'react'
-import { LayoutDashboard, Settings, Sliders, Trophy } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react'
+import { LayoutDashboard, Settings, Sliders, Trophy, Menu, X } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+
+const navItems = [
+  { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/hero' },
+  { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
+  { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
+  { label: 'Leaderboards', icon: Trophy, path: '/dashboard/leaderboards' },
+]
 
 export const Sidebar = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleNavigate = (path) => {
+    navigate(path)
+    setIsOpen(false)
+  }
 
   return (
-    <aside className='theme-card theme-text w-54 min-h-screen border-r border-black/30 py-5 px-4 flex flex-col'>
-      <div className='space-y-3 w-full'>
-        {/* Dashboard / Hero */}
-        <button 
-          onClick={() => navigate('/dashboard/hero')}
-          className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
-        >
-          <LayoutDashboard className='w-4 h-4 shrink-0' />
-          Dashboard
-        </button>
-
-        {/* Settings */}
+    <>
+      {/* Menu button - mobile only, under the navbar. Hidden while the drawer is open */}
+      {!isOpen && (
         <button
-          onClick={() => navigate('/dashboard/settings')}
-          className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
+          onClick={() => setIsOpen(true)}
+          aria-label="Open menu"
+          className="md:hidden fixed left-4 top-[4.75rem] z-30 flex items-center gap-2 rounded-md border border-border bg-background px-2 py-2 font-mono text-sm"
         >
-          <Settings className='w-4 h-4 shrink-0' />
-          Settings
+          <Menu className="w-4 h-4" />
+        </button>
+      )}
+
+      {/* Overlay - mobile only, starts right below the navbar */}
+      {isOpen && (
+        <div
+          onClick={() => setIsOpen(false)}
+          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50 z-30"
+        />
+      )}
+
+      {/* Sidebar: always starts right below the navbar */}
+      <aside
+        className={`theme-card theme-text w-64 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center border-x border-black/80 z-40 transform transition-transform duration-300 overflow-y-auto ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0`}
+      >
+        {/* Close button - mobile only */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="md:hidden absolute top-2 right-2"
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5" />
         </button>
 
-        {/* Matching */}
-        <button 
-          onClick={() => navigate('')}
-          className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
-        >
-          <Sliders className='w-4 h-4 shrink-0' />
-          Matching
-        </button>
+        {/* Main navigation */}
+        <nav className="w-full space-y-4 px-6 pt-5">
+          {navItems.map(({ label, icon: Icon, path }) => {
+            const isActive =
+              location.pathname === path || location.pathname.startsWith(path + '/')
 
-        {/* Leaderboards */}
-        <button 
-          onClick={() => navigate('')}
-          className='w-full h-10 bg-green-100 flex items-center justify-start gap-2 px-3 font-mono text-sm rounded-md border border-black/30 hover:bg-green-200 transition-colors'
-        >
-          <Trophy className='w-4 h-4 shrink-0' />
-          Leaderboards
-        </button>
-      </div>
-    </aside>
+            return (
+              <button
+                key={label}
+                onClick={() => handleNavigate(path)}
+                className={`w-full flex items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
+                  isActive ? 'border border-theme-border/10 theme-bg' : ''
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" />
+                {label}
+              </button>
+            )
+          })}
+        </nav>
+      </aside>
+    </>
   )
 }
