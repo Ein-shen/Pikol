@@ -46,6 +46,9 @@ export const Navbar = () => {
               alt="Profile" 
               className='w-full h-full object-cover' 
             />
+
+
+            
           </div>
         </div>
       </div>
