@@ -9,16 +9,13 @@ export const Dashboard = () => {
       {/* Top Navigation */}
       <Navbar />
 
-      {/* Main Content Area */}
-      <div className='flex flex-1 flex-row overflow-hidden'>
-        {/* Left Sidebar */}
-        <Sidebar />
+      {/* Left Sidebar (fixed, so it sits outside the normal layout flow) */}
+      <Sidebar />
 
-        {/* Dynamic Nested Content */}
-        <main className='flex-1 p-6 overflow-y-auto'>
-          <Outlet />
-        </main>
-      </div>
+      {/* Dynamic Nested Content */}
+      <main className='flex-1 p-6 pt-16 md:pt-6 md:ml-64'>
+        <Outlet />
+      </main>
     </div>
   )
 }
