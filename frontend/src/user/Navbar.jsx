@@ -12,7 +12,7 @@ export const Navbar = () => {
     <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full bg-background'>
       <div className='navbar h-16 border-b flex flex-row justify-between items-center p-3'>
         <h1 className='font-bold text-lg pl-7 sm:pl-15'>
-          Pikol
+          Pikol league
         </h1>
 
         <div className='flex flex-row gap-6 pr-4 items-center'>
