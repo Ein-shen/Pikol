@@ -4,10 +4,9 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { Signout } from './Signout'
 import { useAuth } from '../context/AuthContext'
 const navItems = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/hero' },
+  { label: 'Overview', icon: LayoutDashboard, path: '/dashboard/overview' },
+  { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
   { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
-  { label: 'Matching', icon: Sliders, path: '' },
-  { label: 'Leaderboards', icon: Trophy, path: ' ' },
 ]
 
 export const Sidebar = () => {
