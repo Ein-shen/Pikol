@@ -148,7 +148,7 @@ export const Home = () => {
               </div>
 
               <div className='text-xs font-mono text-gray-500 truncate max-w-[120px] sm:max-w-none'>
-                pikol.mp4
+                Pikol league
               </div>
 
               <div className='w-12 sm:w-14' />
