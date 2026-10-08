@@ -7,7 +7,8 @@ import { Signout } from './user/Signout.jsx'
 import { Dashboard } from './user/Dashboard.jsx'
 import { Hero } from './user/Hero.jsx'
 import { Settings } from './user/components/Settings.jsx'
-
+import { Matching } from './user/Matching.jsx'
+import { Overview } from './user/Overview.jsx'
 function App() {
   const { user, loading } = useAuth()
 
@@ -36,6 +37,9 @@ function App() {
       >
         <Route path="hero" element={<Hero />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="matching" element={<Matching />} />
+
+        <Route path="overview" element={<Overview />} />
       </Route>
 
       {/* FALLBACK */}
