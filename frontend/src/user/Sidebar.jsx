@@ -6,8 +6,8 @@ import { useAuth } from '../context/AuthContext'
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/hero' },
   { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
-  { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
-  { label: 'Leaderboards', icon: Trophy, path: '/dashboard/leaderboards' },
+  { label: 'Matching', icon: Sliders, path: '' },
+  { label: 'Leaderboards', icon: Trophy, path: ' ' },
 ]
 
 export const Sidebar = () => {
