@@ -54,7 +54,7 @@ export const Home = () => {
             </nav>
 
             <Link
-              to='/login'
+              to='/signup'
               className='px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-md bg-white/10 text-gray-200 font-bold text-xs sm:text-base hover:bg-black/20 transition-colors border border-white/10 whitespace-nowrap'
             >
               Sign in
