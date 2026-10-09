@@ -2,6 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import boyBg from '../assets/boy.png'
 import searchBg from '../assets/search.png'
+import { ChevronDown } from 'lucide-react'
 
 export const Navbar = () => {
   const navigate = useNavigate()
@@ -37,19 +38,23 @@ export const Navbar = () => {
           </form>
 
           {/* Direct inline navigation on click */}
-          <div 
-            onClick={() => navigate('/dashboard/hero')}
-            className='flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-gray-100 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
-          >
-            <img 
-              src={boyBg} 
-              alt="Profile" 
-              className='w-full h-full object-cover' 
-            />
+          <div className='flex flex-row gap-1 items-center'>
+             <div 
+              onClick={() => navigate('/dashboard/hero')}
+              className='flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-gray-100 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
+            >
+              <img 
+                src={boyBg} 
+                alt="Profile" 
+                className='w-full h-full object-cover' 
+              />
 
-
-            
           </div>
+
+          <ChevronDown />
+
+          </div>
+         
         </div>
       </div>
     </div>
