@@ -31,7 +31,7 @@ export const Sidebar = () => {
           onClick={() => setIsOpen(true)}
           aria-label="Open menu"
           style={{ zIndex: 30 }}
-          className="md:hidden fixed left-4 top-[4.75rem] flex items-center gap-2 rounded-md border border-border bg-background px-2 py-2 font-mono text-sm"
+          className="md:hidden  fixed left-4 top-[4.75rem] flex items-center gap-2 rounded-md border border-border bg-background px-2 py-2 font-mono text-sm"
         >
           <Menu className="w-4 h-4" />
         </button>
@@ -42,7 +42,7 @@ export const Sidebar = () => {
         <div
           onClick={() => setIsOpen(false)}
           style={{ zIndex: 30 }}
-          className="md:hidden fixed inset-x-0 top-16 bottom-0 bg-black/50"
+          className="md:hidden  fixed inset-x-0 top-16 bottom-0 bg-black/50"
         />
       )}
 
@@ -54,7 +54,7 @@ export const Sidebar = () => {
           borderTop: '1px solid rgba(0,0,0,0.8)',
           borderRight: '1px solid rgba(0,0,0,0.8)',
         }}
-        className={`theme-card theme-text w-64 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center transform transition-transform duration-300 overflow-y-auto ${
+        className={`theme-card theme-text w-54 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center transform transition-transform duration-300 overflow-y-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
@@ -68,7 +68,7 @@ export const Sidebar = () => {
         </button>
 
         {/* Main navigation */}
-        <nav className="w-full space-y-4 px-6 pt-5">
+        <nav className="w-full  space-y-4 px-6 pt-5">
           {navItems.map(({ label, icon: Icon, path }) => {
             const isActive =
               location.pathname === path || location.pathname.startsWith(path + '/')
@@ -77,7 +77,7 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
+                className={`w-full flex A items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
                   isActive ? 'border border-theme-border/10 theme-bg' : ''
                 }`}
               >
