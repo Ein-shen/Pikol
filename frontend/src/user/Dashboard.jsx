@@ -2,9 +2,9 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
-
-export const Dashboard = ({ user, setUser }) => {
- 
+import { useAuth } from '../context/AuthContext'
+export const Dashboard = () => {
+  const {setUser } = useAuth()
   return (
     <div className='bg-green-100 min-h-screen flex flex-col'>
       {/* Top Navigation */}
