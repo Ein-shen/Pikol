@@ -9,12 +9,12 @@ export const Navbar = () => {
 
   return (
     <div className='flex flex-col w-full'>
-      <div className='border-b flex flex-row justify-between items-center p-3'>
+      <div className='navbar  border-b flex flex-row justify-between items-center p-3'>
         <h1 className='font-bold text-lg pl-7 sm:pl-15'>
           Pikol
         </h1>
 
-        <div className='flex flex-row gap-6 pr-4 items-center'>
+        <div className='flex  flex-row gap-6 pr-4 items-center'>
           <form className='flex items-center space-x-2'>
             <div className='relative flex items-center'>
               <img 
