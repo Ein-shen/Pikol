@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { LayoutDashboard, Settings, Sliders, Trophy, Menu, X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Signout } from './Signout'
+import { useAuth } from '../context/AuthContext'
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/hero' },
   { label: 'Settings', icon: Settings, path: '/dashboard/settings' },
@@ -9,8 +10,10 @@ const navItems = [
   { label: 'Leaderboards', icon: Trophy, path: '/dashboard/leaderboards' },
 ]
 
-export const Sidebar = ({ setUser }) => {
- 
+export const Sidebar = () => {
+  
+
+  const {setUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -83,7 +86,7 @@ export const Sidebar = ({ setUser }) => {
               </button>
             )
           })}
-          <Signout setUser={setUser} />
+          <Signout />
         </nav>
       </aside>
     </>
