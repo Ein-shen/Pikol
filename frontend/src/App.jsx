@@ -10,6 +10,10 @@ import { Settings } from './user/components/Settings.jsx'
 import { Matching } from './user/Matching.jsx'
 import { Overview } from './user/Overview.jsx'
 import { Leaderboards } from './user/Leaderboards.jsx'
+import { SingleElilmination } from './user/gametype/SingleElilmination.jsx'
+import { DoubleElimination } from './user/gametype/DoubleElimination.jsx'
+import { QuadroEliminations } from './user/QuadroEliminations.jsx'
+import { OpenPlay } from './user/gametype/OpenPlay.jsx'
 function App() {
   const { user, loading } = useAuth()
 
@@ -39,7 +43,10 @@ function App() {
         <Route path="hero" element={<Hero />} />
         <Route path="settings" element={<Settings />} />
         <Route path="matching" element={<Matching />} />
-
+        <Route path="/dashboard/single" element={<SingleElilmination />} />
+        <Route path="/dashboard/double" element={<DoubleElimination />} />
+        <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
+        <Route path="/dashboard/openplay" element={<OpenPlay />} />
         <Route path="overview" element={<Overview />} />
         <Route path="leaderboards" element={<Leaderboards />} />
       </Route>
