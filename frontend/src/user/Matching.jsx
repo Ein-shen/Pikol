@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import { Plus, X, Trophy, RotateCcw } from 'lucide-react'
+import { Plus, X, Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-
 
 export const Matching = () => {
   const [show, setShow] = useState(false)
+  const [selected, setSelected] = useState(null)
   const navigate = useNavigate()
 
-  const [bracket, setBracket] = useState(null)
-  
+  const pickType = (name) => {
+    setSelected(name)
+    setShow(false)
+  }
 
   return (
     <div className="min-h-screen w-full bg-gray-50 p-4 sm:p-8">
@@ -32,12 +34,10 @@ export const Matching = () => {
           </button>
         </header>
 
-        {!bracket && (
+        {!selected && (
           <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
             <Trophy className="mx-auto mb-4 text-gray-400" size={40} />
-            <h2 className="text-lg font-semibold">
-              No tournament yet
-            </h2>
+            <h2 className="text-lg font-semibold">No tournament yet</h2>
             <p className="mt-2 text-sm text-gray-500">
               Create a tournament, register 10 teams, and start matching.
             </p>
@@ -50,10 +50,14 @@ export const Matching = () => {
           </div>
         )}
 
-        
+        {selected && (
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold">{selected}</h2>
+          </div>
+        )}
 
         {show && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 ">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
             <div className="relative rounded-xl bg-white p-10 shadow-lg space-y-4">
               <button
                 type="button"
@@ -63,37 +67,41 @@ export const Matching = () => {
                 <X size={20} />
               </button>
 
-              <div className='flex items-center justify-center  '>
-                <h1 className='font-semibold text-lg'>
-                  Select your game management 
+              <div className="flex items-center justify-center">
+                <h1 className="font-semibold text-lg">
+                  Select your game management
                 </h1>
               </div>
 
-             <div className="grid grid-cols-2 items-center justify-center gap-x-3 gap-y-3">
-              <button
-                onClick={() => navigate('/dashboard/single')}
-                className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
-                Single elimination
-              </button>
+              <div className="grid grid-cols-2 items-center justify-center gap-x-3 gap-y-3">
+                <button
+                  onClick={() => navigate('/dashboard/single')}
+                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                >
+                  Single elimination
+                </button>
 
-              <button
-                onClick={() => navigate('/dashboard/double')}
-                className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
-                Double Elimination
-              </button>
+                <button
+                  onClick={() => pickType('Double Elimination')}
+                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                >
+                  Double Elimination
+                </button>
 
-              <button
-                onClick={() => navigate('/dashboard/quadro')}
-                className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
-                Quadro Elimination
-              </button>
+                <button
+                  onClick={() => pickType('Quadro Elimination')}
+                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                >
+                  Quadro Elimination
+                </button>
 
-              <button
-                onClick={() => navigate('/dashboard/openplay')}
-                className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
-                Open play
-              </button>
-            </div>
+                <button
+                  onClick={() => pickType('Open play')}
+                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                >
+                  Open play
+                </button>
+              </div>
             </div>
           </div>
         )}
