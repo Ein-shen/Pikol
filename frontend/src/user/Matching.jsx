@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { Plus, X, Trophy, RotateCcw } from 'lucide-react'
 
@@ -358,115 +357,37 @@ export const Matching = () => {
         )}
 
         {show && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-            onClick={() => setShow(false)}
-          >
-            <form
-              onSubmit={createTournament}
-              onClick={(e) => e.stopPropagation()}
-              className="flex max-h-[90vh] w-full max-w-xl flex-col rounded-xl bg-white shadow-xl"
-            >
-              <div className="flex items-center justify-between border-b p-5">
-                <div>
-                  <h2 className="text-lg font-bold">
-                    Create tournament
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Register 10 teams with 2 players each.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShow(false)}
-                  aria-label="Close"
-                  className="rounded-md p-2 hover:bg-gray-100"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 ">
+            <div className="relative rounded-xl bg-white p-10 shadow-lg">
+              <button
+                type="button"
+                onClick={() => setShow(false)}
+                className="absolute right-3 top-3 text-gray-500 hover:text-black"
+              >
+                <X size={20} />
+              </button>
 
-              <div className="space-y-4 overflow-y-auto p-5">
-                <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Tournament name
-                  </label>
-                  <input
-                    value={tournamentName}
-                    onChange={(e) => setTournamentName(e.target.value)}
-                    placeholder="e.g. Doubles Championship"
-                    className="w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-black"
-                  />
-                </div>
+             <div className="grid grid-cols-2 items-center justify-center gap-x-3 gap-y-3">
+              <button className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
+                Single elimination
+              </button>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {teams.map((team, index) => (
-                    <div
-                      key={team.id}
-                      className="space-y-3 rounded-lg border p-3"
-                    >
-                      <label className="block text-sm font-bold">
-                        Team {index + 1}
-                      </label>
+              <button className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
+                Double Elimination
+              </button>
 
-                      <input
-                        value={team.name}
-                        onChange={(e) =>
-                          updateTeam(team.id, 'name', e.target.value)
-                        }
-                        placeholder="Team name"
-                        className="w-full rounded-md border p-2 text-sm"
-                      />
+              <button className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
+                Quadro Elimination
+              </button>
 
-                      <input
-                        value={team.player1}
-                        onChange={(e) =>
-                          updateTeam(team.id, 'player1', e.target.value)
-                        }
-                        placeholder="Player 1"
-                        className="w-full rounded-md border p-2 text-sm"
-                      />
-
-                      <input
-                        value={team.player2}
-                        onChange={(e) =>
-                          updateTeam(team.id, 'player2', e.target.value)
-                        }
-                        placeholder="Player 2"
-                        className="w-full rounded-md border p-2 text-sm"
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {error && (
-                  <p role="alert" className="text-sm text-red-600">
-                    {error}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex justify-end gap-3 border-t p-5">
-                <button
-                  type="button"
-                  onClick={() => setShow(false)}
-                  className="rounded-lg border px-4 py-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-lg bg-black px-5 py-2 text-white hover:bg-gray-800"
-                >
-                  Generate bracket
-                </button>
-              </div>
-            </form>
+              <button className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100">
+                Open play
+              </button>
+            </div>
+            </div>
           </div>
         )}
       </div>
     </div>
   )
 }
-
-export default Matching
