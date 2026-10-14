@@ -10,8 +10,8 @@ const navItems = [
     iconSrc: 'https://img.icons8.com/?size=100&id=aOXlHTOpHruk&format=png&color=000000',
     path: '/dashboard/overview',
   },
-  { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
-  { label: 'Leaderbords', icon: Settings, path: '/dashboard/leaderboards' },
+  { label: 'Matching',iconSrc: 'https://img.icons8.com/?size=100&id=eAodw0TpqLlC&format=png&color=000000',path: '/dashboard/matching' },
+  { label: 'Leaderbords', iconSrc: 'https://img.icons8.com/?size=100&id=aLTVTLhwbxnK&format=png&color=000000', path: '/dashboard/leaderboards' },
 ]
 
 export const Sidebar = () => {
