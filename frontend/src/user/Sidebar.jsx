@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
-import { LayoutDashboard, Settings, Sliders, Trophy, Menu, X } from 'lucide-react'
+import { Settings, Sliders, Menu, X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Signout } from './Signout'
 import { useAuth } from '../context/AuthContext'
 
 const navItems = [
-  { label: 'Overview', icon: LayoutDashboard, path: '/dashboard/overview' },
+  {
+    label: 'Overview',
+    iconSrc: 'https://img.icons8.com/?size=100&id=aOXlHTOpHruk&format=png&color=000000',
+    path: '/dashboard/overview',
+  },
   { label: 'Matching', icon: Sliders, path: '/dashboard/matching' },
   { label: 'Leaderbords', icon: Settings, path: '/dashboard/leaderboards' },
 ]
@@ -65,7 +69,7 @@ export const Sidebar = () => {
 
         {/* Main navigation */}
         <nav className="w-full space-y-4 px-6 pt-5">
-          {navItems.map(({ label, icon: Icon, path }) => {
+          {navItems.map(({ label, icon: Icon, iconSrc, path }) => {
             const isActive =
               location.pathname === path || location.pathname.startsWith(path + '/')
 
@@ -77,7 +81,11 @@ export const Sidebar = () => {
                   isActive ? 'border border-black/80 theme-bg' : ''
                 }`}
               >
-                <Icon className="w-4 h-4 shrink-0" />
+                {iconSrc ? (
+                  <img src={iconSrc} alt="" className="w-4 h-4 shrink-0" />
+                ) : (
+                  Icon && <Icon className="w-4 h-4 shrink-0" />
+                )}
                 {label}
               </button>
             )
