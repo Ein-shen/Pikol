@@ -11,9 +11,9 @@ export const Navbar = () => {
   return (
     <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full bg-background'>
       <div className='navbar h-16 border-b flex flex-row justify-between items-center p-3'>
-        <h1 className='font-bold text-lg pl-7 sm:pl-13'>
-          Pikol league
-        </h1>
+        <span className='font-bold flex flex-row gap-2 text-lg pl-7 sm:pl-13 text-green-400 '>
+          Pikol <h1 className='text-white'>league</h1>
+        </span>
 
           {/* Profile + dropdown (relative so the dropdown anchors to this) */}
           <div className='relative flex flex-row gap-1 items-center'>
