@@ -23,7 +23,13 @@ function App() {
   const { user, loading } = useAuth()
 
   if (loading) {
-    return <div>Loading...</div>
+    return (
+      <div className="bg-gray-500 flex flex-row gap-1 items-center">
+        Wait a sec
+        <img src="/racket.png?v=5" alt="" className="h-5 w-5 animate-spin" />
+        ...
+      </div>
+    )
   }
 
   return (
