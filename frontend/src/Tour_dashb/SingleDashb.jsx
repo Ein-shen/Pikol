@@ -1,7 +1,7 @@
 import React from 'react'
 import { Plus } from 'lucide-react'
 
-import { SingleElilmination } from '../user/gametype/SingleElilmination'
+import { SingleElilmination } from '../user/Create_select_game/SingleElilmination'
 import { useNavigate } from 'react-router-dom'
 
 export const SingleDashb = () => {
