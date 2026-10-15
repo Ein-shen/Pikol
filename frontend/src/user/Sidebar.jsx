@@ -68,7 +68,7 @@ export const Sidebar = () => {
         </button>
 
         {/* Main navigation */}
-        <nav className="w-full space-y-4 px-6 pt-5">
+        <nav className="w-full space-y-4 px-6  pt-5">
           {navItems.map(({ label, icon: Icon, iconSrc, path }) => {
             const isActive =
               location.pathname === path || location.pathname.startsWith(path + '/')
@@ -77,7 +77,7 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
+                className={`w-full flex  items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
                   isActive ? 'border border-black/80 theme-bg' : ''
                 }`}
               >
