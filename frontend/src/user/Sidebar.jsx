@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Settings, Sliders, Menu, X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Signout } from './Signout'
+
 import { useAuth } from '../context/AuthContext'
 
 const navItems = [
@@ -90,7 +90,7 @@ export const Sidebar = () => {
               </button>
             )
           })}
-          <Signout />
+          
         </nav>
       </aside>
     </>
