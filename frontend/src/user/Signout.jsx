@@ -22,9 +22,9 @@ export const Signout = () => {
   return (
     <button
       onClick={handleSignout}
-      className="w-full flex items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover"
+      className=""
     >
-      <LogOut className="w-4 h-4 shrink-0" />
+      
       Sign out
     </button>
   )
