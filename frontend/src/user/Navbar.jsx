@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import boyBg from '../assets/boy.png'
 import searchBg from '../assets/search.png'
 import { ChevronDown } from 'lucide-react'
+import { Signout } from './Signout'
+
 
 export const Navbar = () => {
   const navigate = useNavigate()
@@ -65,7 +67,7 @@ export const Navbar = () => {
                     
                     className='text-left px-4 py-2 text-md hover:bg-gray-100'
                   >
-                    Signout
+                    <Signout />
                   </button>
                 </div>
               </div>
