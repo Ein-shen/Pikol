@@ -44,28 +44,28 @@ export const Navbar = () => {
                   <button
                     type='button'
                      
-                    className='text-left px-4 py-2 text-md hover:bg-gray-100'
+                    className='text-left text-xs  rounded-t-md border-b border-black/80 px-4 py-2 text-md hover:bg-gray-100'
                   >
                     Profile
                   </button>
                   <button
                     type='button'
                   
-                    className='text-left px-4 py-2 text-md hover:bg-gray-100'
+                    className='text-left text-xs border-b border-black/80 px-4 py-2 text-md hover:bg-gray-100'
                   >
                     Support
                   </button>
                    <button
                     type='button'
                     
-                    className='text-left px-4 py-2 text-md hover:bg-gray-100'
+                    className='text-left px-4 text-xs  border-b border-black/80 py-2 text-md hover:bg-gray-100'
                   >
                     Settings
                   </button>
                   <button
                     type='button'
                     
-                    className='text-left px-4 py-2 text-md hover:bg-gray-100'
+                    className='text-left  px-4 text-xs  rounded-b-md py-2 text-md hover:bg-gray-100'
                   >
                     <Signout />
                   </button>
