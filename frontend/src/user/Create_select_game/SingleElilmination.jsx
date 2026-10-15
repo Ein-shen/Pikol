@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Trophy, RotateCcw } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
+import {ArrowLeft } from 'lucide-react'
 
 /* =====================================================
    SETTINGS
@@ -583,7 +584,16 @@ export const SingleElilmination = () => {
 
   return (
     <div className="w-full space-y-8">
-      <h1 className="text-lg font-bold">Single Elimination</h1>
+      <div className='flex flex-row  gap-7 '>
+        <button
+        onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+        </button>
+        <h1 className="text-lg font-bold">Single Elimination</h1>
+
+      </div>
+      
 
       {/* Step 1: register the teams */}
       {!bracket && (
