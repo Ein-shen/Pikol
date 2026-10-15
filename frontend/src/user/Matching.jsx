@@ -111,28 +111,28 @@ export const Matching = () => {
               <div className="grid grid-cols-2 items-center justify-center gap-x-3 gap-y-3">
                 <button
                   onClick={() => navigate('/dashboard/single')}
-                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                  className="font-semibold w-44 h-24 rounded-md border border-black/80 p-6 text-center hover:bg-gray-100"
                 >
                   Single elimination
                 </button>
 
                 <button
-                  onClick={() => pickType('Double Elimination')}
-                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                  onClick={() => navigate('/dashboard/double')}
+                  className="font-semibold w-44 h-24 rounded-md  border border-black/80 p-6 text-center hover:bg-gray-100"
                 >
                   Double Elimination
                 </button>
 
                 <button
-                  onClick={() => pickType('Quadro Elimination')}
-                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                  onClick={() => navigate('/dashboard/quadro')}
+                  className="font-semibold w-44 h-24 rounded-md  border border-black/80 p-6 text-center hover:bg-gray-100"
                 >
                   Quadro Elimination
                 </button>
 
                 <button
-                  onClick={() => pickType('Open play')}
-                  className="font-semibold w-44 h-24 border border-black/80 p-6 text-center hover:bg-gray-100"
+                  onClick={() => navigate('/dashboard/openplay')}
+                  className="font-semibold w-44 h-24 rounded-md border border-black/80 p-6 text-center hover:bg-gray-100"
                 >
                   Open play
                 </button>
