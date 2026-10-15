@@ -1,7 +1,7 @@
 import React from 'react'
 import { Plus } from 'lucide-react'
 
-import { SingleElilmination } from '../user/Create_select_game/SingleElilmination'
+import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export const SingleDashb = () => {
@@ -10,6 +10,12 @@ export const SingleDashb = () => {
   return (
      <div className='w-full flex flex-col  px-10'>
       <div className='flex  flex justify-between flex-row items-center'>
+        <button
+        onClick={() => navigate(-1)}
+        >
+          <ArrowLeft />
+
+        </button>
         <h1 className='font-bold text-lg '> Single Elimination</h1>
         <button
 
