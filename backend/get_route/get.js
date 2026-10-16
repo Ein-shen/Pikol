@@ -35,4 +35,26 @@ router.get("/tournaments", requireAuth, async (req, res) => {
 });
 
 
+// =====================================================
+// GET HERO/profile
+// =====================================================
+router.get("/me", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            "SELECT id, username, email FROM users WHERE id = $1",
+            [req.user.id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        res.json(rows[0]);
+    } catch (err) {
+        console.error("GET ME ERROR:", err);
+        res.status(500).json({ message: "Could not load user." });
+    }
+});
+
+
 export default router;
