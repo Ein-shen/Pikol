@@ -34,6 +34,41 @@ router.get("/tournaments", requireAuth, async (req, res) => {
     }
 });
 
+// =====================================================
+// GET tournament by id (teams in entry order + saved matches)
+// =====================================================
+router.get("/tournaments/:id", requireAuth, async (req, res) => {
+    try {
+        const t = await pool.query(
+            "SELECT id, name FROM tournaments WHERE id = $1",
+            [req.params.id]
+        );
+        if (t.rows.length === 0) {
+            return res.status(404).json({ message: "Tournament not found." });
+        }
+
+        const teams = await pool.query(
+            `SELECT p.id, p.id AS "pairId", p.name, p.player1, p.player2
+             FROM tournament_pairs tp
+             JOIN pairs p ON p.id = tp.pair_id
+             WHERE tp.tournament_id = $1
+             ORDER BY tp.position`,
+            [req.params.id]
+        );
+
+        const matches = await pool.query(
+            `SELECT round, match_number AS "matchNumber", score1, score2
+             FROM matches WHERE tournament_id = $1`,
+            [req.params.id]
+        );
+
+        res.json({ ...t.rows[0], teams: teams.rows, matches: matches.rows });
+    } catch (err) {
+        console.error("GET TOURNAMENT ERROR:", err);
+        res.status(500).json({ message: "Could not load the tournament." });
+    }
+});
+
 
 // =====================================================
 // GET HERO/profile
