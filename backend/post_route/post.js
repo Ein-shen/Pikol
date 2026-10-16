@@ -27,11 +27,14 @@ router.post("/tournaments", requireAuth, async (req, res) => {
              RETURNING id`,
             [name, type]
         );
+        const tournamentId = t.rows[0].id;
 
         // local team id -> database pair id
         const pairs = {};
 
-        for (const team of teams) {
+        for (let index = 0; index < teams.length; index++) {
+            const team = teams[index];
+
             const found = await client.query(
                 `SELECT id FROM pairs
                  WHERE LEAST(lower(player1), lower(player2)) = LEAST(lower($1), lower($2))
@@ -50,10 +53,17 @@ router.post("/tournaments", requireAuth, async (req, res) => {
                 );
                 pairs[team.id] = ins.rows[0].id;
             }
+
+            // NEW: link this pair to the tournament, in entry order
+            await client.query(
+                `INSERT INTO tournament_pairs (tournament_id, pair_id, position)
+                 VALUES ($1, $2, $3)`,
+                [tournamentId, pairs[team.id], index]
+            );
         }
 
         await client.query("COMMIT");
-        res.status(201).json({ tournamentId: t.rows[0].id, pairs });
+        res.status(201).json({ tournamentId, pairs });
 
     } catch (err) {
         await client.query("ROLLBACK");
