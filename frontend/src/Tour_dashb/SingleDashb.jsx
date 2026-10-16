@@ -21,7 +21,7 @@ export const SingleDashb = () => {
   }, [])
 
   return (
-    <div className="w-full flex flex-col gap-20 px-10">
+    <div className="w-full flex flex-col gap-20 ">
       <div className="flex justify-between flex-row items-center">
         <button onClick={() => navigate(-1)}>
           <ArrowLeft />
