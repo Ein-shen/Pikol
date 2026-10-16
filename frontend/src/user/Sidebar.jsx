@@ -15,7 +15,7 @@ const navItems = [
 ]
 
 export const Sidebar = () => {
-  const { setUser } = useAuth()
+ 
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -77,7 +77,7 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex  items-center gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
+                className={`w-full flex  items-center hover:bg-gray-300 gap-2 font-mono text-md rounded-md p-2 transition-colors theme-hover ${
                   isActive ? 'border border-black/80 theme-bg' : ''
                 }`}
               >
