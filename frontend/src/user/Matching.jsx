@@ -77,13 +77,15 @@ export const Matching = () => {
                 <button
                   onClick={() => navigate('/dashboard/singledashb')}
                   key={type}
-                  className="p-6 border border-black/80 font-bold text-lg rounded-md capitalize"
+                  className="hover:bg-gray-300 p-6 border flex flex-col border-black/80 font-bold text-md rounded-md capitalize"
                 >
+                
                   <span>
                     {type} Elimination
                   </span>
                   
-                  <span className="font-bold text-md ml-2">
+                  <span className="flex flex-row items-center gap-1 text-green-400 font-bold text-xs pt-1 ml-2">
+                    <img src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000" alt="trop" height={10 } width={15} />
                     {count} {count === 1 ? 'tournament' : 'tournaments'}
                   </span>
                 </button>
