@@ -51,18 +51,18 @@ function App() {
         path="/dashboard"
         element={user ? <Dashboard /> : <Navigate to="/login" replace />}
       >
-        <Route path="hero" element={<Hero />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="matching" element={<Matching />} />
+        <Route path="/dashboard/hero" element={<Hero />} />
+        <Route path="/dashboard/settings" element={<Settings />} />
+        <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
         <Route path="/dashboard/double" element={<DoubleElimination />} />
         <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
-        <Route path="overview" element={<Overview />} />
-        <Route path="quadrodashb" element={<QuadroDashb />} />
-        <Route path="singledashb" element={<SingleDashb />} />
-        <Route path="openplaydashb" element={<OpenplayDashb />} />
-        <Route path="leaderboards" element={<Leaderboards />} />
+        <Route path="/dashboard/overview" element={<Overview />} />
+        <Route path="/dashboard/quadrodashb" element={<QuadroDashb />} />
+        <Route path="/dashboard/singledashb" element={<SingleDashb />} />
+        <Route path="/dashboard/openplaydashb" element={<OpenplayDashb />} />
+        <Route path="/dashboard/leaderboards" element={<Leaderboards />} />
       </Route>
 
       {/* FALLBACK */}
