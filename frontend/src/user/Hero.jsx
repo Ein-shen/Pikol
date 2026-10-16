@@ -32,8 +32,21 @@ export const Hero = () => {
         <div className="w-6" />
       </div>
 
-      <div>@{user?.username}</div>
-      <div>{user?.email}</div>
+      <div className='flex flex-row items-center justify-center gap-5'>
+
+        {/* Circle */}
+        <div className='rounded-xl w-23 h-23 border border-black/80 p-6'>
+        </div>
+
+        {/* text name */}
+         <div className='flex flex-col items-left justify-top gap-1'>
+          <span className='text-lg font-bold capitalize'>@{user?.username}</span>
+          <span className='text-lg  text-gray-400'>{user?.email}</span>
+
+        </div>
+
+       
+      </div>
     </div>
   )
 }
