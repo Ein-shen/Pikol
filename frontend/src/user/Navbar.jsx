@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import boyBg from '../assets/boy.png'
-import searchBg from '../assets/search.png'
+
 import { ChevronDown } from 'lucide-react'
 import { Signout } from './Signout'
 
@@ -43,12 +43,13 @@ export const Navbar = () => {
                 <div className='flex flex-col'>
                   <button
                     type='button'
-                     
+                     onClick={() => navigate('/dashboard/hero')}
                     className='text-left text-xs  rounded-t-md border-b border-black/80 px-4 py-2 text-md hover:bg-gray-100'
                   >
                     Profile
                   </button>
                   <button
+                    onClick={() => navigate('/dashboard/support')}
                     type='button'
                   
                     className='text-left text-xs border-b border-black/80 px-4 py-2 text-md hover:bg-gray-100'
@@ -56,6 +57,7 @@ export const Navbar = () => {
                     Support
                   </button>
                    <button
+                    onClick={() => navigate('/dashboard/settings')}
                     type='button'
                     
                     className='text-left px-4 text-xs  border-b border-black/80 py-2 text-md hover:bg-gray-100'
