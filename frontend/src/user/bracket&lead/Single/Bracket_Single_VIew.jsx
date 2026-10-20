@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useTransition } from 'react'
 import { Trophy, RotateCcw } from 'lucide-react'
 import api from '../../../api'
 import {
@@ -211,6 +211,11 @@ const updateScore = (roundIndex, matchIndex, key, value) => {
 }
 
 
+
+
+
+  
+
   return (
     <section className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-5">
@@ -226,7 +231,15 @@ const updateScore = (roundIndex, matchIndex, key, value) => {
           <RotateCcw size={16} />
           Reset tournament
         </button>
+
+         <button className='flex flex-row items-center gap-1  border border-black/80 rounded-md px-3 py-2  hover:bg-black/10'>
+          <img src="https://img.icons8.com/?size=100&id=16951&format=png&color=000000" alt="trop" height={24} width={24} />
+          Leaderboards
+        </button>
+
+        
       </div>
+     
 
       {champion && <ChampionBanner champion={champion} />}
 
@@ -242,6 +255,7 @@ const updateScore = (roundIndex, matchIndex, key, value) => {
             />
           ))}
         </div>
+        
       </div>
 
       <p className="text-sm text-gray-500">
