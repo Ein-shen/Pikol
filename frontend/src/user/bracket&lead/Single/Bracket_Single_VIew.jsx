@@ -390,7 +390,7 @@ export const Bracket_Single_VIew = ({
     <section className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-5">
         <div>
-          <h2 className="text-xl font-bold">{tournamentName}</h2>
+          <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">{teams.length} teams registered</p>
         </div>
 
