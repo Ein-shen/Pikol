@@ -422,7 +422,7 @@ export const Bracket_Single_VIew = ({
         <BracketTree bracket={bracket} onScore={updateScore} />
       </div>
 
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-500 font-bold">
         Enter the score in the yellow boxes. The team with the higher score advances to the next round.
         {hasWaiting &&
           ` With ${teams.length} teams, the winners can't always pair evenly. A team in a dashed "Waiting" card has no opponent that round and plays in the next one.`}
