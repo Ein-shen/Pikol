@@ -11,7 +11,7 @@ const navItems = [
     path: '/dashboard/overview',
   },
   { label: 'Matching',iconSrc: 'https://img.icons8.com/?size=100&id=eAodw0TpqLlC&format=png&color=000000',path: '/dashboard/matching' },
-  { label: 'Leaderbords', iconSrc: 'https://img.icons8.com/?size=100&id=aLTVTLhwbxnK&format=png&color=000000', path: '/dashboard/leaderboards' },
+  // { label: 'Leaderbords', iconSrc: 'https://img.icons8.com/?size=100&id=aLTVTLhwbxnK&format=png&color=000000', path: '/dashboard/leaderboards' },
 ]
 
 export const Sidebar = () => {
