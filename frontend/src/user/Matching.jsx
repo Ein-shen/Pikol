@@ -62,7 +62,7 @@ export const Matching = () => {
         <div className="flex flex-col gap-6">
           <h2 className="text-lg font-bold">Used match for tournaments</h2>
 
-          <div className="flex flex-row flex-wrap gap-4">
+          <div className="flex flex-col w-full flex-wrap gap-4">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button
                 onClick={() => navigate('/dashboard/singledashb')}
@@ -71,7 +71,7 @@ export const Matching = () => {
               >
                 <span>{type} Elimination</span>
 
-                <span className="flex flex-row items-center gap-1 pt-1 text-xs font-bold text-green-600">
+                <span className="flex flex-row  right-0 items-center gap-1 pt-1 text-xs font-bold text-green-600">
                   <img
                     src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000"
                     alt="trophy"
