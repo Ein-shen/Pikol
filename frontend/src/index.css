@@ -27,3 +27,7 @@
 .div-theme{
   background-color: blue;
 }
+
+.card-theme {
+  backdrop-color: yellow;
+}
