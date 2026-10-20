@@ -1,6 +1,7 @@
 import React, { useState, useTransition } from 'react'
 import { Trophy, RotateCcw } from 'lucide-react'
 import api from '../../../api'
+import { useNavigate } from 'react-router-dom'
 import {
   CARD_WIDTH, ROUND_GAP, SLOT_HEIGHT, LINE_STYLE, LINE_RADIUS,
   slotFor, pairLabel, getRoundName, putTeamInMatch, getWinner,
@@ -213,7 +214,7 @@ const updateScore = (roundIndex, matchIndex, key, value) => {
 
 
 
-
+  const navigate = useNavigate()
   
 
   return (
@@ -232,7 +233,9 @@ const updateScore = (roundIndex, matchIndex, key, value) => {
           Reset tournament
         </button>
 
-         <button className='flex flex-row items-center gap-1  border border-black/80 rounded-md px-3 py-2  hover:bg-black/10'>
+         <button 
+          onClick={() => navigate("/dashboard/single_lead")}
+           className='flex flex-row items-center gap-1  border border-black/80 rounded-md px-3 py-2  hover:bg-black/10'>
           <img src="https://img.icons8.com/?size=100&id=16951&format=png&color=000000" alt="trop" height={24} width={24} />
           Leaderboards
         </button>
