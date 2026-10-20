@@ -61,7 +61,7 @@ function TeamsForm({
   return (
     <form onSubmit={onSubmit} className="rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="border-b p-5">
-        <h2 className="text-lg font-bold">Single elimination</h2>
+        <h2 className="text-lg font-bold capitalize">Single elimination</h2>
         <p className="text-sm text-gray-500">Register {teamCount} teams with 2 players each.</p>
       </div>
 
