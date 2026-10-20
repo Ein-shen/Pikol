@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../api'
-import { Bracket_Single_VIew } from '../user/bracket&lead/Single/Bracket_Single_VIew'
-import { createBracket, applyResults } from '../user/bracket&lead/Single/BracketUtils'
+import {
+  Bracket_Single_VIew,
+  createBracket,
+  applyResults,
+} from '../user/bracket&lead/Single/Bracket_Single_VIew'
 
 export const SingleDashb = () => {
   const [tournaments, setTournaments] = useState([])
@@ -39,13 +42,34 @@ export const SingleDashb = () => {
     fetchTournaments()
   }
 
+  const deleteTournament = async (id) => {
+    if (!window.confirm('Delete this tournament?')) return
+    try {
+      await api.delete(`/tournaments/${id}`)
+      setTournaments((prev) => prev.filter((t) => t.id !== id))
+    } catch (err) {
+      console.error('Delete tournament error:', err)
+    }
+  }
+
+  const renameTournament = async (id, oldName) => {
+    const name = window.prompt('New name', oldName)?.trim()
+    if (!name || name === oldName) return
+    try {
+      await api.patch(`/tournaments/${id}`, { name })
+      setTournaments((prev) => prev.map((t) => (t.id === id ? { ...t, name } : t)))
+    } catch (err) {
+      console.error('Rename tournament error:', err)
+    }
+  }
+
   const openTournament = async (id) => {
     setOpenError('')
     try {
       const { data } = await api.get(`/tournaments/${id}`)
 
-      if (data.teams.length === 0) {
-        return setOpenError('This tournament has no saved teams, so the bracket cannot be rebuilt.')
+      if (data.teams.length < 2) {
+        return setOpenError('This tournament needs at least 2 saved teams to build a bracket.')
       }
 
       const bracket = applyResults(createBracket(data.teams), data.matches)
@@ -134,7 +158,7 @@ export const SingleDashb = () => {
                     type="button"
                     onClick={() => {
                       setMenuId(null)
-                      // rename logic
+                      renameTournament(tournament.id, tournament.name)
                     }}
                     className="text-left text-xs px-4 py-2 border-b border-black/80 rounded-t-md hover:bg-gray-100"
                   >
@@ -144,7 +168,7 @@ export const SingleDashb = () => {
                     type="button"
                     onClick={() => {
                       setMenuId(null)
-                      // delete logic
+                      deleteTournament(tournament.id)
                     }}
                     className="text-left text-xs px-4 py-2 rounded-b-md text-red-600 hover:bg-gray-100"
                   >
