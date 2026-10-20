@@ -1,17 +1,27 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
-import { createBracket } from '../bracket&lead/Single/BracketUtils'
+import { createBracket } from '../bracket&lead/Single/Bracket_Single_VIew'
 
-const TEAM_COUNT = 10
+// Even numbers only, so every team has an opponent in round 1
+const TEAM_COUNT_OPTIONS = [4, 6, 8, 10, 12, 14, 16, 20, 24, 32]
+const DEFAULT_TEAM_COUNT = 10
 
-function createEmptyTeams() {
-  return Array.from({ length: TEAM_COUNT }, (_, i) => ({
-    id: i + 1,
-    name: `Team ${i + 1}`,
-    player1: '',
-    player2: '',
-  }))
+function createEmptyTeam(id) {
+  return { id, name: `Team ${id}`, player1: '', player2: '' }
+}
+
+function createEmptyTeams(count) {
+  return Array.from({ length: count }, (_, i) => createEmptyTeam(i + 1))
+}
+
+// Grow or shrink the list while keeping what was already typed
+function resizeTeams(prev, count) {
+  if (count <= prev.length) return prev.slice(0, count)
+  const extra = Array.from({ length: count - prev.length }, (_, i) =>
+    createEmptyTeam(prev.length + i + 1)
+  )
+  return [...prev, ...extra]
 }
 
 function trimTeam(team) {
@@ -27,7 +37,7 @@ function validateTournament(name, teams) {
   if (!name) return 'Please enter a tournament name.'
 
   if (teams.some((t) => !t.name || !t.player1 || !t.player2)) {
-    return `Please complete all ${TEAM_COUNT} teams and their players.`
+    return `Please complete all ${teams.length} teams and their players.`
   }
 
   const players = teams.flatMap((t) => [t.player1.toLowerCase(), t.player2.toLowerCase()])
@@ -37,12 +47,22 @@ function validateTournament(name, teams) {
   return ''
 }
 
-function TeamsForm({ tournamentName, onNameChange, teams, onTeamChange, error, onSubmit, onCancel }) {
+function TeamsForm({
+  tournamentName,
+  onNameChange,
+  teamCount,
+  onCountChange,
+  teams,
+  onTeamChange,
+  error,
+  onSubmit,
+  onCancel,
+}) {
   return (
     <form onSubmit={onSubmit} className="rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="border-b p-5">
         <h2 className="text-lg font-bold">Single elimination</h2>
-        <p className="text-sm text-gray-500">Register {TEAM_COUNT} teams with 2 players each.</p>
+        <p className="text-sm text-gray-500">Register {teamCount} teams with 2 players each.</p>
       </div>
 
       <div className="space-y-4 p-5">
@@ -54,6 +74,30 @@ function TeamsForm({ tournamentName, onNameChange, teams, onTeamChange, error, o
             placeholder="e.g. Doubles Championship"
             className="w-full rounded-lg border p-3 outline-none focus:ring-2 focus:ring-black"
           />
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Number of teams</label>
+          <div className="flex flex-wrap gap-2">
+            {TEAM_COUNT_OPTIONS.map((count) => (
+              <button
+                key={count}
+                type="button"
+                onClick={() => onCountChange(count)}
+                className={`rounded-lg border px-4 py-2 text-sm font-medium ${
+                  teamCount === count
+                    ? 'bg-black text-white'
+                    : 'bg-white hover:bg-gray-100'
+                }`}
+              >
+                {count}
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-gray-500">
+            4, 8, 16 and 32 give a bracket where nobody ever waits a round. Other counts show a
+            "Waiting" card for the team with no opponent.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -89,10 +133,10 @@ function TeamsForm({ tournamentName, onNameChange, teams, onTeamChange, error, o
         <button type="button" onClick={onCancel} className="rounded-lg border px-4 py-2">
           Cancel
         </button>
-        <button 
-        
-        
-        type="submit" className="rounded-lg bg-black px-5 py-2 text-white hover:bg-gray-800">
+        <button
+          type="submit"
+          className="rounded-lg bg-black px-5 py-2 text-white hover:bg-gray-800"
+        >
           Generate bracket
         </button>
       </div>
@@ -102,9 +146,16 @@ function TeamsForm({ tournamentName, onNameChange, teams, onTeamChange, error, o
 
 export const SingleElilmination = () => {
   const navigate = useNavigate()
-  const [teams, setTeams] = useState(createEmptyTeams)
+  const [teamCount, setTeamCount] = useState(DEFAULT_TEAM_COUNT)
+  const [teams, setTeams] = useState(() => createEmptyTeams(DEFAULT_TEAM_COUNT))
   const [tournamentName, setTournamentName] = useState('')
   const [error, setError] = useState('')
+
+  const changeTeamCount = (count) => {
+    setTeamCount(count)
+    setTeams((prev) => resizeTeams(prev, count))
+    setError('')
+  }
 
   const updateTeam = (id, field, value) => {
     setTeams((prev) => prev.map((t) => (t.id === id ? { ...t, [field]: value } : t)))
@@ -124,7 +175,7 @@ export const SingleElilmination = () => {
       const savedTeams = cleanTeams.map((team) => ({ ...team, pairId: data.pairs[team.id] }))
 
       // Go to the dashboard and hand it the new bracket
-      navigate('/dashboard/singledashbb', {   // <-- use your real SingleDashb route
+      navigate('/dashboard/singledashb', {
         state: {
           tournamentId: data.tournamentId,
           tournamentName: name,
@@ -142,6 +193,8 @@ export const SingleElilmination = () => {
       <TeamsForm
         tournamentName={tournamentName}
         onNameChange={setTournamentName}
+        teamCount={teamCount}
+        onCountChange={changeTeamCount}
         teams={teams}
         onTeamChange={updateTeam}
         error={error}
