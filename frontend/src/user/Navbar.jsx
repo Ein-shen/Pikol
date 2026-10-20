@@ -27,7 +27,7 @@ export const Navbar = () => {
             onClick={() => go('/dashboard/hero')}
             className='flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 bg-gray-100 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity'
           >
-            <img src={boyBg} alt='Profile' className='w-full h-full object-cover' />
+            
           </div>
 
           <button
