@@ -18,16 +18,13 @@ import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 import { Lead_Single_e } from './user/bracket&lead/Single/Lead_Single_e.jsx'
-import { Bracket_Single_VIew } from './user/bracket&lead/Single/Bracket_Single_VIew.jsx'
- 
-
 
 function App() {
   const { user, loading } = useAuth()
 
   if (loading) {
     return (
-      <div className="flex justify-center   text-2xl items-center bg-gray-200 h-screen flex flex-row gap-1 items-center">
+      <div className="flex flex-row gap-1 justify-center items-center text-2xl bg-gray-200 h-screen">
         Wait a sec
         <img src="/racket.png?v=5" alt="" className="h-5 w-5 animate-spin" />
         ...
@@ -56,10 +53,9 @@ function App() {
       >
         <Route path="/dashboard/hero" element={<Hero />} />
         <Route path="/dashboard/settings" element={<Settings />} />
-         <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
+        <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
-        <Route path="/dashboard/bracketsingleview" element={<Bracket_Single_VIew />} />
         <Route path="/dashboard/double" element={<DoubleElimination />} />
         <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
