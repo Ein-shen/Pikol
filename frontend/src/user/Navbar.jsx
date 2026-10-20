@@ -49,7 +49,7 @@ export const Navbar = () => {
                     Profile
                   </button>
                   <button
-                    onClick={() => navigate('/dashboard/support')}
+                    onClick={() => navigate(' ')}
                     type='button'
                   
                     className='text-left text-xs border-b border-black/80 px-4 py-2 text-md hover:bg-gray-100'
@@ -57,7 +57,7 @@ export const Navbar = () => {
                     Support
                   </button>
                    <button
-                    onClick={() => navigate('/dashboard/settings')}
+                    onClick={() => navigate('')}
                     type='button'
                     
                     className='text-left px-4 text-xs  border-b border-black/80 py-2 text-md hover:bg-gray-100'
