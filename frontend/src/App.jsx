@@ -17,7 +17,9 @@ import { OpenPlay } from './user/Create_select_game/OpenPlay.jsx'
 import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
+import { Lead_Single_e } from './user/bracket&lead/Single/Lead_Single_e.jsx'
 import { Bracket_Single_VIew } from './user/bracket&lead/Single/Bracket_Single_VIew.jsx'
+ 
 
 
 function App() {
@@ -54,6 +56,7 @@ function App() {
       >
         <Route path="/dashboard/hero" element={<Hero />} />
         <Route path="/dashboard/settings" element={<Settings />} />
+         <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
         <Route path="/dashboard/bracketsingleview" element={<Bracket_Single_VIew />} />
