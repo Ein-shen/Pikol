@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Plus, ArrowLeft } from 'lucide-react'
+import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../api'
 import { Bracket_Single_VIew } from '../user/bracket&lead/Single/Bracket_Single_VIew'
@@ -8,6 +8,7 @@ import { createBracket, applyResults } from '../user/bracket&lead/Single/Bracket
 export const SingleDashb = () => {
   const [tournaments, setTournaments] = useState([])
   const [openError, setOpenError] = useState('')
+  const [menuId, setMenuId] = useState(null) // id of the tournament whose menu is open
   const navigate = useNavigate()
   const location = useLocation()
   const current = location.state // set by the form page or by openTournament
@@ -23,6 +24,13 @@ export const SingleDashb = () => {
 
   useEffect(() => {
     fetchTournaments()
+  }, [])
+
+  // Close the card menu when clicking anywhere else
+  useEffect(() => {
+    const close = () => setMenuId(null)
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
   }, [])
 
   // Clears the screen only. Saved matches stay in the database.
@@ -55,6 +63,8 @@ export const SingleDashb = () => {
     }
   }
 
+  const showList = !current?.bracket
+
   return (
     <div className="w-full flex flex-col gap-10">
       <div className="flex justify-between flex-row items-center">
@@ -83,19 +93,69 @@ export const SingleDashb = () => {
         />
       )}
 
-      {openError && <p role="alert" className="text-sm text-red-600">{openError}</p>}
+      {showList && openError && (
+        <p role="alert" className="text-sm text-red-600">{openError}</p>
+      )}
 
-      <div className="grid grid-cols-3 gap-4">
-        {tournaments.map((tournament) => (
-          <div
-            key={tournament.id}
-            onClick={() => openTournament(tournament.id)}
-            className="cursor-pointer border border-black/80 p-4 rounded-md text-lg font-bold capitalize hover:bg-gray-100"
-          >
-            {tournament.name}
-          </div>
-        ))}
-      </div>
+      {showList && (
+        <div className="grid grid-cols-3 gap-4">
+          {tournaments.map((tournament) => (
+            <div
+              key={tournament.id}
+              onClick={() => openTournament(tournament.id)}
+              className="relative cursor-pointer text-md flex flex-row items-center gap-1 border border-black/80 p-4 pr-10 rounded-md font-bold capitalize hover:bg-gray-100"
+            >
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setMenuId((prev) => (prev === tournament.id ? null : tournament.id))
+                }}
+                className="absolute top-1 right-1 p-1 rounded hover:bg-gray-200"
+                aria-label="More options"
+              >
+                <MoreHorizontal size={20} />
+              </button>
+
+              <img
+                src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
+                alt="pikol"
+                height={24}
+                width={24}
+              />
+
+              {tournament.name}
+
+              {menuId === tournament.id && (
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute right-1 top-9 w-36 bg-white border border-black/80 rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuId(null)
+                      // rename logic
+                    }}
+                    className="text-left text-xs px-4 py-2 border-b border-black/80 rounded-t-md hover:bg-gray-100"
+                  >
+                    Rename
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuId(null)
+                      // delete logic
+                    }}
+                    className="text-left text-xs px-4 py-2 rounded-b-md text-red-600 hover:bg-gray-100"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
