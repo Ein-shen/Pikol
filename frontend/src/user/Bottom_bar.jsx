@@ -11,4 +11,4 @@ export const Bottom_bar = () => {
       </div>
     </div>
   )
-}
+} 
