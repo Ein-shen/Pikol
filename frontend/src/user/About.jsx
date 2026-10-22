@@ -2,22 +2,22 @@ import React from 'react'
 
 const features = [
   {
-    icon: '',
+    icon: <img src="https://img.icons8.com/?size=100&id=GwYlS5m5Goz6&format=png&color=000000" alt="" height={24} width={24} />,
     title: 'Open Play',
     desc: 'Create open play sessions where players can join, rotate, and get matched automatically.',
   },
   {
-    icon: '',
+    icon: <img src="https://img.icons8.com/?size=100&id=rPPPU6C1gVvS&format=png&color=000000" alt="" height={24} width={24} />,
     title: 'Tournaments',
     desc: 'Run brackets with automatic scheduling and live score tracking from start to finish.',
   },
   {
-    icon: '',
+    icon: <img src="https://img.icons8.com/?size=100&id=ejNHCrsHeThk&format=png&color=000000" alt="" height={24} width={24} />,
     title: 'Player Management',
     desc: 'Keep track of players, teams, and standings in one organized place.',
   },
   {
-    icon: '',
+    icon: <img src="https://img.icons8.com/?size=100&id=12928&format=png&color=000000" alt="" height={24} width={24} />,
     title: 'Fair Matchups',
     desc: 'Pick your matching type so every game stays balanced, fair and square.',
   },
@@ -47,7 +47,7 @@ export const About = () => {
         {features.map((f) => (
           <div
             key={f.title}
-            className='flex flex-col gap-3 p-5 sm:p-6 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 shadow-lg hover:bg-white/15 hover:-translate-y-1 transition-all duration-300'
+            className='flex flex-col gap-3 p-5 sm:p-6 rounded-xl bg-black/20 backdrop-blur-sm border border-white/10 shadow-lg hover:bg-white/15 hover:-translate-y-1 transition-all duration-300'
           >
             <div className='w-11 h-11 flex items-center justify-center rounded-lg bg-[#A8D38D]/20 border border-[#A8D38D]/30 text-xl'>
               {f.icon}
