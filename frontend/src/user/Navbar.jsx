@@ -44,30 +44,30 @@ export const Navbar = () => {
           </button>
 
           {showDropdown && (
-            <div className='absolute right-0 top-full mt-2 w-40 theme-accent theme-input border theme-border rounded-md shadow-md z-50'>
+            <div className='absolute right-0 top-full mt-2 w-40 border theme-border rounded-md shadow-md z-50'>
               <div className='flex flex-col'>
                 <button
                   type='button'
                   onClick={() => go('/dashboard/hero')}
-                  className={`${itemClass} rounded-t-md border-b theme-border`}
+                  className={`${itemClass} rounded-t-md border-b theme-border theme-card  theme-hover `}
                 >
                   Profile
                 </button>
                 <button
                   type='button'
                   onClick={() => go('/dashboard/support')}
-                  className={`${itemClass} border-b theme-border`}
+                  className={`${itemClass} border-b theme-border theme-card  theme-hover `}
                 >
                   Support
                 </button>
                 <button
                   type='button'
                   onClick={() => go('/dashboard/settings')}
-                  className={`${itemClass} border-b theme-border`}
+                  className={`${itemClass} border-b theme-border theme-card  theme-hover `}
                 >
                   Settings
                 </button>
-                <Signout className={`${itemClass} rounded-b-md`} />
+                <Signout className={`${itemClass} rounded-b-md theme-border theme-card  theme-hover `} />
               </div>
             </div>
           )}
