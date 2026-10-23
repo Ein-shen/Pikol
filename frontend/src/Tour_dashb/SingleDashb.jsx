@@ -134,7 +134,7 @@ export const SingleDashb = () => {
                   e.stopPropagation()
                   setMenuId((prev) => (prev === tournament.id ? null : tournament.id))
                 }}
-                className="absolute top-1 right-1 p-1 rounded  theme-muted   "
+                className="absolute top-1 right-1 p-1 rounded     "
                 aria-label="More options"
               >
                 <MoreHorizontal size={20} />
