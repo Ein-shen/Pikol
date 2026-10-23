@@ -71,7 +71,7 @@ export const Matching = () => {
               >
                 <span>{type} Elimination</span>
 
-                <span className="flex flex-row  right-0 items-center gap-1 pt-1 text-xs font-bold text-green-600">
+                <span className="flex flex-row  right-0 items-center gap-1 pt-1 text-xs font-bold ">
                   <img
                     src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000"
                     alt="trophy"
@@ -119,7 +119,7 @@ export const Matching = () => {
 
               <button
                 onClick={() => navigate('/dashboard/quadro')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-input"
+                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent"
               >
                 Quadro Elimination
               </button>
