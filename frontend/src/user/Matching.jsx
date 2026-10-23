@@ -31,7 +31,7 @@ export const Matching = () => {
 
         <button
           onClick={() => setShow(true)}
-          className="flex items-center gap-2 rounded-md  theme-accent px-4 py-2 text-white "
+          className="flex items-center gap-2 rounded-md theme-hover theme-accent px-4 py-2 text-white "
         >
           <Plus size={18} />
           Create tournament
@@ -89,7 +89,7 @@ export const Matching = () => {
       {/* POPUP */}
       {show && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4">
-          <div className="relative space-y-4 rounded-xl bg-white p-10 shadow-lg">
+          <div className="relative space-y-4 rounded-xl theme-bg p-10 shadow-lg">
             <button
               type="button"
               onClick={() => setShow(false)}
@@ -105,21 +105,21 @@ export const Matching = () => {
             <div className=" flex flex-row items-center justify-center gap-3 pt-10">
               <button
                 onClick={() => navigate('/dashboard/single')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
+                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent"
               >
                 Single elimination
               </button>
 
               <button
                 onClick={() => navigate('/dashboard/double')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
+                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-hover theme-accent "
               >
                 Double Elimination
               </button>
 
               <button
                 onClick={() => navigate('/dashboard/quadro')}
-                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold hover:bg-gray-100"
+                className="h-24 w-44 rounded-md border border-black/80 p-6 text-center font-semibold  theme-input"
               >
                 Quadro Elimination
               </button>
