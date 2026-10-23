@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 export const Lead_Single_e = () => {
   return (
     <div w-full>
-      <div className="flex justify-between flex-row items-center">
+      <header className="flex justify-between flex-row items-center">
         <button  >
           <ArrowLeft />
       
@@ -17,7 +17,7 @@ export const Lead_Single_e = () => {
         >
           
         </button>
-      </div>
+      </header>
     </div>
   )
 }
