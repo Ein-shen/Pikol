@@ -388,7 +388,7 @@ export const Bracket_Single_VIew = ({
 
   return (
     <section className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border bg-white p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-5">
         <div>
           <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">{teams.length} teams registered</p>
@@ -396,7 +396,7 @@ export const Bracket_Single_VIew = ({
 
         <button
           onClick={onReset}
-          className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm hover:bg-gray-50"
+          className="flex items-center gap-2 rounded-lg   px-3 py-2 text-sm  theme-border theme-hover theme-accent"
         >
           <RotateCcw size={16} />
           Reset tournament
@@ -404,7 +404,7 @@ export const Bracket_Single_VIew = ({
 
         <button
           onClick={() => navigate('/dashboard/single_lead')}
-          className="flex flex-row items-center gap-1 border border-black/80 rounded-md px-3 py-2 hover:bg-black/10"
+          className="flex flex-row items-center gap-1 border  rounded-md px-3 py-2 theme-border theme-hover theme-accent"
         >
           <img
             src="https://img.icons8.com/?size=100&id=16951&format=png&color=000000"
@@ -418,11 +418,11 @@ export const Bracket_Single_VIew = ({
 
       {champion && <ChampionBanner champion={champion} />}
 
-      <div className="overflow-x-auto rounded-xl p-6" style={{ background: '#efefef' }}>
+      <div className="overflow-x-auto rounded-xl p-6 theme-accent"  >
         <BracketTree bracket={bracket} onScore={updateScore} />
       </div>
 
-      <p className="text-sm text-gray-500 font-bold">
+      <p className="text-sm theme-text font-bold">
         Enter the score in the yellow boxes. The team with the higher score advances to the next round.
         {hasWaiting &&
           ` With ${teams.length} teams, the winners can't always pair evenly. A team in a dashed "Waiting" card has no opponent that round and plays in the next one.`}
