@@ -1,7 +1,23 @@
 import React from 'react'
-
+import { ArrowLeft } from 'lucide-react'
 export const Lead_Single_e = () => {
   return (
-    <div>Lead_Single_e</div>
+    <div w-full>
+      <div className="flex justify-between flex-row items-center">
+        <button  >
+          <ArrowLeft />
+      
+        </button>
+
+        <h1 className="font-bold text-lg">Single Elimination</h1>
+
+        <button
+          
+          className="flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
+        >
+          
+        </button>
+      </div>
+    </div>
   )
 }
