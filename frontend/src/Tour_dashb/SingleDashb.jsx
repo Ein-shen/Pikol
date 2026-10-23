@@ -127,14 +127,14 @@ export const SingleDashb = () => {
             <div
               key={tournament.id}
               onClick={() => openTournament(tournament.id)}
-              className="relative cursor-pointer text-md flex flex-row items-center gap-1 border border-black/80 p-4 pr-10 rounded-md font-bold capitalize hover:bg-gray-100"
+              className="relative cursor-pointer text-md flex flex-row items-center gap-1 border border-black/80 p-4 pr-10 rounded-md font-bold capitalize  theme-hover theme-accent "
             >
               <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setMenuId((prev) => (prev === tournament.id ? null : tournament.id))
                 }}
-                className="absolute top-1 right-1 p-1 rounded hover:bg-gray-200"
+                className="absolute top-1 right-1 p-1 rounded  theme-muted   "
                 aria-label="More options"
               >
                 <MoreHorizontal size={20} />
@@ -152,15 +152,15 @@ export const SingleDashb = () => {
               {menuId === tournament.id && (
                 <div
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute right-1 top-9 w-36 bg-white border border-black/80 rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
+                  className="absolute right-1 top-9 w-36 theme-bg theme-hover border border-black/80 rounded-md shadow-md z-50 flex flex-col font-normal normal-case"
                 >
-                  <button
+                  <button 
                     type="button"
                     onClick={() => {
                       setMenuId(null)
                       renameTournament(tournament.id, tournament.name)
                     }}
-                    className="text-left text-xs px-4 py-2 border-b border-black/80 rounded-t-md hover:bg-gray-100"
+                    className="text-left text-xs px-4 py-2 border-b border-black/80 rounded-t-md theme-hover theme-input theme-accent"
                   >
                     Rename
                   </button>
@@ -170,7 +170,7 @@ export const SingleDashb = () => {
                       setMenuId(null)
                       deleteTournament(tournament.id)
                     }}
-                    className="text-left text-xs px-4 py-2 rounded-b-md text-red-600 hover:bg-gray-100"
+                    className="text-left text-xs px-4 py-2 rounded-b-md text-red-600 theme-hover theme-input theme-accent"
                   >
                     Delete
                   </button>
