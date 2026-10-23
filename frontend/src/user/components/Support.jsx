@@ -1,5 +1,6 @@
 import React from 'react'
 import { ArrowLeft } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 const contacts = [
   {
     icon: '✉️',
@@ -16,13 +17,16 @@ const contacts = [
 ]
 
 export const Support = () => {
+  const navigate = useNavigate()
   return (
     <div w-full>
       <header className="flex justify-between flex-row items-center">
-        <button  >
-          <ArrowLeft />
-      
-        </button>
+        <button 
+                  onClick={() => navigate(-1)}
+                  >
+                  <ArrowLeft />
+              
+                </button>
 
         <h1 className="font-bold text-lg">Support</h1>
 
