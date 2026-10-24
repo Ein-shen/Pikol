@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import boyBg from '../assets/boy.png'
+ 
 import { ChevronDown } from 'lucide-react'
 import { Signout } from './Signout'
 import { ThemeToggle } from '../user/theme_color/ThemeToggle'
@@ -13,6 +13,8 @@ export const Navbar = () => {
     setShowDropdown(false)
     navigate(path)
   }
+
+  
 
   const itemClass = 'text-left text-xs px-4 py-2 theme-hover w-full'
 
