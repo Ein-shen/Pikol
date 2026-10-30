@@ -307,5 +307,10 @@ router.put("/top3/:id", requireAuth, async (req, res) => {
     }
 });
 
+// =====================================================
+// UPDATE PROFILE 
+// POST /api/users
+// =====================================================
+
 
 export default router;
