@@ -278,6 +278,11 @@ router.get("/top3/:id", requireAuth, async (req, res) => {
 
 })
 
+// =====================================================
+// GET Full name
+// POST /api/user
+// =====================================================
+
 
 export default router;
 
