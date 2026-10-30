@@ -432,16 +432,14 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
 function PlaceCard({ label, team, icon, featured = false }) {
   return (
     <div
-      className={`rounded-md border space-y-1 border-yellow-200 bg-white/60 text-center ${
-        featured
-          ? 'w-full p-5'
-          : 'flex-1 min-w-[180px] max-w-[260px] p-3'
+      className={`h-full w-full rounded-md border space-y-1 border-yellow-200 bg-white/60 text-center ${
+        featured ? 'p-5' : 'p-4'
       }`}
     >
       {icon}
       <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>{label}</p>
 
-      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-l'}`}>
+      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-base'}`}>
         {team ? pairLabel(team) : ''}
       </p>
       <p
@@ -468,7 +466,7 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
       />
 
       {/* Rest of the ranking */}
-      <div className="mt-4 flex flex-wrap justify-center gap-3">
+      <div className="mt-4 w-full grid grid-cols-1 sm:grid-cols-3 gap-3">
         <PlaceCard label="2nd place" team={second} />
         {showThird && <PlaceCard label="3rd place" team={third} />}
         {showThird && <PlaceCard label="4th place" team={fourth} />}
