@@ -75,4 +75,39 @@ router.post("/tournaments", requireAuth, async (req, res) => {
 });
 
 
+/// =====================================================
+// UPDATE PROFILE (name + username)
+// POST /api/me
+// =====================================================
+
+router.post("/me", requireAuth, async (req, res) => {
+    const fullname = String(req.body?.fullname || "").trim();
+    
+
+    if (!fullname ) {
+        return res.status(400).json({ message: "Missing profile data." });
+    }
+
+    try {
+        const result = await pool.query(
+            `UPDATE users
+             SET full_name = $1,
+                 
+             WHERE id = $3
+             RETURNING id, username, email, full_name AS fullname`,
+            [fullname,  req.user.id]
+        );
+
+        return res.status(200).json({ user: result.rows[0] });
+    } catch (err) {
+        if (err.code === "23505") {
+            return res.status(400).json({ message: "Username already taken." });
+        }
+        console.error("UPDATE PROFILE ERROR:", err);
+        return res.status(500).json({ message: "Could not update profile." });
+    }
+});
+
+
+
 export default router;
