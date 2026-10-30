@@ -139,7 +139,7 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={openEdit}
-                className="text-left text-xs border-b border-white/10 px-4 py-2 theme-hover theme-card theme-border w-full"
+                className="text-center text-xs border-b border-white/10 px-4 py-2 theme-hover theme-card theme-border w-full"
               >
                 Edit profile
               </button>
