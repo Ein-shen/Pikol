@@ -1,6 +1,3 @@
- 
-
-
 /*
  * ====================================================================
  * OVERVIEW
@@ -496,24 +493,22 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
   )
 }
 
+/* ------------------------------------------------------------------ */
+/* Podium cards (FIXED: every card has the same width)                 */
+/* ------------------------------------------------------------------ */
+
 function PlaceCard({ label, team, icon, featured = false }) {
   return (
     <div
-      className={`rounded-md border space-y-1 border-yellow-200 bg-white/60 text-center ${
-        featured ? 'w-full p-5' : 'flex-1 min-w-[180px] max-w-[260px] p-3'
-      }`}
+      className="rounded-md border border-yellow-200 bg-white/60 p-4 text-center space-y-1"
+      style={{ width: '100%', maxWidth: 'none', minWidth: 0, boxSizing: 'border-box' }}
     >
       {icon}
       <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>{label}</p>
-
-      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-l'}`}>
+      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-base'}`}>
         {team ? pairLabel(team) : ''}
       </p>
-      <p
-        className={`mt-1 ${featured ? 'text-sm' : 'text-base'} ${
-          team ? 'text-gray-900' : 'text-gray-400'
-        }`}
-      >
+      <p className={`text-sm ${team ? 'text-gray-900' : 'text-gray-400'}`}>
         {team ? team.name : 'TBD'}
       </p>
     </div>
@@ -527,9 +522,10 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
         featured
         label="Champion"
         team={champion}
-        icon={<Trophy className="mx-auto mb-1 text-yellow-600  " size={36} />}
+        icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
       />
 
+      {/* 👇 THIS is the div to change */}
       <div className="mt-4 flex flex-wrap justify-center gap-3">
         <PlaceCard label="2nd place" team={second} />
         {showThird && <PlaceCard label="3rd place" team={third} />}
@@ -538,7 +534,6 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
     </div>
   )
 }
-
 /* ------------------------------------------------------------------ */
 /* Group stage helpers                                                 */
 /* ------------------------------------------------------------------ */
