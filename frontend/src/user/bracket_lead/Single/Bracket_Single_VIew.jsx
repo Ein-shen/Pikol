@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Trophy, RotateCcw } from 'lucide-react'
 import api from '../../../api'
-import { useNavigate } from 'react-router-dom'
 
 /* ------------------------------------------------------------------ */
 /* Layout constants                                                    */
@@ -12,6 +11,17 @@ const ROW_HEIGHT = 150
 const HEADER = 40
 const LINE_COLOR = '#1ba3c6'
 const COLUMN = CARD_WIDTH + ROUND_GAP
+
+// Highest score allowed in a match (same as the other formats)
+const MAX_SCORE = 11
+
+// Cleans what the user types into a score box (digits only, no leading
+// zeros, capped at MAX_SCORE). Returns '' when empty.
+const cleanScore = (value) => {
+  const digits = value.replace(/\D/g, '').replace(/^0+(?=\d)/, '')
+  if (digits === '') return ''
+  return Number(digits) > MAX_SCORE ? String(MAX_SCORE) : digits
+}
 
 /* ------------------------------------------------------------------ */
 /* Bracket logic                                                       */
@@ -37,6 +47,7 @@ const waitItem = (team1, feed) => ({
 function getRoundName(roundIndex, totalRounds) {
   if (roundIndex === totalRounds - 1) return 'Final'
   if (roundIndex === totalRounds - 2) return 'Semi-finals'
+  if (roundIndex === totalRounds - 3) return 'Quarter-finals'
   return `Round ${roundIndex + 1}`
 }
 
@@ -47,6 +58,12 @@ function getWinner(match) {
   const s2 = Number(match.score2)
   if (s1 === s2) return null
   return s1 > s2 ? match.team1 : match.team2
+}
+
+// The loser of a finished match (null while there is no winner yet).
+function getLoser(match, winner) {
+  if (!winner) return null
+  return teamKey(winner) === teamKey(match.team1) ? match.team2 : match.team1
 }
 
 // Recompute who plays who from the scores. Returns matches whose
@@ -131,7 +148,9 @@ export function createBracket(teams) {
   return rounds
 }
 
-// Put saved scores back onto a freshly built bracket
+// Put saved scores back onto a freshly built bracket.
+// The server may have stored the two teams in the opposite order, so the
+// scores are swapped when needed (rows without pair ids are used as-is).
 export function applyResults(bracket, matches) {
   bracket.forEach((round, r) => {
     matches
@@ -139,8 +158,10 @@ export function applyResults(bracket, matches) {
       .forEach((saved) => {
         const item = round[saved.matchNumber - 1]
         if (!item || item.kind !== 'match' || !item.team1 || !item.team2) return
-        item.score1 = String(saved.score1)
-        item.score2 = String(saved.score2)
+
+        const same = saved.pair1Id == null || saved.pair1Id === teamKey(item.team1)
+        item.score1 = String(same ? saved.score1 : saved.score2)
+        item.score2 = String(same ? saved.score2 : saved.score1)
       })
     propagate(bracket)
   })
@@ -197,16 +218,16 @@ function MatchCard({ match, onScore }) {
     >
       <div className="flex justify-center items-center gap-1.5" style={{ margin: '8px 0' }}>
         <input
-          type="text" inputMode="numeric" aria-label="Score team 1"
+          type="text" inputMode="numeric" maxLength={2} aria-label="Score team 1"
           disabled={!canEnterScore} value={match.score1} placeholder="-"
-          onChange={(e) => onScore('score1', e.target.value.replace(/\D/g, ''))}
+          onChange={(e) => onScore('score1', cleanScore(e.target.value))}
           style={scoreBoxStyle}
         />
         <span style={{ color: '#666', fontSize: 12 }}>:</span>
         <input
-          type="text" inputMode="numeric" aria-label="Score team 2"
+          type="text" inputMode="numeric" maxLength={2} aria-label="Score team 2"
           disabled={!canEnterScore} value={match.score2} placeholder="-"
-          onChange={(e) => onScore('score2', e.target.value.replace(/\D/g, ''))}
+          onChange={(e) => onScore('score2', cleanScore(e.target.value))}
           style={scoreBoxStyle}
         />
       </div>
@@ -308,16 +329,41 @@ function BracketTree({ bracket, onScore }) {
   )
 }
 
-function ChampionBanner({ champion }) {
+// Every card is w-full, so the champion card and the runner-up card
+// always have the same width at any screen size.
+function PlaceCard({ label, team, icon, featured = false }) {
   return (
-    <div className="rounded-xl border border-yellow-300 bg-yellow-50 p-6 text-center">
-      <Trophy className="mx-auto mb-2 text-yellow-600" size={36} />
-      <p className="text-sm font-medium text-yellow-800">Tournament champion</p>
-     
-      <p className="mt-2 text-xl font-bold text-black">
-        {champion.player1} &amp; {champion.player2}
+    <div
+      className={`h-full w-full rounded-md border border-yellow-200 bg-white/60 text-center space-y-1 ${
+        featured ? 'p-5' : 'p-4'
+      }`}
+    >
+      {icon}
+      <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>{label}</p>
+
+      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-base'}`}>
+        {team ? pairLabel(team) : ''}
       </p>
-       <h2 className="mt-1 text-ms text-black">{champion.name}</h2>
+      <p className={`text-sm ${team ? 'text-gray-900' : 'text-gray-400'}`}>
+        {team ? team.name : 'TBD'}
+      </p>
+    </div>
+  )
+}
+
+function ChampionBanner({ champion, runnerUp }) {
+  return (
+    <div className="rounded-md border border-yellow-300 bg-yellow-100 p-6">
+      <PlaceCard
+        featured
+        label="Champion"
+        team={champion}
+        icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
+      />
+
+      <div className="mt-4 grid grid-cols-1 gap-3">
+        <PlaceCard label="1st place" team={runnerUp} />
+      </div>
     </div>
   )
 }
@@ -329,8 +375,6 @@ export const Bracket_Single_VIew = ({
   initialBracket,
   onReset,
 }) => {
-  const navigate = useNavigate()
-
   // Rebuild from the teams if the incoming bracket is from an older version
   const [bracket, setBracket] = useState(() =>
     isValidBracket(initialBracket) ? initialBracket : createBracket(teams)
@@ -341,6 +385,10 @@ export const Bracket_Single_VIew = ({
   const [error, setError] = useState('')
 
   const hasWaiting = bracket.some((round, r) => r > 0 && round.some((i) => i.kind === 'wait'))
+
+  // Runner-up = the loser of the final
+  const finalMatch = bracket[bracket.length - 1]?.[0]
+  const runnerUp = finalMatch ? getLoser(finalMatch, champion) : null
 
   const saveResult = (roundIndex, matchIndex, match, winnerChanged, cleared) => {
     const matchesUrl = `/tournaments/${tournamentId}/matches`
@@ -397,18 +445,16 @@ export const Bracket_Single_VIew = ({
 
         <button
           onClick={onReset}
-          className="flex items-center gap-2 rounded-lg   px-3 py-2 text-sm  theme-border theme-hover theme-accent"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
         >
           <RotateCcw size={16} />
           Reset tournament
         </button>
-
-        
       </div>
 
-      {champion && <ChampionBanner champion={champion} />}
+      {champion && <ChampionBanner champion={champion} runnerUp={runnerUp} />}
 
-      <div className="overflow-x-auto rounded-xl p-6 theme-accent"  >
+      <div className="overflow-x-auto rounded-xl p-6 theme-accent">
         <BracketTree bracket={bracket} onScore={updateScore} />
       </div>
 
