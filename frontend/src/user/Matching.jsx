@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react'
 import { Plus, X, Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +8,12 @@ const TYPE_ROUTES = {
   single: '/dashboard/singledashb',
   double: '/dashboard/double',
   quadro: '/dashboard/quadrodashb',
+  top3: '/dashboard/top3dashb',
+}
+
+// Name shown on each card (types not listed here show "<type> Elimination")
+const TYPE_LABELS = {
+  top3: 'Top 3 Brackets',
 }
 
 export const Matching = () => {
@@ -86,7 +91,7 @@ export const Matching = () => {
                 key={type}
                 className="flex flex-col rounded-md border theme-border theme-card theme-hover p-6 text-left text-md font-bold capitalize text-input"
               >
-                <span>{type} Elimination</span>
+                <span>{TYPE_LABELS[type] || `${type} Elimination`}</span>
 
                 <span className="flex flex-row items-center gap-1 pt-1 text-xs font-bold">
                   <img
@@ -148,6 +153,13 @@ export const Matching = () => {
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Quadro Elimination
+              </button>
+
+              <button
+                onClick={() => navigate('/dashboard/top3')}
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+              >
+                Top 3 Brackets
               </button>
             </div>
           </div>
