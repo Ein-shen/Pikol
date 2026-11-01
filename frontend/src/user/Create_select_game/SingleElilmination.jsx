@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../api'
 import { createBracket } from '../bracket_lead/Single/Bracket_Single_VIew'
 
-// Even numbers only, so every team has an opponent in round 1
-const TEAM_COUNT_OPTIONS = [4, 6, 8, 10, 12, 14, 16, 20, 24, 32]
+// Any count works: when it is not 4, 8, 16 or 32, some teams get a bye
+// (they skip round 1 and start in round 2). createBracket handles it.
+const TEAM_COUNT_OPTIONS = [4, 6, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 24, 32]
 const DEFAULT_TEAM_COUNT = 10
 
 function createEmptyTeam(id) {
@@ -41,6 +42,12 @@ function validateTournament(name, teams) {
     return `Please complete all ${teams.length} teams and their players.`
   }
 
+  // Two teams with the same name look identical in the bracket
+  const names = teams.map((t) => t.name.toLowerCase())
+  if (new Set(names).size !== names.length) {
+    return 'Each team must have a different name.'
+  }
+
   const players = teams.flatMap((t) => [t.player1.toLowerCase(), t.player2.toLowerCase()])
   if (new Set(players).size !== players.length) {
     return 'Each player must belong to only one team.'
@@ -56,6 +63,7 @@ function TeamsForm({
   teams,
   onTeamChange,
   error,
+  submitting,
   onSubmit,
   onCancel,
 }) {
@@ -71,8 +79,11 @@ function TeamsForm({
 
       <div className="space-y-4 p-5">
         <div>
-          <label className="mb-1 block text-sm font-medium">Tournament name</label>
+          <label htmlFor="tournament-name" className="mb-1 block text-sm font-medium">
+            Tournament name
+          </label>
           <input
+            id="tournament-name"
             value={tournamentName}
             onChange={(e) => onNameChange(e.target.value)}
             placeholder="e.g. Doubles Championship"
@@ -99,28 +110,33 @@ function TeamsForm({
             ))}
           </div>
           <p className="mt-2 text-xs theme-muted">
-            4, 8, 16 and 32 give a bracket where nobody ever waits a round. Other counts show a
-            "Waiting" card for the team with no opponent.
+            4, 8, 16 and 32 give a bracket where every team plays in round 1. Other counts give
+            some teams a bye: they skip round 1 and start in round 2.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {teams.map((team, index) => (
             <div key={team.id} className="space-y-3 rounded-lg border theme-border p-3">
-              <label className="block text-sm font-bold">Team {index + 1}</label>
+              <label htmlFor={`team-${team.id}-name`} className="block text-sm font-bold">
+                Team {index + 1}
+              </label>
               <input
+                id={`team-${team.id}-name`}
                 value={team.name}
                 onChange={(e) => onTeamChange(team.id, 'name', e.target.value)}
                 placeholder="Team name"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
+                aria-label={`Team ${index + 1} player 1`}
                 value={team.player1}
                 onChange={(e) => onTeamChange(team.id, 'player1', e.target.value)}
                 placeholder="Player 1"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
               <input
+                aria-label={`Team ${index + 1} player 2`}
                 value={team.player2}
                 onChange={(e) => onTeamChange(team.id, 'player2', e.target.value)}
                 placeholder="Player 2"
@@ -137,15 +153,17 @@ function TeamsForm({
         <button
           type="button"
           onClick={onCancel}
-          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2"
+          disabled={submitting}
+          className="theme-text theme-hover rounded-lg border theme-border px-5 py-2 disabled:opacity-40"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold"
+          disabled={submitting}
+          className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold disabled:opacity-60"
         >
-          Generate bracket
+          {submitting ? 'Saving...' : 'Generate bracket'}
         </button>
       </div>
     </form>
@@ -158,6 +176,7 @@ export const SingleElilmination = () => {
   const [teams, setTeams] = useState(() => createEmptyTeams(DEFAULT_TEAM_COUNT))
   const [tournamentName, setTournamentName] = useState('')
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const changeTeamCount = (count) => {
     setTeamCount(count)
@@ -171,29 +190,45 @@ export const SingleElilmination = () => {
 
   const generateBracket = async (e) => {
     e.preventDefault()
+    if (submitting) return // stops a double click from creating two tournaments
 
     const cleanTeams = teams.map(trimTeam)
     const name = tournamentName.trim()
     const problem = validateTournament(name, cleanTeams)
     if (problem) return setError(problem)
 
+    setError('')
+    setSubmitting(true)
+
+    let data
     try {
-      const { data } = await api.post('/tournaments', { name, type: 'single', teams: cleanTeams })
-
-      const savedTeams = cleanTeams.map((team) => ({ ...team, pairId: data.pairs[team.id] }))
-
-      // Go to the dashboard and hand it the new bracket
-      navigate('/dashboard/singledashb', {
-        state: {
-          tournamentId: data.tournamentId,
-          tournamentName: name,
-          teams: savedTeams,
-          bracket: createBracket(savedTeams),
-        },
-      })
+      const res = await api.post('/tournaments', { name, type: 'single', teams: cleanTeams })
+      data = res.data
     } catch (err) {
       setError(err.response?.data?.message || 'Could not save the tournament.')
+      setSubmitting(false)
+      return
     }
+
+    // The tournament is saved now. If the server reply is missing the pair ids,
+    // say so instead of the misleading "could not save".
+    if (!data?.pairs) {
+      setError('The tournament was saved, but the server did not return the team ids.')
+      setSubmitting(false)
+      return
+    }
+
+    const savedTeams = cleanTeams.map((team) => ({ ...team, pairId: data.pairs[team.id] }))
+
+    // Go to the dashboard and hand it the new bracket
+    navigate('/dashboard/singledashb', {
+      state: {
+        tournamentId: data.tournamentId,
+        tournamentName: name,
+        teams: savedTeams,
+        bracket: createBracket(savedTeams),
+      },
+    })
   }
 
   return (
@@ -221,6 +256,7 @@ export const SingleElilmination = () => {
         teams={teams}
         onTeamChange={updateTeam}
         error={error}
+        submitting={submitting}
         onSubmit={generateBracket}
         onCancel={() => navigate('/dashboard/matching')}
       />
