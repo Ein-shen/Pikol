@@ -21,8 +21,8 @@ import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
 import { Top3_Dashb } from './Tour_dashb/Top3_Dashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
-import { Lead_Single_e } from './user/bracket_lead/Single/Lead_Single_e.jsx'
-import { Bracket_quadro_e } from './user/bracket_lead/quadro/Bracket_quadro_e.jsx'
+
+ 
 import { PulseLoader } from 'react-spinners'
 
 function App() {
@@ -64,7 +64,7 @@ function App() {
         element={user ? <Dashboard /> : <Navigate to="/login" replace />}
       >
         <Route path="/dashboard/hero" element={<Hero />} />
-        <Route path="/dashboard/single_lead" element={<Lead_Single_e />} />
+ 
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
         <Route path="/dashboard/double" element={<DoubleElimination />} />
