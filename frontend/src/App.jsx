@@ -15,9 +15,11 @@ import { Leaderboards } from './user/Leaderboards.jsx'
 import { SingleElilmination } from './user/Create_select_game/SingleElilmination.jsx'
 import { DoubleElimination } from './user/Create_select_game/DoubleElimination.jsx'
 import { QuadroEliminations } from './user/Create_select_game/QuadroEliminations.jsx'
+import { Top3_Brackets } from './user/Create_select_game/Top3_Brackets.jsx'
 import { OpenPlay } from './user/Create_select_game/OpenPlay.jsx'
 import { SingleDashb } from './Tour_dashb/SingleDashb.jsx'
 import { QuadroDashb } from './Tour_dashb/QuadroDashb.jsx'
+import { Top3_Dashb } from './Tour_dashb/Top3_Dashb.jsx'
 import { OpenplayDashb } from './Tour_dashb/OpenplayDashb.jsx'
 import { Lead_Single_e } from './user/bracket_lead/Single/Lead_Single_e.jsx'
 import { Bracket_quadro_e } from './user/bracket_lead/quadro/Bracket_quadro_e.jsx'
@@ -25,9 +27,6 @@ import { PulseLoader } from 'react-spinners'
 
 function App() {
   const { user, loading } = useAuth()
-
- 
-
 
   if (loading) {
     return (
@@ -70,13 +69,14 @@ function App() {
         <Route path="/dashboard/single" element={<SingleElilmination />} />
         <Route path="/dashboard/double" element={<DoubleElimination />} />
         <Route path="/dashboard/quadro" element={<QuadroEliminations />} />
+        <Route path="/dashboard/top3" element={<Top3_Brackets />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
         <Route path="/dashboard/overview" element={<Overview />} />
         <Route path="/dashboard/quadrodashb" element={<QuadroDashb />} />
+        <Route path="/dashboard/top3dashb" element={<Top3_Dashb />} />
         <Route path="/dashboard/singledashb" element={<SingleDashb />} />
         <Route path="/dashboard/openplaydashb" element={<OpenplayDashb />} />
         <Route path="/dashboard/leaderboards" element={<Leaderboards />} />
-        
 
         <Route path="/dashboard/settings_components" element={<Settings_components />} />
         <Route path="/dashboard/support_components" element={<Support_components />} />
