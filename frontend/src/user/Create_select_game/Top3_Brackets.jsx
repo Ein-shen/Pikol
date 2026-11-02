@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
 
-import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top3/Top3_bracketing_e'
+import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top3_bracketing_e'
 // getFormatSummary: one-line text describing the format for a team count
 // getGroupLabel:    which group (A or B) a team falls in, from its position in the list
 // Both come from the bracket file, so this page always matches the real bracket rules.
