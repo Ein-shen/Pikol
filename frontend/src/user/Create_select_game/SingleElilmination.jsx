@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
-import { createBracket } from '../bracket_lead/Single/Bracket_Single_VIew'
+import { createBracket } from '../bracket_lead/Bracket_Single_VIew'
 
 // Any count works: when it is not 4, 8, 16 or 32, some teams get a bye
 // (they skip round 1 and start in round 2). createBracket handles it.
