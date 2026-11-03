@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
-import { createBracket } from '../bracket_lead/Single/Bracket_Single_VIew'
+import { createBracket } from '../bracket_lead/Bracket_Single_VIew'
 
 // Even numbers only, so every team has an opponent in round 1
 const TEAM_COUNT_OPTIONS = [4, 6, 8, 10, 12, 14, 16, 20, 24, 32]
