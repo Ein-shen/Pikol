@@ -195,4 +195,15 @@ router.get("/quadro/:id", requireAuth, async (req, res) => {
 });
 
 
+// =====================================================
+// QUADRO: list quadro tournaments
+// GET /api/quadro
+// ===================================================== 
+
+
+// =====================================================
+// QUADRO: load one (teams + group scores + knockout scores)
+// GET /api/quadro/:id
+// =====================================================  
+
 export default router;
