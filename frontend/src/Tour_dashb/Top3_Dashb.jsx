@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Plus, ArrowLeft, MoreHorizontal } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../api'
-import { Top3_View } from '../user/bracket_lead/Top3/Top3_bracketing_e'
+import { Top3_View } from '../user/bracket_lead/Top3_bracketing_e'
 
 // TODO: keep these in sync with API_PATH / LIST_ROUTE in Top3_bracketing_e.jsx
 // and the routes in App.jsx.
