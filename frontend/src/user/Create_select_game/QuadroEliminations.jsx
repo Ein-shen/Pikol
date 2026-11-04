@@ -9,10 +9,12 @@ import api from '../../api'
 import { getFormatSummary, getGroupLabel } from '../bracket_lead/quadro/Bracket_quadro_e'
 
 // Team counts the user can pick.
-// 10 = 2 groups of 5 (semi-finals). 12 and up = 4 groups (quarter-finals).
+//   8 pairs  = Group A (4) + Group B (4), semi-finals
+//   9 pairs  = Group A (4) + Group B (5), semi-finals
+//   10 pairs = 2 groups of 5 (semi-finals). 12 and up = 4 groups (quarter-finals).
 // Other sizes work too (see FORMATS in Bracket_quadro_e.jsx): just add them here.
-const TEAM_COUNT_OPTIONS = [10, 12, 16, 20, 24, 28, 32]
-const DEFAULT_TEAM_COUNT = 20
+const TEAM_COUNT_OPTIONS = [8, 9, 10, 12, 16, 20, 24, 28, 32]
+const DEFAULT_TEAM_COUNT = 8
 
 function createEmptyTeam(id) {
   return { id, name: `Team ${id}`, player1: '', player2: '' }
@@ -42,6 +44,11 @@ function trimTeam(team) {
 
 function validateTournament(name, teams) {
   if (!name) return 'Please enter a tournament name.'
+
+  // Safeguard: the picker already limits this, but never trust the UI alone
+  if (!TEAM_COUNT_OPTIONS.includes(teams.length)) {
+    return 'Please choose a valid number of teams.'
+  }
 
   if (teams.some((t) => !t.name || !t.player1 || !t.player2)) {
     return `Please complete all ${teams.length} teams and their players.`
@@ -119,7 +126,7 @@ function TeamsForm({
               <label className="block text-sm font-bold">
                 Team {index + 1}
                 <span className="ml-2 text-xs font-normal theme-muted">
-                  {/* Group letter uses the same rule as the bracket (works for 10, 20, ...) */}
+                  {/* Group letter uses the same rule as the bracket */}
                   Group {getGroupLabel(index, teamCount)}
                 </span>
               </label>
