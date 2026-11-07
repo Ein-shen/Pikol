@@ -30,12 +30,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { RotateCcw, Lock, Unlock, Trophy } from 'lucide-react'
 import api from '../../api'
 
-// TODO: set these to match your backend / router.
 // Route to go back to the list of tournaments
 const LIST_ROUTE = '/dashboard/top3dashb'
-// All API calls of this tournament go to `${API_PATH}/${id}/...`
-// (same sub-routes as quadro: /group-matches and /matches)
-const API_PATH = '/top3'
 
 /* ------------------------------------------------------------------ */
 /* Format: 2 groups, top 3 of each go to the playoffs                  */
@@ -494,7 +490,7 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Podium cards (FIXED: every card has the same width)                 */
+/* Podium cards                                                        */
 /* ------------------------------------------------------------------ */
 
 function PlaceCard({ label, team, icon, featured = false }) {
@@ -525,7 +521,6 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
         icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
       />
 
-      {/* 👇 THIS is the div to change */}
       <div className="mt-4 flex flex-wrap justify-center gap-3">
         <PlaceCard label="2nd place" team={second} />
         {showThird && <PlaceCard label="3rd place" team={third} />}
@@ -534,6 +529,7 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
     </div>
   )
 }
+
 /* ------------------------------------------------------------------ */
 /* Group stage helpers                                                 */
 /* ------------------------------------------------------------------ */
@@ -796,7 +792,8 @@ export function Top3_View({
 
   const [error, setError] = useState('')
 
-  const base = `${API_PATH}/${tournamentId}`
+  // Base URL for all API calls of this tournament
+  const base = `/top3/${tournamentId}`
 
   const standings = useMemo(
     () => standingsFor(groups, groupMatches, scores),
@@ -1065,7 +1062,7 @@ export const Top3_bracketing_e = () => {
     let cancelled = false
     setStatus('loading')
     api
-      .get(`${API_PATH}/${id}`)
+      .get(`/top3/${id}`)
       .then((res) => {
         if (cancelled) return
         setData(res.data)
@@ -1081,7 +1078,7 @@ export const Top3_bracketing_e = () => {
   const handleReset = async () => {
     if (!window.confirm('Reset this tournament? All scores will be lost.')) return
     try {
-      await api.delete(`${API_PATH}/${id}`)
+      await api.delete(`/top3/${id}`)
     } catch {
       // Ignore errors: we navigate away either way
     }
