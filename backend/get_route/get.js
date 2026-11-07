@@ -170,14 +170,15 @@ router.get("/quadro/:id", requireAuth, async (req, res) => {
         );
 
         const groupMatches = await pool.query(
-            `SELECT group_name AS "group", pair1_id AS "pair1Id", pair2_id AS "pair2Id",
-                    score1, score2
+            `SELECT group_name AS "group", pair1_id AS "pair1Id", 
+            pair2_id AS "pair2Id", score1, score2
              FROM group_matches WHERE tournament_id = $1`,
             [id]
         );
 
         const matches = await pool.query(
-            `SELECT round, match_number AS "matchNumber", score1, score2
+            `SELECT round, match_number AS "matchNumber", 
+            score1, score2
              FROM matches WHERE tournament_id = $1`,
             [id]
         );
@@ -190,20 +191,90 @@ router.get("/quadro/:id", requireAuth, async (req, res) => {
         });
     } catch (err) {
         console.error("LOAD QUADRO ERROR:", err);
-        res.status(500).json({ message: "Could not load the tournament." });
+        res.status(500).json({ 
+            message: "Could not load the tournament." });
     }
 });
 
 
 // =====================================================
-// QUADRO: list quadro tournaments
-// GET /api/quadro
+// Top3: list top3 tournaments
+// GET /api/top3
 // ===================================================== 
 
+router.get("/top3", requireAuth, async (req, res ) => {
+    try {
+        const { rows } = await pool.query(
+           ` SELECT id, name, type, created_at FROM tournaments WHERE type = 'top3' 
+             ORDER BY id DESC`
+        );
+        res.json(rows);
 
-// =====================================================
-// QUADRO: load one (teams + group scores + knockout scores)
-// GET /api/quadro/:id
-// =====================================================  
+    } catch (err) {
+        console.error("LIST TOP# ERROR:", err);
+        res.status(500).json({message: "could not load tournament. "});
+    }
+});
+
+
+// ==============================================================   
+// TOP3: load one (teams + group scores + knockout scores)
+// GET /api/top3/:id
+// ============================================================== 
+router.get("/top3/:id", requireAuth, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const t = await pool.query(
+            "SELECT  id, name, type FROM tournaments WHERE id = $1 AND type = 'top3'",
+             [id]
+
+        );
+        if (t.rows.length === 0 ) {
+            return res.status(404).json({message: "Tournament not found. " });
+
+        }
+
+        const teams = await pool.query(`
+            SELECT p.id, p.id AS "pairId", p.name, p.player1, p.player2
+            FROM tournament_pairs tp
+            JOIN pairs p ON p.id = tp.pair_id
+            WHERE tp.tournament_id = $1
+            ORDER BY tp.position
+        `, [id]);
+
+        const groupMatches = await pool.query(`
+            SELECT group_name AS "group", pair1_id AS "pair1Id",
+            pair2_id AS "pair2Id", score1, score2 FROM group_matches
+            WHERE tournament_id = $1
+
+            `, [id]);
+
+        const matches = await pool.query(`
+            SELECT round, match_number AS "matchNumber",
+                pair1_id AS "pair1Id", pair2_id AS "pair2Id",
+                score1, score2
+            FROM matches WHERE tournament_id = $1
+        `, [id]);
+            
+
+        res.json({
+            ...t.rows[0],
+            teams: teams.rows,
+            groupMatches: groupMatches.rows,
+            matches: matches.rows,
+
+        });
+
+    } catch (err) {
+        console.error("LOAD TOP3 ERROR:", err);
+        res.status(500).json({
+            message: "Could not load the tournament."
+        });
+    } 
+
+})
+
 
 export default router;
+
