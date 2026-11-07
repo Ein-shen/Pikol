@@ -6,8 +6,7 @@ import api from '../api'
 // Where each tournament type's list page lives
 const TYPE_ROUTES = {
   single: '/dashboard/singledashb',
-  double: '/dashboard/double',
-  top2: '/dashboard/quadrodashb',
+  top2: '/dashboard/top2dashb',
   top3: '/dashboard/top3dashb',
 }
 
@@ -15,8 +14,8 @@ const TYPE_ROUTES = {
 const TYPE_LABELS = {
   single: 'Single Elimination',
   double: 'Double Elimination',
-  quadro: 'Top 2 Bracketing',
-  top3: 'Top 3 Brackets',
+  top2: 'Top 2 Bracketing',
+  top3: 'Top 3 Bracketing',
   
 }
 
@@ -49,7 +48,7 @@ export const Matching = () => {
         <div className="w-10 shrink-0" />
 
         {/* Centered heading */}
-        <h1 className="text-lg font-bold">Matching brackets</h1>
+        <h1 className="text-lg font-bold">Matching tournaments</h1>
 
         {/* Create tournament button */}
         <button
@@ -148,7 +147,7 @@ export const Matching = () => {
               
 
               <button
-                onClick={() => navigate('/dashboard/quadro')}
+                onClick={() => navigate('/dashboard/top2')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Top 2 Bracketing
