@@ -12,9 +12,9 @@ import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top3_bracketing
 
 // TODO: set these to match your backend / router.
 // Tournament type sent to POST /tournaments
-const TOURNAMENT_TYPE = 'top3'
+
 // Route of the tournaments list (the user lands here after saving)
-const LIST_ROUTE = '/dashboard/top3dashb'
+
 
 // Team counts the user can pick. All of them use 2 groups (A and B),
 // and the top 3 of each group go to the playoffs:
@@ -88,7 +88,6 @@ function TeamsForm({
         <h2 className="text-lg font-bold capitalize">Top 3 brackets</h2>
         <p className="text-sm theme-muted">Register {teamCount} teams with 2 players each.</p>
       </div>
-
       <div className="space-y-4 p-5">
         <div>
           <label className="mb-1 block text-sm font-medium">Tournament name</label>
@@ -214,11 +213,7 @@ export const Top3_Brackets = () => {
 
     setSaving(true)
     try {
-      const { data } = await api.post('/tournaments', {
-        name,
-        type: TOURNAMENT_TYPE,
-        teams: cleanTeams,
-      })
+      const { data } = await api.post('/tournaments', { name, type: 'top3', teams: cleanTeams })
 
       // Same shape that the dashboard builds when you click a card
       const savedTeams = cleanTeams.map((team) => ({
@@ -227,7 +222,7 @@ export const Top3_Brackets = () => {
         pairId: data.pairs?.[team.id] ?? team.id,
       }))
 
-      navigate(LIST_ROUTE, {
+      navigate('/dashboard/top3dashb', {
         state: {
           tournamentId: data.tournamentId,
           tournamentName: name,
@@ -268,7 +263,7 @@ export const Top3_Brackets = () => {
         onTeamChange={updateTeam}
         error={error}
         onSubmit={generateBracket}
-        onCancel={() => navigate(LIST_ROUTE)}
+        onCancel={() => navigate('/dashboard/top3dashb')}
         saving={saving}
       />
     </div>
