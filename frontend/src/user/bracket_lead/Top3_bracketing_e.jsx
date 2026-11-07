@@ -383,7 +383,7 @@ function WaitCard({ item }) {
         borderRadius: 6,
       }}
     >
-      <p className="text-[11px] uppercase tracking-wide text-gray-500">Bye - waiting for next round</p>
+      <p className="text-[11px] uppercase tracking-wide text-gray-500">Bye - Top 1 in bracket</p>
       <p className="mt-1 text-[13px]" style={nameStyle(item.team1)}>
         {item.team1 ? pairLabel(item.team1) : 'TBD'}
       </p>
@@ -521,10 +521,10 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
         icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
       />
 
-      <div className="mt-4 flex flex-wrap justify-center gap-3">
-        <PlaceCard label="2nd place" team={second} />
-        {showThird && <PlaceCard label="3rd place" team={third} />}
-        {showThird && <PlaceCard label="4th place" team={fourth} />}
+      <div className="mt-4 flex   flex-row justify-center gap-3">
+        <PlaceCard label="1st place" team={second} />
+        {showThird && <PlaceCard label="2nd place" team={third} />}
+        {showThird && <PlaceCard label="3ed place" team={fourth} />}
       </div>
     </div>
   )
