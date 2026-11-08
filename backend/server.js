@@ -3,10 +3,10 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.js";
-import getRoutes from "./get_route/get.js";
-import postRoutes from "./post_route/post.js";
-import putRoutes from "./put_route/put.js";
-import deleteRoutes from "./delete_route/delete.js";
+import getRoutes from "./routes/get.js";
+import postRoutes from "./routes/post.js";
+import putRoutes from "./routes/put.js";
+import deleteRoutes from "./routes/delete.js";
 import pool from "./db.js";
 
 const app = express();
