@@ -101,7 +101,7 @@ export const Top2_Dashb = () => {
         {/* CHANGED: min-w-0 lets the title truncate instead of pushing the button off-screen */}
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
-            className="theme-hover shrink-0 rounded-md p-2" // CHANGED: shrink-0 keeps the back button from squishing
+            className="opacity-60 transition hover:opacity-100 shrink-0 rounded-md p-2" // CHANGED: shrink-0 keeps the back button from squishing
             onClick={() => navigate(-1)}
             aria-label="Go back"
           >
