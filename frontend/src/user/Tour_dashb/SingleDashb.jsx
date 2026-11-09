@@ -114,7 +114,7 @@ export const SingleDashb = () => {
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
-            className="theme-hover p-2 rounded-md"
+            className="opacity-60 transition hover:opacity-100 p-2 rounded-md"
             onClick={() => navigate(-1)}
             aria-label="Go back"
           >
