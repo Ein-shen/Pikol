@@ -236,7 +236,7 @@ export const Top2_Brackets = () => {
     <div className="w-full flex flex-col gap-10">
       <header className="flex justify-between flex-row items-center">
         <button
-          className="theme-hover p-2 rounded-md"
+          className="opacity-60 transition hover:opacity-100 p-2 rounded-md"
           onClick={() => navigate(-1)}
           aria-label="Go back"
         >
