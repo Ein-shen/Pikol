@@ -54,7 +54,7 @@ export const Matching = () => {
         <button
           type="button"
           onClick={() => setShow(true)}
-          className="theme-hover rounded-md p-2"
+          className="opacity-60 transition hover:opacity-100 rounded-md p-2"
           aria-label="Create tournament"
         >
           <Plus size={24} />
