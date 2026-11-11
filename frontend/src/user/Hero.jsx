@@ -1,16 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
-// CHANGED: merged the two separate lucide-react imports into one
 import { ArrowLeft, ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 
 export const Hero = () => {
-  // CHANGED: removed unused `showEdit` state (wasn't used anywhere)
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
 
-  // CHANGED: ref used to detect clicks outside the dropdown
+  // Edit profile state
+  const [showEdit, setShowEdit] = useState(false)
+  const [form, setForm] = useState({ fullname: '', username: '' })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  // Ref used to detect clicks outside the dropdown
   const menuRef = useRef(null)
 
   const fetchUser = async () => {
@@ -26,7 +30,7 @@ export const Hero = () => {
     fetchUser()
   }, [])
 
-  // CHANGED: close the dropdown on outside click or Escape
+  // Close the dropdown on outside click or Escape
   useEffect(() => {
     if (!showDropdown) return
 
@@ -47,16 +51,53 @@ export const Hero = () => {
     }
   }, [showDropdown])
 
+  // Close the edit modal on Escape
+  useEffect(() => {
+    if (!showEdit) return
+
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setShowEdit(false)
+    }
+    document.addEventListener('keydown', handleKey)
+    return () => document.removeEventListener('keydown', handleKey)
+  }, [showEdit])
+
   const go = (path) => {
     setShowDropdown(false)
     navigate(path)
   }
 
-  // CHANGED: added a logout handler (adjust to however you store auth)
   const handleLogout = () => {
     setShowDropdown(false)
     localStorage.removeItem('token') // placeholder: use your real auth cleanup
     navigate('/login')
+  }
+
+  // Open the edit modal with the current user's values
+  const openEdit = () => {
+    setForm({
+      fullname: user?.fullname ?? '',
+      username: user?.username ?? '',
+    })
+    setError('')
+    setShowDropdown(false)
+    setShowEdit(true)
+  }
+
+  const handleSave = async (e) => {
+    e.preventDefault()
+    setSaving(true)
+    setError('')
+    try {
+      const res = await api.put('/me', form) // adjust method/route to your backend
+      setUser(res.data) // or call fetchUser() if your API doesn't return the user
+      setShowEdit(false)
+    } catch (err) {
+      console.error('Update profile error:', err)
+      setError('Could not save your changes. Try again.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -65,17 +106,14 @@ export const Hero = () => {
         <button
           className="theme-hover p-2 rounded-md"
           onClick={() => navigate(-1)}
-          aria-label="Go back" // CHANGED: added aria-label for the icon-only button
+          aria-label="Go back"
         >
           <ArrowLeft />
         </button>
 
-        {/* CHANGED: username + dropdown are now wrapped in ONE `relative` container.
-            Before, the dropdown was a separate child of the flex header, so it became
-            a 4th flex item and pushed the layout around instead of floating. */}
+        {/* Username + dropdown wrapped in ONE relative container */}
         <div ref={menuRef} className="relative">
           <div className="flex flex-row items-center gap-1 text-lg font-bold">
-            {/* CHANGED: removed duplicate text-lg/font-bold (parent already has them) */}
             <span>@{user?.username}</span>
             <button
               type="button"
@@ -92,11 +130,6 @@ export const Hero = () => {
             </button>
           </div>
 
-          {/* CHANGED: fixed the missing `)}` / syntax, and rebuilt the menu:
-              - absolute + top-full so it floats under the username
-              - theme-card so it has a background (was see-through)
-              - removed duplicate `flex` and conflicting justify-center/items-center
-              - `border` kept for width, theme-border for colour */}
           {showDropdown && (
             <div
               role="menu"
@@ -105,17 +138,16 @@ export const Hero = () => {
               <button
                 type="button"
                 role="menuitem"
-                onClick={() => go(' ')} // CHANGED: wired up with your `go` helper (it was unused). Adjust the route.
+                onClick={openEdit}
                 className="text-left text-xs border-b border-white/10 px-4 py-2 theme-hover theme-card theme-border w-full"
               >
-                {/* CHANGED: typo "Edi profile" -> "Edit profile" */}
                 Edit profile
               </button>
               <button
                 type="button"
                 role="menuitem"
-                onClick={() => go(' ')} // CHANGED: adjust the route
-                className="text-left text-xs px-4  border-b border-white/10 py-2 theme-hover theme-card theme-border w-full"
+                onClick={() => go('/add-account')} // adjust the route
+                className="text-left text-xs px-4 border-b border-white/10 py-2 theme-hover theme-card theme-border w-full"
               >
                 Add account
               </button>
@@ -123,7 +155,7 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={handleLogout}
-                className="text-left text-xs px-4 py-2  border-b border-white/10 theme-hover theme-card theme-border w-full"
+                className="text-left text-xs px-4 py-2 theme-hover theme-card theme-border w-full"
               >
                 Logout
               </button>
@@ -131,17 +163,12 @@ export const Hero = () => {
           )}
         </div>
 
-        {/* CHANGED: w-6 -> w-10 so the spacer matches the back button's width
-            (24px icon + 16px padding), which keeps the username truly centered */}
+        {/* Spacer matches the back button width so the username stays centered */}
         <div className="w-10" />
       </header>
 
       <div className="flex flex-row items-center justify-center gap-5">
         {/* Circle */}
-        {/* CHANGED: onClick={() => navigate()} called navigate with no argument,
-            which does nothing/errors. Removed it; add a real path if you want it clickable. */}
-        {/* CHANGED: items-center does nothing on a non-flex div, so added flex + justify-center.
-            Also w-23/h-23 + p-6 made the 52px icon overflow the box; now w-24/h-24 with no padding. */}
         <div className="theme-border theme-accent flex h-24 w-24 items-center justify-center rounded-xl border border-black/80">
           <img
             src="https://img.icons8.com/?size=100&id=12438&format=png&color=000000"
@@ -152,19 +179,15 @@ export const Hero = () => {
           />
         </div>
 
-        {/* text name */}
-        {/* CHANGED: `items-left` and `justify-top` aren't real Tailwind classes -> items-start justify-start */}
+        {/* Name + email */}
         <div className="flex flex-col items-start justify-start gap-2">
           <span className="flex flex-row items-center gap-1 text-xl font-bold">
-            {/* CHANGED: removed the hardcoded "Shen Sarsale" text after the fullname.
-                It would always show next to the real name. */}
             {user?.fullname}
 
-            {/* CHANGED: span -> button so it's keyboard accessible and clickable */}
-           <button
+            <button
               type="button"
               aria-label="Edit profile"
-              onClick={() => go('')}
+              onClick={openEdit}
               className="flex items-center justify-center rounded-lg p-1 opacity-60 transition hover:opacity-100"
             >
               <img
@@ -177,10 +200,69 @@ export const Hero = () => {
             </button>
           </span>
 
-          {/* CHANGED: text-gray-400 -> theme-muted so it follows your dark/light green theme */}
           <span className="theme-muted text-xs">{user?.email}</span>
         </div>
       </div>
+
+      {/* Edit profile modal */}
+      {showEdit && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          onMouseDown={(e) => e.target === e.currentTarget && setShowEdit(false)}
+        >
+          <form
+            onSubmit={handleSave}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="edit-profile-title"
+            className="theme-card theme-border theme-text flex w-full max-w-sm flex-col gap-4 rounded-xl border p-6 shadow-lg"
+          >
+            <h2 id="edit-profile-title" className="text-lg font-bold">
+              Edit profile
+            </h2>
+
+            <label className="flex flex-col gap-1 text-sm">
+              Full name
+              <input
+                value={form.fullname}
+                onChange={(e) => setForm({ ...form, fullname: e.target.value })}
+                className="theme-border rounded-md border bg-transparent px-3 py-2"
+                required
+                autoFocus
+              />
+            </label>
+
+            <label className="flex flex-col gap-1 text-sm">
+              Username
+              <input
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                className="theme-border rounded-md border bg-transparent px-3 py-2"
+                required
+              />
+            </label>
+
+            {error && <p className="text-sm text-red-500">{error}</p>}
+
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setShowEdit(false)}
+                className="theme-hover rounded-md px-3 py-2 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="theme-accent rounded-md px-4 py-2 text-sm font-bold disabled:opacity-60"
+              >
+                {saving ? 'Saving...' : 'Save changes'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   )
 }
