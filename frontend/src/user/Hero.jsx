@@ -246,7 +246,7 @@ export const Hero = () => {
               type="button"
               aria-label="Edit profile"
               onClick={openEdit}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-white px-2 py-1 text-xs opacity-60 transition hover:opacity-100"
+              className="flex w-full items-center justify-center gap-2 rounded-md   border theme-border-2  px-2 py-1 text-xs opacity-60 transition hover:opacity-100"
             >
               Edit Profile
               <img
