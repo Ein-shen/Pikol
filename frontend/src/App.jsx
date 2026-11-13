@@ -11,7 +11,7 @@ import { About_components } from './user/components/About_components.jsx'
 import { Support_components }  from './user/components/Support_components.jsx'
 import { Matching } from './user/Matching.jsx'
 import { Overview } from './user/Overview.jsx'
-import { Leaderboards } from './user/Leaderboards.jsx'
+
 import { SingleElilmination } from './user/Create_select_game/SingleElilmination.jsx'
 import { DoubleElimination } from './user/Create_select_game/DoubleElimination.jsx'
 import { Top2_Brackets } from './user/Create_select_game/Top2_Brackets.jsx'
@@ -76,7 +76,7 @@ function App() {
         <Route path="/dashboard/top3dashb" element={<Top3_Dashb />} />
         <Route path="/dashboard/singledashb" element={<SingleDashb />} />
         <Route path="/dashboard/openplaydashb" element={<OpenplayDashb />} />
-        <Route path="/dashboard/leaderboards" element={<Leaderboards />} />
+       
 
         <Route path="/dashboard/settings_components" element={<Settings_components />} />
         <Route path="/dashboard/support_components" element={<Support_components />} />
