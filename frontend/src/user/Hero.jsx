@@ -113,7 +113,7 @@ export const Hero = () => {
 
         {/* Username + dropdown wrapped in ONE relative container */}
         <div ref={menuRef} className="relative">
-          <div className="flex flex-row items-center gap-1 text-lg font-bold">
+          <div className="flex flex-row items-center gap-1 text-xl font-bold">
             <span>@{user?.username}</span>
             <button
               type="button"
@@ -232,12 +232,12 @@ export const Hero = () => {
             </div>
           </form>
         ) : (
-          <div className="flex w-full min-w-0 max-w-xs flex-col gap-6 text-center sm:w-auto sm:text-left">
+         <div className="flex w-full min-w-0 max-w-xs flex-col justify-between gap-6 text-center sm:w-auto sm:text-left">
             <div className="flex flex-col gap-3">
               <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
                 {user?.fullname} shen sarsale
               </span>
-              <span className="theme-muted break-all text-sm leading-tight">
+              <span className="theme-muted break-all text-l leading-tight">
                 {user?.email}
               </span>
             </div>
