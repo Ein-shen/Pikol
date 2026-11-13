@@ -101,7 +101,7 @@ export const Hero = () => {
   }
 
   return (
-    <div className="flex flex-col w-full gap-20">
+    <div className="flex flex-col w-full gap-10 sm:gap-20">
       <header className="flex flex-row items-center justify-between">
         <button
           className="opacity-60 transition hover:opacity-100 p-2 rounded-md"
@@ -167,9 +167,9 @@ export const Hero = () => {
         <div className="w-10" />
       </header>
 
-      <div className="flex flex-row justify-center gap-5">
+      <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-stretch sm:justify-center">
         {/* Circle */}
-        <div className="theme-border theme-accent flex h-32 w-32 shrink-0 items-center justify-center rounded-xl border border-black/80">
+        <div className="theme-border theme-accent flex h-28 w-28 shrink-0 items-center justify-center rounded-xl border border-black/80 sm:h-32 sm:w-32">
           <img
             src="https://img.icons8.com/?size=100&id=12438&format=png&color=000000"
             alt="default"
@@ -181,7 +181,10 @@ export const Hero = () => {
 
         {/* Name + email */}
         {isEditing ? (
-          <form onSubmit={handleSave} className="flex w-64 flex-col gap-3 sm:w-72">
+          <form
+            onSubmit={handleSave}
+            className="flex w-full max-w-xs flex-col gap-3 sm:w-72"
+          >
             <div className="flex flex-col  ">
               <label htmlFor="edit-fullname" className="text-sm font-semibold">
                 Name
@@ -229,12 +232,14 @@ export const Hero = () => {
             </div>
           </form>
         ) : (
-         <div className="flex flex-col justify-between">
-            <div className="flex flex-col gap-4">
-              <span className="text-2xl font-bold capitalize leading-tight">
+          <div className="flex w-full min-w-0 max-w-xs flex-col gap-6 text-center sm:w-auto sm:text-left">
+            <div className="flex flex-col gap-3">
+              <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
                 {user?.fullname} shen sarsale
               </span>
-              <span className="theme-muted text-sm leading-tight">{user?.email}</span>
+              <span className="theme-muted break-all text-sm leading-tight">
+                {user?.email}
+              </span>
             </div>
 
             <button
@@ -253,8 +258,6 @@ export const Hero = () => {
               />
             </button>
           </div>
-            
-      
         )}
       </div>
     </div>
