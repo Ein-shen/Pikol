@@ -104,7 +104,7 @@ export const Hero = () => {
     <div className="flex flex-col w-full gap-20">
       <header className="flex flex-row items-center justify-between">
         <button
-          className="theme-hover p-2 rounded-md"
+          className="opacity-60 transition hover:opacity-100 p-2 rounded-md"
           onClick={() => navigate(-1)}
           aria-label="Go back"
         >
