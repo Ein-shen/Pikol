@@ -8,8 +8,8 @@ export const Hero = () => {
   const navigate = useNavigate()
   const [showDropdown, setShowDropdown] = useState(false)
 
-  // Edit profile state
-  const [showEdit, setShowEdit] = useState(false)
+  // Inline edit state
+  const [isEditing, setIsEditing] = useState(false)
   const [form, setForm] = useState({ fullname: '', username: '' })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -51,16 +51,16 @@ export const Hero = () => {
     }
   }, [showDropdown])
 
-  // Close the edit modal on Escape
+  // Cancel inline editing on Escape
   useEffect(() => {
-    if (!showEdit) return
+    if (!isEditing) return
 
     const handleKey = (e) => {
-      if (e.key === 'Escape') setShowEdit(false)
+      if (e.key === 'Escape') setIsEditing(false)
     }
     document.addEventListener('keydown', handleKey)
     return () => document.removeEventListener('keydown', handleKey)
-  }, [showEdit])
+  }, [isEditing])
 
   const go = (path) => {
     setShowDropdown(false)
@@ -73,7 +73,7 @@ export const Hero = () => {
     navigate('/login')
   }
 
-  // Open the edit modal with the current user's values
+  // Switch the name into edit mode with the current user's values
   const openEdit = () => {
     setForm({
       fullname: user?.fullname ?? '',
@@ -81,7 +81,7 @@ export const Hero = () => {
     })
     setError('')
     setShowDropdown(false)
-    setShowEdit(true)
+    setIsEditing(true)
   }
 
   const handleSave = async (e) => {
@@ -91,7 +91,7 @@ export const Hero = () => {
     try {
       const res = await api.put('/me', form) // adjust method/route to your backend
       setUser(res.data) // or call fetchUser() if your API doesn't return the user
-      setShowEdit(false)
+      setIsEditing(false)
     } catch (err) {
       console.error('Update profile error:', err)
       setError('Could not save your changes. Try again.')
@@ -167,9 +167,9 @@ export const Hero = () => {
         <div className="w-10" />
       </header>
 
-      <div className="flex flex-row items-center justify-center gap-5">
+      <div className="flex flex-row justify-center gap-5">
         {/* Circle */}
-        <div className="theme-border theme-accent flex h-24 w-24 items-center justify-center rounded-xl border border-black/80">
+        <div className="theme-border theme-accent flex h-32 w-32 shrink-0 items-center justify-center rounded-xl border border-black/80">
           <img
             src="https://img.icons8.com/?size=100&id=12438&format=png&color=000000"
             alt="default"
@@ -180,89 +180,83 @@ export const Hero = () => {
         </div>
 
         {/* Name + email */}
-        <div className="flex flex-col items-start justify-start gap-2">
-          <span className="flex flex-row items-center gap-1 text-xl font-bold">
-            {user?.fullname}
+        {isEditing ? (
+          <form onSubmit={handleSave} className="flex w-64 flex-col gap-3 sm:w-72">
+            <div className="flex flex-col  ">
+              <label htmlFor="edit-fullname" className="text-sm font-semibold">
+                Name
+              </label>
+              <input
+                id="edit-fullname"
+                value={form.fullname}
+                onChange={(e) => setForm({ ...form, fullname: e.target.value })}
+                className="theme-border w-full rounded-md border bg-transparent px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="edit-username" className="text-sm font-semibold">
+                Username
+              </label>
+              <input
+                id="edit-username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                className="theme-border w-full rounded-md border bg-transparent px-3 py-1.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                required
+              />
+            </div>
+
+            {error && <p className="text-xs text-red-500">{error}</p>}
+
+            <div className="flex items-center gap-2">
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-green-500 disabled:opacity-60"
+              >
+                {saving ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="theme-card theme-border theme-hover rounded-md border px-4 py-1.5 text-sm font-semibold"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : (
+         <div className="flex flex-col justify-between">
+            <div className="flex flex-col gap-4">
+              <span className="text-2xl font-bold capitalize leading-tight">
+                {user?.fullname} shen sarsale
+              </span>
+              <span className="theme-muted text-sm leading-tight">{user?.email}</span>
+            </div>
 
             <button
               type="button"
               aria-label="Edit profile"
               onClick={openEdit}
-              className="flex items-center justify-center rounded-lg p-1 opacity-60 transition hover:opacity-100"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-white px-2 py-1 text-xs opacity-60 transition hover:opacity-100"
             >
+              Edit Profile
               <img
                 src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000"
                 alt=""
-                height={18}
-                width={18}
+                height={14}
+                width={14}
                 className="theme-icon"
               />
             </button>
-          </span>
-
-          <span className="theme-muted text-xs">{user?.email}</span>
-        </div>
+          </div>
+            
+      
+        )}
       </div>
-
-      {/* Edit profile modal */}
-      {showEdit && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          onMouseDown={(e) => e.target === e.currentTarget && setShowEdit(false)}
-        >
-          <form
-            onSubmit={handleSave}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="edit-profile-title"
-            className="theme-card theme-border theme-text flex w-full max-w-sm flex-col gap-4 rounded-xl border p-6 shadow-lg"
-          >
-            <h2 id="edit-profile-title" className="text-lg font-bold">
-              Edit profile
-            </h2>
-
-            <label className="flex flex-col gap-1 text-sm">
-              Full name
-              <input
-                value={form.fullname}
-                onChange={(e) => setForm({ ...form, fullname: e.target.value })}
-                className="theme-border rounded-md border bg-transparent px-3 py-2"
-                required
-                autoFocus
-              />
-            </label>
-
-            <label className="flex flex-col gap-1 text-sm">
-              Username
-              <input
-                value={form.username}
-                onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="theme-border rounded-md border bg-transparent px-3 py-2"
-                required
-              />
-            </label>
-
-            {error && <p className="text-sm text-red-500">{error}</p>}
-
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setShowEdit(false)}
-                className="theme-hover rounded-md px-3 py-2 text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={saving}
-                className="theme-accent rounded-md px-4 py-2 text-sm font-bold disabled:opacity-60"
-              >
-                {saving ? 'Saving...' : 'Save changes'}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
     </div>
   )
 }
