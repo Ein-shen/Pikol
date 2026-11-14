@@ -34,7 +34,7 @@ export const Overview = () => {
       <h1 className="text-lg font-bold">Overview</h1>
 
       {/* Total */}
-      <div className="border theme-border p-6 rounded-md">
+      <div className="border theme-border p-6 rounded-md theme-hover theme-card">
         <p className="text-sm text-gray-500">Total tournaments</p>
         <p className="text-3xl font-black">{total}</p>
       </div>
@@ -43,7 +43,7 @@ export const Overview = () => {
       <div className=" gap-4 w-full flex flex-row   ">
         
         {Object.entries(typeCounts).map(([type, count]) => (
-          <div key={type} className="flex flex-row justify-between w-full rounded-md p-4 space-y-3 border theme-border">
+          <div key={type} className="flex flex-row justify-between w-full theme-hover theme-card rounded-md p-4 space-y-3 border theme-border">
            
            <div className='flex flex-col gap-5'>
             <span className="capitalize text-gray-500 ">{type} 
@@ -53,10 +53,28 @@ export const Overview = () => {
             
 
            </div>
+
+           
             
           </div>
         ))}
       </div>
+      <div className='flex flex-col pt-5'>
+              <h1 className='flex flex-col gap-2'>
+
+                Reminder:
+                <span> - show recent winners</span>
+                  <span> - show recent tournament used</span>
+                  <span> - show tournament anlytics</span>
+                  <span> - show AI chatbot</span>
+                  <span> - show Policies </span>
+                  <span> - Add more precise Explaination of the tournament</span>
+                   <span> - Add Confirmation popup in the delete and signout buttons</span>
+                    <span> - Implement Lower bracket and upper braket type tournament</span>
+                     <span> - Implement Openplay backend andfrontend</span>
+                      <span> - Add delay animation this web</span>
+              </h1>
+           </div>
 
     </div>
   )
