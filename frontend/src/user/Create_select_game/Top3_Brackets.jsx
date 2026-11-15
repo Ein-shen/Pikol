@@ -8,7 +8,7 @@ import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top3_bracketing
 // getGroupLabel:    which group (A or B) a team falls in, from its position in the list
 // Both come from the bracket file, so this page always matches the real bracket rules.
 // TODO: adjust this path to where Top3_bracketing_e.jsx lives relative to THIS file.
- 
+
 
 // TODO: set these to match your backend / router.
 // Tournament type sent to POST /tournaments
@@ -16,10 +16,12 @@ import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top3_bracketing
 // Route of the tournaments list (the user lands here after saving)
 
 
-// Team counts the user can pick. All of them use 2 groups (A and B),
-// and the top 3 of each group go to the playoffs:
-//   8 = 4 + 4,  9 = 4 + 5,  10 = 5 + 5,  12 = 6 + 6, ...
-const TEAM_COUNT_OPTIONS = [8, 9, 10, 12, 14, 16]
+// Team counts the user can pick. Works like the Top 2 page, but the top 3 of EVERY group
+// go to the playoffs (see FORMATS in Top3_bracketing_e.jsx):
+//   6-11, 13-15 teams = 2 groups (A, B), e.g. 7 = 4 + 3, 9 = 5 + 4, 15 = 8 + 7
+//   12 teams          = 3 groups (A, B, C) of 4
+//   16+ teams         = 4 groups (A-D), e.g. 16 = 4 x 4, 20 = 5 x 4
+const TEAM_COUNT_OPTIONS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 28, 32]
 const DEFAULT_TEAM_COUNT = 8
 
 function createEmptyTeam(id) {
@@ -58,6 +60,12 @@ function validateTournament(name, teams) {
 
   if (teams.some((t) => !t.name || !t.player1 || !t.player2)) {
     return `Please complete all ${teams.length} teams and their players.`
+  }
+
+  // Team names must be unique, otherwise the standings can't tell teams apart
+  const names = teams.map((t) => t.name.toLowerCase())
+  if (new Set(names).size !== names.length) {
+    return 'Each team name must be unique.'
   }
 
   const players = teams.flatMap((t) => [t.player1.toLowerCase(), t.player2.toLowerCase()])
