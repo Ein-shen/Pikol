@@ -41,7 +41,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { RotateCcw, Lock, Unlock, Trophy } from 'lucide-react'
+import { RotateCcw, Lock, Unlock, Trophy, Pencil} from 'lucide-react'
 import api from '../../api'
 // createBracket: builds an empty knockout tree from a list of seeded teams
 // applyResults:  fills that tree with scores that were saved earlier
@@ -1300,7 +1300,7 @@ export function Top2_View({
   return (
     <section className="space-y-5">
       {/* Header: tournament name, summary line and reset button */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl rounded-md border theme-muted p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-5">
         <div>
           <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">
@@ -1308,13 +1308,25 @@ export function Top2_View({
             {doneCount}/{allMatches.length}
           </p>
         </div>
-        <button
-          onClick={onReset}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
-        >
-          <RotateCcw size={16} /> Reset tournament
-        </button>
-      </div>
+
+        <div className="flex w-full flex-row justify-end gap-2">
+          <button
+            onClick={onReset}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
+          >
+            <RotateCcw size={16} /> Reset tournament
+          </button>
+
+          <button
+            onClick={ ""}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
+          >
+            <Pencil size={16} /> Edit Tournament
+          </button>
+        </div>
+
+        </div>
+        
 
       {/* Champion banner (only when the final is decided) */}
       {champion && (
