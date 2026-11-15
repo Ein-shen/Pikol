@@ -9,12 +9,21 @@ import api from '../../api'
 import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top2_bracketing_e'
 
 // Team counts the user can pick.
+//   6 pairs  = Group A (3) + Group B (3), semi-finals
+//   7 pairs  = Group A (4) + Group B (3), semi-finals
 //   8 pairs  = Group A (4) + Group B (4), semi-finals
-//   9 pairs  = Group A (4) + Group B (5), semi-finals
-//   10 pairs = 2 groups of 5 (semi-finals). 12 and up = 4 groups (quarter-finals).
+//   9 pairs  = Group A (5) + Group B (4), semi-finals
+//   10 pairs = 2 groups of 5 (semi-finals).
+//   12 pairs = 3 groups (A, B, C) of 4: top 2 of each = 6 teams, seeds 1-2 get a bye,
+//              2 quarter-finals, then 4 teams in the semi-finals.
+//   16 and up = 4 groups (quarter-finals).
 // Other sizes work too (see FORMATS in Bracket_quadro_e.jsx): just add them here.
-const TEAM_COUNT_OPTIONS = [8, 9, 10, 12, 16, 20, 24, 28, 32]
+const TEAM_COUNT_OPTIONS = [6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32]
 const DEFAULT_TEAM_COUNT = 8
+
+// Route of the Top 2 dashboard (list + bracket view). MUST match the path in your router.
+// Used after saving and by the Cancel button, so there is only one place to change.
+const DASH_ROUTE = '/dashboard/top2dashb'
 
 function createEmptyTeam(id) {
   return { id, name: `Team ${id}`, player1: '', player2: '' }
@@ -52,6 +61,12 @@ function validateTournament(name, teams) {
 
   if (teams.some((t) => !t.name || !t.player1 || !t.player2)) {
     return `Please complete all ${teams.length} teams and their players.`
+  }
+
+  // Team names must be unique, otherwise the standings can't tell teams apart
+  const names = teams.map((t) => t.name.toLowerCase())
+  if (new Set(names).size !== names.length) {
+    return 'Each team name must be unique.'
   }
 
   const players = teams.flatMap((t) => [t.player1.toLowerCase(), t.player2.toLowerCase()])
@@ -217,7 +232,7 @@ export const Top2_Brackets = () => {
         pairId: data.pairs?.[team.id] ?? team.id,
       }))
 
-      navigate('/dashboard/quadrodashb', {
+      navigate(DASH_ROUTE, {
         state: {
           tournamentId: data.tournamentId,
           tournamentName: name,
@@ -258,7 +273,7 @@ export const Top2_Brackets = () => {
         onTeamChange={updateTeam}
         error={error}
         onSubmit={generateBracket}
-        onCancel={() => navigate('/dashboard/quadrodashb')}
+        onCancel={() => navigate(DASH_ROUTE)}
         saving={saving}
       />
     </div>
