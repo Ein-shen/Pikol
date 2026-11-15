@@ -4,6 +4,12 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import api from '../../api'
 import { Quadro_View } from '../bracket_lead/Top2_bracketing_e'
 
+// These two MUST match the paths in your router.
+// DASH_ROUTE = this page (list of tournaments + bracket view)
+// NEW_ROUTE  = the registration page (Top2_Brackets.jsx)
+const DASH_ROUTE = '/dashboard/top2dashb'
+const NEW_ROUTE = '/dashboard/top2'
+
 export const Top2_Dashb = () => {
   const [tournaments, setTournaments] = useState([])
   const [openError, setOpenError] = useState('')
@@ -60,7 +66,7 @@ export const Top2_Dashb = () => {
       await api.delete(`/top2/${id}`)
       setTournaments((prev) => prev.filter((t) => t.id !== id))
       if (current?.tournamentId === id) {
-        navigate('/dashboard/quadrodashb', { replace: true, state: null })
+        navigate(DASH_ROUTE, { replace: true, state: null })
       }
     } catch (err) {
       console.error('Delete tournament error:', err)
@@ -78,7 +84,7 @@ export const Top2_Dashb = () => {
         prev.map((t) => (t.id === id ? { ...t, name: renameValue.trim() } : t))
       )
       if (current?.tournamentId === id) {
-        navigate('/dashboard/quadrodashb', {
+        navigate(DASH_ROUTE, {
           replace: true,
           state: { ...current, tournamentName: renameValue.trim() },
         })
@@ -93,31 +99,31 @@ export const Top2_Dashb = () => {
   const getTeamCount = (t) => t.teams?.length ?? t.teamCount ?? null
 
   return (
-    // CHANGED: added min-w-0 so wide children (like the bracket view) can't
+    // min-w-0 so wide children (like the bracket view) can't
     // stretch this flex child past the screen width
     <div className="flex w-full min-w-0 flex-col gap-4 sm:gap-6">
-      {/* CHANGED: gap-3 between title and button so they never touch on small screens */}
+      {/* gap-3 between title and button so they never touch on small screens */}
       <header className="flex items-center justify-between gap-3">
-        {/* CHANGED: min-w-0 lets the title truncate instead of pushing the button off-screen */}
+        {/* min-w-0 lets the title truncate instead of pushing the button off-screen */}
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
-            className="opacity-60 transition hover:opacity-100 shrink-0 rounded-md p-2" // CHANGED: shrink-0 keeps the back button from squishing
+            className="opacity-60 transition hover:opacity-100 shrink-0 rounded-md p-2" // shrink-0 keeps the back button from squishing
             onClick={() => navigate(-1)}
             aria-label="Go back"
           >
             <ArrowLeft />
           </button>
-          {/* CHANGED: text-lg on mobile, text-xl from sm up; truncate for long titles */}
+          {/* text-lg on mobile, text-xl from sm up; truncate for long titles */}
           <h1 className="truncate text-lg font-bold sm:text-xl">Top 2 Bracketing</h1>
         </div>
         <button
-          onClick={() => navigate('/dashboard/top2')}
-          // CHANGED: shrink-0 + whitespace-nowrap so the label never wraps to 2 lines;
+          onClick={() => navigate(NEW_ROUTE)}
+          // shrink-0 + whitespace-nowrap so the label never wraps to 2 lines;
           // smaller padding on mobile
           className="theme-accent flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold sm:gap-2 sm:px-4"
         >
           <Plus size={16} />
-          {/* CHANGED: short label on phones, full label from sm up */}
+          {/* short label on phones, full label from sm up */}
           <span className="sm:hidden">New</span>
           <span className="hidden sm:inline">New Tournament</span>
         </button>
@@ -133,10 +139,10 @@ export const Top2_Dashb = () => {
           teams={current.teams}
           savedGroupMatches={current.groupMatches || current.savedGroupMatches || []}
           savedKnockout={current.matches || current.savedKnockout || []}
-          onReset={() => navigate('/dashboard/quadrodashb', { replace: true, state: null })}
+          onReset={() => navigate(DASH_ROUTE, { replace: true, state: null })}
         />
       ) : (
-        // CHANGED: smaller gap on mobile, and an xl:grid-cols-4 step for wide screens
+        // smaller gap on mobile, and an xl:grid-cols-4 step for wide screens
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {tournaments.map((t) => {
             const teamCount = getTeamCount(t)
@@ -144,7 +150,7 @@ export const Top2_Dashb = () => {
               <div
                 key={t.id}
                 onClick={() => openTournament(t.id)}
-                // CHANGED: min-w-0 (stops long names from stretching the grid cell),
+                // min-w-0 (stops long names from stretching the grid cell),
                 // p-4 on mobile / p-5 from sm up
                 className="theme-card theme-hover theme-border relative flex min-w-0 cursor-pointer flex-col justify-between rounded-xl border p-4 shadow-sm sm:p-5"
               >
@@ -172,10 +178,10 @@ export const Top2_Dashb = () => {
                       )}
                     </div>
 
-                    {/* CHANGED: shrink-0 so the menu button never gets squished */}
+                    {/* shrink-0 so the menu button never gets squished */}
                     <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
                       <button
-                        // CHANGED: p-2 on mobile for a bigger touch target (~32px), p-1.5 on desktop
+                        // p-2 on mobile for a bigger touch target (~32px), p-1.5 on desktop
                         className="theme-hover rounded-md p-2 sm:p-1.5"
                         onClick={() => setMenuId(menuId === t.id ? null : t.id)}
                         aria-label="Options"
@@ -183,7 +189,7 @@ export const Top2_Dashb = () => {
                         <MoreHorizontal size={16} />
                       </button>
                       {menuId === t.id && (
-                        // CHANGED: top-9 (matches the bigger button), larger items on mobile
+                        // top-9 (matches the bigger button), larger items on mobile
                         <div className="theme-border theme-card absolute right-0 top-9 z-10 flex w-40 flex-col rounded-lg border py-1 shadow-lg sm:w-36">
                           <button
                             type="button"
@@ -192,7 +198,7 @@ export const Top2_Dashb = () => {
                               setRenameValue(t.name)
                               setMenuId(null)
                             }}
-                            // CHANGED: py-3 on mobile for easier tapping, text-sm on mobile
+                            // py-3 on mobile for easier tapping, text-sm on mobile
                             className="theme-hover theme-border w-full border-b px-4 py-3 text-left text-sm sm:py-2 sm:text-xs"
                           >
                             Rename
@@ -211,7 +217,6 @@ export const Top2_Dashb = () => {
                       )}
                     </div>
                   </div>
-                  
                 </div>
 
                 {renamingId === t.id ? (
@@ -223,7 +228,7 @@ export const Top2_Dashb = () => {
                     <input
                       value={renameValue}
                       onChange={(e) => setRenameValue(e.target.value)}
-                      // CHANGED: text-base on mobile (iOS Safari zooms the page when an
+                      // text-base on mobile (iOS Safari zooms the page when an
                       // input is under 16px), text-xs from sm up; more padding on mobile
                       className="theme-input mb-2 w-full rounded-md p-2 text-base sm:p-1.5 sm:text-xs"
                       autoFocus
@@ -232,7 +237,7 @@ export const Top2_Dashb = () => {
                       <button
                         type="button"
                         onClick={() => setRenamingId(null)}
-                        // CHANGED: bigger tap area on mobile
+                        // bigger tap area on mobile
                         className="theme-border rounded border px-3 py-2 text-sm sm:px-2 sm:py-1 sm:text-xs"
                       >
                         Cancel
@@ -251,7 +256,7 @@ export const Top2_Dashb = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={(e) => deleteTournament(t.id, e)}
-                        // CHANGED: flex-1 on mobile = two equal wide buttons that are easy to hit;
+                        // flex-1 on mobile = two equal wide buttons that are easy to hit;
                         // sm:flex-none goes back to compact buttons on desktop
                         className="flex-1 rounded bg-red-500 px-3 py-2 text-sm font-semibold text-white sm:flex-none sm:py-1 sm:text-xs"
                       >
