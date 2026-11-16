@@ -422,7 +422,7 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
       </h3>
 
       {/* 3rd place match: losers of the two semi-finals */}
-      {/* {thirdPlace && (
+      {thirdPlace && (
         <>
           <h3
             className="absolute text-center text-xs font-semibold"
@@ -437,7 +437,7 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
             <MatchCard match={thirdPlace.match} onScore={thirdPlace.onScore} />
           </div>
         </>
-      )} */}
+      )}
     </div>
   )
 }
