@@ -1,15 +1,86 @@
 import express from "express";
 import pool from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
+// =====================================================
+// MULTER SETUP (profile photos)
+// =====================================================
+const uploadDir = path.join(process.cwd(), "uploads", "profile");
+fs.mkdirSync(uploadDir, { recursive: true });
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, uploadDir),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, `user-${req.user.id}-${Date.now()}${ext}`);
+    },
+});
+
+const upload = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+    fileFilter: (req, file, cb) => {
+        if (!file.mimetype.startsWith("image/")) {
+            return cb(new Error("Only image files are allowed."));
+        }
+        cb(null, true);
+    },
+});
+
+// =====================================================
+// POST /api/me/photo : upload profile photo
+// =====================================================
+router.post("/me/photo", requireAuth, (req, res) => {
+    upload.single("photo")(req, res, async (err) => {
+        if (err) {
+            const message =
+                err.code === "LIMIT_FILE_SIZE"
+                    ? "Image must be smaller than 5 MB."
+                    : err.message || "Upload failed.";
+            return res.status(400).json({ message });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No photo uploaded." });
+        }
+
+        const photoUrl = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
+
+        try {
+            // Delete the previous photo file (if it was one of ours)
+            const old = await pool.query(
+                "SELECT photo_url FROM users WHERE id = $1",
+                [req.user.id]
+            );
+            const oldUrl = old.rows[0]?.photo_url;
+            if (oldUrl && oldUrl.includes("/uploads/profile/")) {
+                fs.unlink(path.join(uploadDir, path.basename(oldUrl)), () => {});
+            }
+
+            const result = await pool.query(
+                `UPDATE users SET photo_url = $1 WHERE id = $2
+                 RETURNING id, username, email, full_name AS fullname,
+                           COALESCE(photo_url, '') AS photo_url`,
+                [photoUrl, req.user.id]
+            );
+
+            res.json({ user: result.rows[0] });
+        } catch (dbErr) {
+            console.error("UPLOAD PHOTO ERROR:", dbErr);
+            res.status(500).json({ message: "Could not save profile photo." });
+        }
+    });
+});
 
 // =====================================================
 // CREATE TOURNAMENT + SAVE PAIRS
 // POST /api/tournaments
 // =====================================================
-
 router.post("/tournaments", requireAuth, async (req, res) => {
     const { name, type, teams } = req.body;
 
@@ -29,7 +100,6 @@ router.post("/tournaments", requireAuth, async (req, res) => {
         );
         const tournamentId = t.rows[0].id;
 
-        // local team id -> database pair id
         const pairs = {};
 
         for (let index = 0; index < teams.length; index++) {
@@ -54,7 +124,6 @@ router.post("/tournaments", requireAuth, async (req, res) => {
                 pairs[team.id] = ins.rows[0].id;
             }
 
-            // NEW: link this pair to the tournament, in entry order
             await client.query(
                 `INSERT INTO tournament_pairs (tournament_id, pair_id, position)
                  VALUES ($1, $2, $3)`,
@@ -64,7 +133,6 @@ router.post("/tournaments", requireAuth, async (req, res) => {
 
         await client.query("COMMIT");
         res.status(201).json({ tournamentId, pairs });
-
     } catch (err) {
         await client.query("ROLLBACK");
         console.error("CREATE TOURNAMENT ERROR:", err);
@@ -73,36 +141,5 @@ router.post("/tournaments", requireAuth, async (req, res) => {
         client.release();
     }
 });
-
-
-//=======================================================
-//
-// POST /api/me: update the logged-in user's full name
-//
-//=======================================================
-router.post("/me", requireAuth, async (req, res) => { // requireAuth runs first and sets req.user
-    const fullname = String(req.body?.fullname || "").trim(); // read name, force text, trim spaces
-
-    if (!fullname) { // empty name: nothing to save
-        return res.status(400).json({ message: "Missing profile data." }); // 400 = bad request, return stops here
-    }
-
-    try { // catch database errors so the server doesn't crash
-        const result = await pool.query( // wait for the database to answer
-            `UPDATE users                           -- change existing rows
-             SET full_name = $1                     -- new name, no comma (last item)
-             WHERE id = $2                          -- only this user's row
-             RETURNING id, username, email,
-             full_name AS fullname`, // return the updated row, renamed to fullname
-            [fullname, req.user.id] // $1 = fullname, $2 = logged-in user's id
-        );
-
-        return res.status(200).json({ user: result.rows[0] }); // 200 = OK, send updated user
-    } catch (err) { // runs if anything above threw
-        console.error("UPDATE PROFILE ERROR:", err); // full error shows in your terminal only
-        return res.status(500).json({ message: "Could not update profile." }); // 500 = server error, safe message
-    }
-});
-
 
 export default router;
