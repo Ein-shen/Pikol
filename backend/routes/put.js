@@ -311,6 +311,32 @@ router.put("/top3/:id", requireAuth, async (req, res) => {
 // UPDATE PROFILE 
 // POST /api/users
 // =====================================================
+router.put("/me", requireAuth, async (req, res) => {
+    const fullname = req.body?.fullname?.trim();
+    const username = req.body?.username?.trim();
 
+    if (!fullname && !username) {
+        return res.status(400).json({ message: "No profile data provided to update." });
+    }
+
+    try {
+        const result = await pool.query(
+            `UPDATE users
+             SET full_name = COALESCE($1, full_name),
+                 username  = COALESCE($2, username)
+             WHERE id = $3
+             RETURNING id, username, email, full_name AS fullname,
+                       COALESCE(photo_url, '') AS photo_url`,
+            [fullname || null, username || null, req.user.id]
+        );
+        res.json({ user: result.rows[0] });
+    } catch (err) {
+        if (err.code === "23505") {
+            return res.status(409).json({ message: "That username is already taken." });
+        }
+        console.error("UPDATE PROFILE ERROR:", err);
+        res.status(500).json({ message: "Could not update profile." });
+    }
+});
 
 export default router;
