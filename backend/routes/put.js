@@ -49,6 +49,14 @@ export async function isTop3(id) {
     return rows.length > 0;
 }
 
+// CHANGED (new): is this tournament a single one?
+export async function isSingle(id) {
+    const { rows } = await pool.query(
+        "SELECT 1 FROM tournaments WHERE id = $1 AND type = 'top3'",
+        [id]
+    );
+    return rows.length > 0;
+}
 
 // =====================================================
 // SAVE A FINISHED MATCH (insert or update)
@@ -209,6 +217,33 @@ router.put("/top2/:id", requireAuth, async (req, res) => {
         console.error("RENAME TOP2 ERROR:", err);
         res.status(500).json({ message: "Could not rename the tournament." });
     }
+});
+
+// =====================================================
+// SINGLE: rename
+// PUT /api/Single/:id
+// =====================================================
+router.put("/single/:id", requireAuth, async (req, res) => {
+    const name = String(req.body.name || "").trim();
+    if (!name) return res.status(400).json({message: "Name is required."});
+
+    try {
+        const { rowCount }= await pool.query(
+            "UPDATE tournaments SET name = $1 WHERE id = $2 AND type = 'single'",
+            [name, req.params.id]
+        );
+        if (rowCount === 0 ){
+            return res.status(400).json({message : "Single tournament can't be found."});
+
+        }
+        res.json({ok: true})
+
+    }catch (err) {
+        console.error("RENAME SINGLE ERROR:", err);
+        res.status(500).json({message: "Couldn't rename the tournament."});
+
+    }
+
 });
 
 
