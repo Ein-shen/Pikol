@@ -85,7 +85,7 @@ export const Matching = () => {
         <div className="flex flex-col gap-6">
           <h2 className="text-lg font-bold">Used match for tournaments</h2>
 
-          <div className="flex w-full flex-col flex-wrap gap-4">
+          <div className="flex w-full flex-col flex-wrap gap-4 pt-5">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button
                 onClick={() =>
