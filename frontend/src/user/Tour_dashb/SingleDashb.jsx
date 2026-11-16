@@ -8,6 +8,10 @@ import {
   applyResults,
 } from '../bracket_lead/Bracket_Single_VIew'
 
+// These two MUST match the paths in your router.
+const DASH_ROUTE = '/dashboard/singledashb'
+const NEW_ROUTE = '/dashboard/single'
+
 export const SingleDashb = () => {
   const [tournaments, setTournaments] = useState([])
   const [openError, setOpenError] = useState('')
@@ -17,16 +21,14 @@ export const SingleDashb = () => {
   const [renameValue, setRenameValue] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
-  const current = location.state // set by the form page or by openTournament
+  const current = location.state
 
   const fetchTournaments = async () => {
     try {
-      const res = await api.get('/tournaments')
-      // Filter out quadro tournaments so only single elimination is shown
-      const singleTournaments = res.data.filter((t) => t.type !== 'quadro')
-      setTournaments(singleTournaments)
+      const res = await api.get('/single')
+      setTournaments(Array.isArray(res.data) ? res.data : [])
     } catch (err) {
-      console.error('Get tournaments error:', err)
+      console.error('Get single tournaments error:', err)
     }
   }
 
@@ -34,66 +36,23 @@ export const SingleDashb = () => {
     fetchTournaments()
   }, [])
 
-  // Close the card menu when clicking anywhere else
   useEffect(() => {
     const close = () => setMenuId(null)
     window.addEventListener('click', close)
     return () => window.removeEventListener('click', close)
   }, [])
 
-  // Clears the screen only. Saved matches stay in the database.
-  const resetTournament = () => {
-    navigate(location.pathname, { replace: true, state: null })
-    fetchTournaments()
-  }
-
-  const deleteTournament = async (id, e) => {
-    if (e) e.stopPropagation()
-    try {
-      await api.delete(`/tournaments/${id}`)
-      setTournaments((prev) => prev.filter((t) => t.id !== id))
-      if (current?.tournamentId === id) {
-        navigate(location.pathname, { replace: true, state: null })
-      }
-    } catch (err) {
-      console.error('Delete tournament error:', err)
-    }
-    setConfirmId(null)
-    setMenuId(null)
-  }
-
-  const renameTournament = async (id, e) => {
-    e.preventDefault()
-    if (!renameValue.trim()) return
-    try {
-      await api.patch(`/tournaments/${id}`, { name: renameValue.trim() })
-      setTournaments((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, name: renameValue.trim() } : t))
-      )
-      if (current?.tournamentId === id) {
-        navigate(location.pathname, {
-          replace: true,
-          state: { ...current, tournamentName: renameValue.trim() },
-        })
-      }
-    } catch (err) {
-      console.error('Rename tournament error:', err)
-    }
-    setRenamingId(null)
-    setRenameValue('')
-  }
-
   const openTournament = async (id) => {
     setOpenError('')
     try {
-      const { data } = await api.get(`/tournaments/${id}`)
+      const { data } = await api.get(`/single/${id}`)
 
-      if (data.teams.length < 2) {
+      if (!data.teams || data.teams.length < 2) {
         return setOpenError('This tournament needs at least 2 saved teams to build a bracket.')
       }
 
-      const bracket = applyResults(createBracket(data.teams), data.matches)
-      navigate(location.pathname, {
+      const bracket = applyResults(createBracket(data.teams), data.matches || [])
+      navigate(DASH_ROUTE, {
         state: {
           tournamentId: data.id,
           tournamentName: data.name,
@@ -103,35 +62,80 @@ export const SingleDashb = () => {
       })
     } catch (err) {
       console.error('Open tournament error:', err)
-      setOpenError('Could not open the tournament.')
+      setOpenError('Could not open tournament.')
     }
   }
 
-  const showList = !current?.bracket
+  const deleteTournament = async (id, e) => {
+    e.stopPropagation()
+     setOpenError('')
+    try {
+      await api.delete(`/single/${id}`)
+      setTournaments((prev) => prev.filter((t) => t.id !== id))
+      if (current?.tournamentId === id) {
+        navigate(DASH_ROUTE, { replace: true, state: null })
+      }
+      setConfirmId(null)
+      setMenuId(null)
+    } catch (err) {
+      console.error('Delete tournament error:', err)
+      setOpenError(err.response?.data?.message || 'Could not delete the tournament.')
+    }
+  }
+
+  const renameTournament = async (id, e) => {
+    e.preventDefault()
+    const name = renameValue.trim()
+    if (!name) return
+    try {
+      await api.put(`/single/${id}`, { name })
+      setTournaments((prev) => prev.map((t) => (t.id === id ? { ...t, name } : t)))
+      if (current?.tournamentId === id) {
+        navigate(DASH_ROUTE, {
+          replace: true,
+          state: { ...current, tournamentName: name },
+        })
+      }
+    } catch (err) {
+      console.error('Rename tournament error:', err)
+    }
+    setRenamingId(null)
+    setRenameValue('')
+  }
+
+  const resetTournament = () => {
+    navigate(DASH_ROUTE, { replace: true, state: null })
+    fetchTournaments()
+  }
+
+  const getTeamCount = (t) => t.teams?.length ?? t.teamCount ?? null
 
   return (
-    <div className="w-full flex flex-col gap-6">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className="flex w-full min-w-0 flex-col gap-4 sm:gap-6">
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
-            className="opacity-60 transition hover:opacity-100 p-2 rounded-md"
+            className="shrink-0 rounded-md p-2 opacity-60 transition hover:opacity-100"
             onClick={() => navigate(-1)}
             aria-label="Go back"
           >
             <ArrowLeft />
           </button>
-          <h1 className="text-xl font-bold">Top 1 Single elimination</h1>
+          <h1 className="truncate text-lg font-bold sm:text-xl">Top 1 Single Elimination</h1>
         </div>
         <button
-          onClick={() => navigate('/dashboard/single')}
-          className="theme-accent flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold"
-          aria-label="New tournament"
+          onClick={() => navigate(NEW_ROUTE)}
+          className="theme-accent flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold sm:gap-2 sm:px-4"
         >
-          <Plus size={16} /> New Tournament
+          <Plus size={16} />
+          <span className="sm:hidden">New</span>
+          <span className="hidden sm:inline">New Tournament</span>
         </button>
       </header>
 
-      {current?.bracket && (
+      {openError && <p role="alert" className="text-sm text-red-500">{openError}</p>}
+
+      {current?.bracket ? (
         <Bracket_Single_VIew
           key={current.tournamentId}
           tournamentId={current.tournamentId}
@@ -140,45 +144,46 @@ export const SingleDashb = () => {
           initialBracket={current.bracket}
           onReset={resetTournament}
         />
-      )}
+      ) : (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          {tournaments.map((t) => {
+            const teamCount = getTeamCount(t)
+            return (
+              <div
+                key={t.id}
+                onClick={() => openTournament(t.id)}
+                className="theme-card theme-hover theme-border relative flex min-w-0 cursor-pointer flex-col justify-between rounded-xl border p-4 shadow-sm sm:p-5"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
+                        alt="pikol"
+                        height={24}
+                        width={24}
+                        className="theme-icon shrink-0"
+                      />
+                      <h3 className="truncate text-base font-bold capitalize">{t.name}</h3>
+                    </div>
 
-      {showList && openError && (
-        <p role="alert" className="text-sm text-red-500">{openError}</p>
-      )}
-
-      {showList && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {tournaments.map((t) => (
-            <div
-              key={t.id}
-              onClick={() => openTournament(t.id)}
-              className="theme-card theme-hover relative flex flex-col justify-between rounded-xl border theme-border p-5 cursor-pointer shadow-sm"
-            >
-              <div>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <img
-                      src="https://img.icons8.com/?size=100&id=zbygTShAC2X2&format=png&color=000000"
-                      alt="pikol"
-                      height={24}
-                      width={24}
-                      className="shrink-0 theme-icon"
-                    />
-                    <h3 className="text-base capitalize  font-bold truncate pr-6">{t.name}
-                       <p className="mt-1 text-xs theme-muted">{t.teams?.length || 20} teams</p>
-                    </h3>
+                    {teamCount !== null && (
+                      <p className="theme-muted mt-0.5 pl-9 text-xs">
+                        {teamCount} {teamCount === 1 ? 'team' : 'teams'}
+                      </p>
+                    )}
                   </div>
 
-                  <div className="relative " onClick={(e) => e.stopPropagation()}>
+                  <div className="relative shrink-0" onClick={(e) => e.stopPropagation()}>
                     <button
-                      className="theme-hover p-1.5 absolute right-0 rounded-md"
+                      className="theme-hover rounded-md p-2 sm:p-1.5"
                       onClick={() => setMenuId(menuId === t.id ? null : t.id)}
                       aria-label="Options"
                     >
                       <MoreHorizontal size={16} />
                     </button>
                     {menuId === t.id && (
-                      <div className="absolute right-0 top-8 z-10 w-36 rounded-lg border theme-border theme-card shadow-lg py-1 flex flex-col">
+                      <div className="theme-border theme-card absolute right-0 top-9 z-10 flex w-40 flex-col rounded-lg border py-1 shadow-lg sm:w-36">
                         <button
                           type="button"
                           onClick={() => {
@@ -186,7 +191,7 @@ export const SingleDashb = () => {
                             setRenameValue(t.name)
                             setMenuId(null)
                           }}
-                          className="w-full text-left px-4 py-2 text-xs theme-hover border-b theme-border"
+                          className="theme-hover theme-border w-full border-b px-4 py-3 text-left text-sm sm:py-2 sm:text-xs"
                         >
                           Rename
                         </button>
@@ -196,7 +201,7 @@ export const SingleDashb = () => {
                             setConfirmId(t.id)
                             setMenuId(null)
                           }}
-                          className="w-full text-left px-4 py-2 text-xs text-red-500 theme-hover"
+                          className="theme-hover w-full px-4 py-3 text-left text-sm text-red-500 sm:py-2 sm:text-xs"
                         >
                           Delete
                         </button>
@@ -204,60 +209,60 @@ export const SingleDashb = () => {
                     )}
                   </div>
                 </div>
-               
-              </div>
 
-              {renamingId === t.id ? (
-                <form
-                  onSubmit={(e) => renameTournament(t.id, e)}
-                  className="mt-4"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <input
-                    value={renameValue}
-                    onChange={(e) => setRenameValue(e.target.value)}
-                    className="theme-input w-full rounded-md p-1.5 text-xs mb-2"
-                    autoFocus
-                  />
-                  <div className="flex justify-end gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setRenamingId(null)}
-                      className="px-2 py-1 text-xs border theme-border rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="px-2 py-1 text-xs theme-accent rounded font-semibold"
-                    >
-                      Save
-                    </button>
+                {renamingId === t.id ? (
+                  <form
+                    onSubmit={(e) => renameTournament(t.id, e)}
+                    className="mt-4"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      value={renameValue}
+                      onChange={(e) => setRenameValue(e.target.value)}
+                      className="theme-input mb-2 w-full rounded-md p-2 text-base sm:p-1.5 sm:text-xs"
+                      autoFocus
+                    />
+                    <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setRenamingId(null)}
+                        className="theme-border rounded border px-3 py-2 text-sm sm:px-2 sm:py-1 sm:text-xs"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="theme-accent rounded px-3 py-2 text-sm font-semibold sm:px-2 sm:py-1 sm:text-xs"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </form>
+                ) : confirmId === t.id ? (
+                  <div className="mt-4 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+                    <p className="text-xs font-medium text-red-500">Delete this tournament?</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => deleteTournament(t.id, e)}
+                        className="flex-1 rounded bg-red-500 px-3 py-2 text-sm font-semibold text-white sm:flex-none sm:py-1 sm:text-xs"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => setConfirmId(null)}
+                        className="theme-border flex-1 rounded border px-3 py-2 text-sm sm:flex-none sm:py-1 sm:text-xs"
+                      >
+                        No
+                      </button>
+                    </div>
                   </div>
-                </form>
-              ) : confirmId === t.id ? (
-                <div className="mt-4 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
-                  <p className="text-xs font-medium text-red-500">Delete this tournament?</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={(e) => deleteTournament(t.id, e)}
-                      className="px-3 py-1 bg-red-500 text-white rounded text-xs font-semibold"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => setConfirmId(null)}
-                      className="px-3 py-1 border theme-border rounded text-xs"
-                    >
-                      No
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ))}
+                ) : null}
+              </div>
+            )
+          })}
+
           {tournaments.length === 0 && (
-            <p className="col-span-full text-center text-sm theme-muted py-10">
+            <p className="theme-muted col-span-full py-10 text-center text-sm">
               No single elimination tournaments found. Create one to get started!
             </p>
           )}
