@@ -1,6 +1,9 @@
 import express from "express";
 import pool from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const router = express.Router();
 
@@ -79,7 +82,8 @@ router.get("/tournaments/:id", requireAuth, async (req, res) => {
 router.get("/me", requireAuth, async (req, res) => {
     try {
         const { rows } = await pool.query(
-            "SELECT id, username, email FROM users WHERE id = $1",
+            `SELECT id, username, email, full_name AS fullname, COALESCE(photo_url, '') AS photo_url 
+             FROM users WHERE id = $1`,
             [req.user.id]
         );
 
@@ -278,10 +282,6 @@ router.get("/top3/:id", requireAuth, async (req, res) => {
 
 })
 
-// =====================================================
-// GET Full name
-// POST /api/user
-// =====================================================
 
 
 export default router;
