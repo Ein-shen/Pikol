@@ -37,6 +37,7 @@
  *   5. Removed the invalid `rounded: 'medium'` style key
  *   6. Renamed Quadro_View -> Top2_View (alias kept at the bottom of the file)
  *   7. New 3-group format for 12 pairs (FORMATS, createThreeGroupBracket)
+ *   8. RESPONSIVE: layout/spacing tweaks only (search "RESPONSIVE:")
  */
 
 import React, { useEffect, useMemo, useState } from 'react'
@@ -235,6 +236,7 @@ const groupScoreBox = {
   fontWeight: 600,
   color: '#333',
   border: 'none',
+  flexShrink: 0, // RESPONSIVE: the box keeps its size on narrow screens (names shrink instead)
 }
 
 // Style for a team name: bold + dark when a team is known,
@@ -345,7 +347,9 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
   const height = thirdPlace ? Math.max(treeHeight, thirdY + ROW_HEIGHT / 2) : treeHeight
 
   return (
-    <div className="relative rounded-md" style={{ width, height }}>
+    // RESPONSIVE: shrink-0 stops the tree from being squashed inside its
+    // scrolling parent; the parent scrolls sideways on small screens instead
+    <div className="relative shrink-0 rounded-md" style={{ width, height }}>
       {/* Round titles ("Quarter-finals", "Semi-finals", "Final") */}
       {bracket.map((_, r) => (
         <h3
@@ -441,8 +445,9 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
 function PlaceCard({ label, team, icon, featured = false }) {
   return (
     <div
+      // RESPONSIVE: smaller padding on phones
       className={`w-full   text-center space-y-1 ${
-        featured ? 'p-5' : 'p-4'
+        featured ? 'p-3 sm:p-5' : 'p-2 sm:p-4'
       }`}
     >
       {icon}
@@ -451,12 +456,13 @@ function PlaceCard({ label, team, icon, featured = false }) {
         {label}
       </p>
 
-      <p className={`font-bold capitalize text-black ${featured ? 'text-xl' : 'text-base'}`}>
+      {/* RESPONSIVE: smaller text on phones + break-words so long names wrap */}
+      <p className={`break-words font-bold capitalize text-black ${featured ? 'text-base sm:text-xl' : 'text-sm sm:text-base'}`}>
         {team ? pairLabel(team) : ''}
       </p>
 
       <p
-        className={`mt-1 ${featured ? 'text-sm' : 'text-base'} ${
+        className={`mt-1 break-words ${featured ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} ${
           team ? 'text-gray-900' : 'text-gray-400'
         }`}
       >
@@ -890,14 +896,16 @@ const STANDINGS_LEGEND = [
 function GroupCard({ group, matches, standings, scores, locked, onScore, advance }) {
   return (
     <div className="theme-card rounded-xl border theme-border p-4 space-y-4">
-      <h3 className="text-lg font-bold flex justify-between items-center w-full items-center ">Bracket {group.name}
+      {/* RESPONSIVE: flex-wrap + gap so the "Top N advance" note drops under the title on narrow screens */}
+      <h3 className="text-lg font-bold flex flex-wrap gap-2 justify-between items-center w-full items-center ">Bracket {group.name}
          <p className="text-xs text-right theme-muted">Top {advance} (bold) advance to the playoffs.</p>
       </h3>
       
 
       {/* Standings table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        {/* RESPONSIVE: min-w keeps the columns readable; the wrapper scrolls sideways on small screens */}
+        <table className="w-full min-w-[440px] text-sm">
           {/* CHANGED: every comment is on its own line, so no whitespace text
               nodes end up inside <tr> (fixes the React hydration warning) */}
           <thead>
@@ -947,9 +955,11 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
       </div>
  
     {/* List of this group's matches, each with two score inputs */}
-    <div className="flex flex-row w-full gap-2">
+    {/* RESPONSIVE: stacked (column) on phones, side by side from sm: and up */}
+    <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-2">
 
-        <div className="flex flex-col items-center  min-w-[120px]">
+        {/* RESPONSIVE: full width on phones, original min width from sm: and up */}
+        <div className="flex flex-col items-center w-full sm:w-auto min-w-[120px]">
           <h1 className="font-bold mb-1">List of teams</h1>
 
           <span className="text-xs theme-muted mb-4">
@@ -977,8 +987,9 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
           })}
         </div>
 
-        <span className='border-r border-white/10'> </span>
-      <div className="w-full flex flex-col space-y-2 items-center">
+        {/* RESPONSIVE: the vertical divider only shows when the two columns are side by side */}
+        <span className='hidden sm:block border-r border-white/10'> </span>
+      <div className="w-full min-w-0 flex flex-col space-y-2 items-center">
 
         <span className="flex items-center text-center font-bold pb-2">
           Round Robin
@@ -990,7 +1001,7 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
           return (
             <div
               key={m.id}
-              className="flex items-center justify-between gap-2 w-full text-[13px]"
+              className="flex items-center justify-between gap-1 sm:gap-2 w-full text-[13px]"
             >
 
               {/* Team 1 */}
@@ -1300,16 +1311,18 @@ export function Top2_View({
   return (
     <section className="space-y-5">
       {/* Header: tournament name, summary line and reset button */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-5">
-        <div>
-          <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
+      {/* RESPONSIVE: p-4 on phones, original p-5 from sm: and up */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-4 sm:p-5">
+        <div className="min-w-0">
+          <h2 className="break-words text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">
             {teams.length} teams · {groups.length} {groups.length === 1 ? 'Bracket' : 'Brackets'} of {Math.ceil(teams.length / groups.length)} · Group matches{' '}
             {doneCount}/{allMatches.length}
           </p>
         </div>
 
-        <div className="flex w-full flex-row justify-end gap-2">
+        {/* RESPONSIVE: flex-wrap so the two buttons wrap instead of overflowing on narrow screens */}
+        <div className="flex w-full flex-row flex-wrap justify-end gap-2">
           <button
             onClick={onReset}
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
@@ -1385,7 +1398,7 @@ export function Top2_View({
           groups.length === 1
             ? 'grid-cols-1'
             : groups.length === 3
-              ? 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'
+              ? 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-2'
               : 'grid-cols-1 lg:grid-cols-2'
         }`}
       >
@@ -1406,7 +1419,8 @@ export function Top2_View({
       {/* Playoff tree (only after the groups were locked) */}
       {bracket && (
         <>
-          <h3 className="text-lg pt-10 font-bold">Playoffs (Single Elimination)</h3>
+          {/* RESPONSIVE: less top space on phones */}
+          <h3 className="text-lg pt-6 sm:pt-10 font-bold">Playoffs (Single Elimination)</h3>
           {groups.length === 3 && (
             <p className="text-xs theme-muted">
               The top 2 of each group (6 teams) are seeded by group finish. Seeds 1 and 2 get a bye, the
@@ -1414,7 +1428,8 @@ export function Top2_View({
             </p>
           )}
           {/* overflow-x-auto lets the wide tree scroll sideways on small screens */}
-          <div className="overflow-x-auto rounded-xl p-6 theme-accent">
+          {/* RESPONSIVE: p-3 on phones, original p-6 from sm: and up */}
+          <div className="overflow-x-auto rounded-xl p-3 sm:p-6 theme-accent">
             <BracketTree
               bracket={bracket}
               onScore={updateKnockoutScore}
@@ -1469,12 +1484,13 @@ export const Top2_bracketing_e = () => {
     navigate(LIST_ROUTE)
   }
 
-  if (status === 'loading') return <p className="px-10 theme-muted">Loading tournament...</p>
+  // RESPONSIVE (3 places below): px-4 on phones, original px-10 from sm: and up
+  if (status === 'loading') return <p className="px-4 sm:px-10 theme-muted">Loading tournament...</p>
 
   // Error, no data, or fewer than 2 teams = nothing to play
   if (status === 'error' || !data || data.teams.length < 2) {
     return (
-      <div className="w-full space-y-4 px-10">
+      <div className="w-full space-y-4 px-4 sm:px-10">
         <p className="theme-muted">Could not load this tournament.</p>
         <button
           onClick={() => navigate(LIST_ROUTE)}
@@ -1487,7 +1503,7 @@ export const Top2_bracketing_e = () => {
   }
 
   return (
-    <div className="w-full px-10">
+    <div className="w-full px-4 sm:px-10">
       {/* key={id} makes React rebuild Top2_View from scratch for a different tournament */}
       <Top2_View
         key={id}
