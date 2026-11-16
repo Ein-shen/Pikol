@@ -18,7 +18,7 @@ import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top2_bracketing
 //              2 quarter-finals, then 4 teams in the semi-finals.
 //   16 and up = 4 groups (quarter-finals).
 // Other sizes work too (see FORMATS in Bracket_quadro_e.jsx): just add them here.
-const TEAM_COUNT_OPTIONS = [6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32]
+const TEAM_COUNT_OPTIONS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 28, 32]
 const DEFAULT_TEAM_COUNT = 8
 
 // Route of the Top 2 dashboard (list + bracket view). MUST match the path in your router.
@@ -145,13 +145,13 @@ function TeamsForm({
                   Group {getGroupLabel(index, teamCount)}
                 </span>
               </label>
-              <input
+              {/* <input
                 value={team.name}
                 disabled={saving}
                 onChange={(e) => onTeamChange(team.id, 'name', e.target.value)}
                 placeholder="Team name"
                 className="theme-input w-full rounded-md p-2 text-sm"
-              />
+              /> */}
               <input
                 value={team.player1}
                 disabled={saving}
