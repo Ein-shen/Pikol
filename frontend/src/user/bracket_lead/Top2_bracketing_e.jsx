@@ -1323,12 +1323,12 @@ export function Top2_View({
 
         {/* RESPONSIVE: flex-wrap so the two buttons wrap instead of overflowing on narrow screens */}
         <div className="flex w-full flex-row flex-wrap justify-end gap-2">
-          <button
+          {/* <button
             onClick={onReset}
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
           >
             <RotateCcw size={16} /> Reset tournament
-          </button>
+          </button> */}
 
           <button
             onClick={ ""}
