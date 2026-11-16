@@ -258,7 +258,7 @@ export const Top2_Brackets = () => {
           <ArrowLeft />
         </button>
 
-        <h1 className="font-bold text-lg">Top 2 Bracketing</h1>
+        <h1 className="font-bold text-lg">Standard Tournament</h1>
 
         {/* Empty spacer, same width as the back button, so the title stays centered */}
         <div className="w-10" />
