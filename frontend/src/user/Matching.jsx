@@ -14,7 +14,7 @@ const TYPE_ROUTES = {
 const TYPE_LABELS = {
   single: 'Single Elimination',
   double: 'Double Elimination',
-  top2: 'Top 2 Bracketing',
+  top2: 'Standard Tournament',
   top3: 'Top 3 Bracketing',
   
 }
@@ -150,10 +150,10 @@ export const Matching = () => {
                 onClick={() => navigate('/dashboard/top2')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
-                Top 2 Bracketing
+                Tournament
               </button>
 
-              
+
 
               {/* <button
                 onClick={() => navigate('/dashboard/top3')}
