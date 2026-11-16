@@ -121,13 +121,13 @@ function TeamsForm({
               <label htmlFor={`team-${team.id}-name`} className="block text-sm font-bold">
                 Team {index + 1}
               </label>
-              <input
+              {/* <input
                 id={`team-${team.id}-name`}
                 value={team.name}
                 onChange={(e) => onTeamChange(team.id, 'name', e.target.value)}
                 placeholder="Team name"
                 className="theme-input w-full rounded-md p-2 text-sm"
-              />
+              /> */}
               <input
                 aria-label={`Team ${index + 1} player 1`}
                 value={team.player1}
