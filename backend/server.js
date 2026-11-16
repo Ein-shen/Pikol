@@ -8,6 +8,7 @@ import postRoutes from "./routes/post.js";
 import putRoutes from "./routes/put.js";
 import deleteRoutes from "./routes/delete.js";
 import pool from "./db.js";
+import path from "path";   
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+// Serve uploaded images  // <-- add
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api", getRoutes);
