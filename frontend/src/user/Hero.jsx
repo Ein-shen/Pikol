@@ -278,7 +278,7 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={openEdit}
-                className="w-full border-b border-white/10 px-4 py-2 text-center text-xs theme-hover"
+                className="w-full border-b border-white/10 px-4 py-2  text-left text-xs theme-hover"
               >
                 Edit profile
               </button>
@@ -412,7 +412,7 @@ export const Hero = () => {
               type="button"
               aria-label="Edit profile"
               onClick={openEdit}
-              className="flex w-full items-center justify-center   rounded-md border px-2 py-1 text-xs opacity-60 transition hover:opacity-100 theme-border-2"
+              className="flex w-full items-center justify-center  gap-2  rounded-md border px-2 py-1 text-xs opacity-60 transition hover:opacity-100 theme-border-2"
             >
               Edit Profile
 
