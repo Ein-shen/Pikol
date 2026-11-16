@@ -35,7 +35,7 @@ export const Signup = () => {
     try {
       const res = await api.post('/auth/signup', { username, email, password })
       setUser(res.data)
-      navigate('/dashboard')
+      navigate(`/dashboard/overview`)
     } catch (err) {
       setError(err.response?.data?.message || 'Could not create account. Please try again.')
     } finally {
