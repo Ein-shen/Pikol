@@ -204,6 +204,66 @@ router.get("/top2/:id", requireAuth, async (req, res) => {
     }
 });
 
+
+// =====================================================
+// SINGLE: list single elimination tournaments
+// GET /api/single
+// =====================================================
+router.get("/single", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT t.id, t.name, t.type, t.created_at,
+                    (SELECT COUNT(*) FROM tournament_pairs tp
+                     WHERE tp.tournament_id = t.id)::int AS "teamCount"
+             FROM tournaments t
+             WHERE t.type = 'single'
+             ORDER BY t.id DESC`
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error("LIST SINGLE ERROR:", err);
+        res.status(500).json({ message: "Could not load tournaments." });
+    }
+});
+
+// =====================================================
+// SINGLE: load one (teams + saved matches)
+// GET /api/single/:id
+// =====================================================
+router.get("/single/:id", requireAuth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const t = await pool.query(
+            "SELECT id, name, type FROM tournaments WHERE id = $1 AND type = 'single'",
+            [id]
+        );
+        if (t.rows.length === 0) {
+            return res.status(404).json({ message: "Tournament not found." });
+        }
+
+        const teams = await pool.query(
+            `SELECT p.id, p.id AS "pairId", p.name, p.player1, p.player2
+             FROM tournament_pairs tp
+             JOIN pairs p ON p.id = tp.pair_id
+             WHERE tp.tournament_id = $1
+             ORDER BY tp.position`,
+            [id]
+        );
+
+        const matches = await pool.query(
+            `SELECT round, match_number AS "matchNumber", score1, score2
+             FROM matches WHERE tournament_id = $1`,
+            [id]
+        );
+
+        res.json({ ...t.rows[0], teams: teams.rows, matches: matches.rows });
+    } catch (err) {
+        console.error("LOAD SINGLE ERROR:", err);
+        res.status(500).json({ message: "Could not load the tournament." });
+    }
+});
+
+
 // =====================================================
 // Top3: list top3 tournaments
 // GET /api/top3
