@@ -20,7 +20,7 @@ export const Login = () => {
     try {
       const res = await api.post('/auth/login', { email, password })
       setUser(res.data)
-      navigate('/dashboard')
+      navigate(`/dashboard/overview`)
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password')
     } finally {
