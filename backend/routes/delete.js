@@ -2,7 +2,7 @@
 import express from "express";
 import pool from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
-import { clearDownstream, isQuadro, isTop2, isTop3 } from "./put.js";
+import { clearDownstream, isSingle, isTop2, isTop3 } from "./put.js";
 
 const router = express.Router();
 
@@ -70,6 +70,77 @@ router.delete("/tournaments/:id", requireAuth, async (req, res) => {
         client.release();
     }
 });
+
+
+// =====================================================
+// SINGLE / DOUBLE: delete a whole tournament
+// DELETE /api/tournaments/:id
+// =====================================================
+router.delete("/single/:id", requireAuth, async (req, res) =>{
+    const { id } = req.params;
+
+    if (!(await isSingle(id))) {
+        return res.status(404).json({message: "Single elimination tournament is not found."});
+
+    }
+
+    const client = await pool.connect();
+
+    try {
+        await client.query("BEGIN");
+
+        const pairs = await client.query(
+            "SELECT pair_id FROM tournament_pairs WHERE tournament_id $1",
+            [id]
+
+        );
+
+        const pairIds = pairs.rows.map((r) => r.pair_id);
+
+        await client.query(
+            "DELETE FROM group_matches WHERE tournament_id $1",
+            [id]
+
+        );
+
+        await client.query(
+            "DELETE FROM matches WHERE tournament_id = $1",
+            [id]
+        );
+
+        await client.query(
+            "DELETE FROM tournament_pairs WHERE tournament_id = $1",
+            [id]
+        );
+
+        await client.query(
+            "DELETE FROM tournaments WHERE id = $1",
+            [id]
+        );
+
+        if (pairIds.length > 0) {
+            await client.query(
+                `DELETE FROM pairs
+                 WHERE id = ANY($1::int[])
+                   AND id NOT IN (SELECT pair_id FROM tournament_pairs)`,
+                [pairIds]
+            );
+        }
+
+        await client.query("COMMIT");
+        res.json({ ok: true });
+
+    } catch (err) {
+        await client.query("ROLLBACK");
+        console.error("DELETE TOP2 ERROR:", err);
+        res.status(500).json({ message: "Could not delete the tournament." });
+    } finally {
+        client.release();
+     
+
+    }
+})
+
 
 // =====================================================
 // TOP2: clear one group score
