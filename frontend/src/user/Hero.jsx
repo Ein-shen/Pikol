@@ -310,7 +310,8 @@ export const Hero = () => {
       {/* PROFILE CONTENT */}
       <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-stretch sm:justify-center">
         {/* PROFILE PHOTO */}
-        <div className="flex flex-col items-center gap-2">
+        {/* PROFILE PHOTO */}
+        <div className="relative flex flex-col items-center">
           <input
             type="file"
             accept="image/*"
@@ -336,9 +337,11 @@ export const Hero = () => {
             />
           </button>
 
-          <span className="text-xs opacity-60">
-            {uploadingPhoto ? 'Uploading photo...' : ''}
-          </span>
+          {uploadingPhoto && (
+            <span className="absolute left-0 right-0 top-full mt-1 text-center text-xs opacity-60">
+              Uploading photo...
+            </span>
+          )}
         </div>
 
         {/* NAME AND EMAIL */}
@@ -397,34 +400,26 @@ export const Hero = () => {
             </div>
           </form>
         ) : (
-          <div className="flex w-full min-w-0 max-w-xs flex-col justify-between text-center sm:w-auto sm:text-left">
-            <div className="flex flex-col gap-3">
-              <span className="break-words text-xl font-bold capitalize   sm:text-2xl">
-                {user?.fullname}
-              </span>
-
-              <span className="theme-muted break-all text-sm  ">
-                {user?.email}
-              </span>
-            </div>
-
-            <button
-              type="button"
-              aria-label="Edit profile"
-              onClick={openEdit}
-              className="flex w-full items-center justify-center  gap-2  rounded-md border px-2 py-1 text-xs opacity-60 transition hover:opacity-100 theme-border-2"
-            >
-              Edit Profile
-
-              <img                                                                
-                src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000"
-                alt=""
-                height={14}
-                width={14}
-                className="theme-icon"
-              />
-            </button>
+         <div className="flex w-full min-w-0 max-w-xs flex-col justify-between self-stretch text-center sm:w-auto sm:text-left">
+          <div className="flex flex-col gap-1">
+            <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
+              {user?.fullname}
+            </span>
+            <span className="theme-muted break-all text-sm">
+              {user?.email}
+            </span>
           </div>
+
+          <button
+            type="button"
+            aria-label="Edit profile"
+            onClick={openEdit}
+            className="flex w-full items-center justify-center gap-2 rounded-md border px-2 py-1 text-xs opacity-60 transition hover:opacity-100 theme-border-2"
+          >
+            Edit Profile
+            <img src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000" alt="" height={14} width={14} className="theme-icon" />
+          </button>
+        </div>
         )}
       </div>
     </div>
