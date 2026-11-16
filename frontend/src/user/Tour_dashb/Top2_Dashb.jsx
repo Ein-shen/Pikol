@@ -114,7 +114,7 @@ export const Top2_Dashb = () => {
             <ArrowLeft />
           </button>
           {/* text-lg on mobile, text-xl from sm up; truncate for long titles */}
-          <h1 className="truncate text-lg font-bold sm:text-xl">Top 2 Bracketing</h1>
+          <h1 className="truncate text-lg font-bold sm:text-xl">Standard Tournament</h1>
         </div>
         <button
           onClick={() => navigate(NEW_ROUTE)}
