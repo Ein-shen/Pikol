@@ -443,13 +443,13 @@ export const Bracket_Single_VIew = ({
           <p className="mt-1 text-sm text-gray-500">{teams.length} teams registered</p>
         </div>
 
-        <button
+        {/* <button
           onClick={onReset}
           className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
         >
           <RotateCcw size={16} />
           Reset tournament
-        </button>
+        </button> */}
       </div>
 
       {champion && <ChampionBanner champion={champion} runnerUp={runnerUp} />}
