@@ -94,7 +94,7 @@ function TeamsForm({
       className="theme-card theme-text rounded-xl border theme-border shadow-sm"
     >
       <div className="border-b theme-border p-5">
-        <h2 className="text-lg font-bold capitalize">Quadro elimination</h2>
+        <h2 className="text-lg font-bold capitalize">Standard Tournament</h2>
         <p className="text-sm theme-muted">Register {teamCount} teams with 2 players each.</p>
       </div>
 
