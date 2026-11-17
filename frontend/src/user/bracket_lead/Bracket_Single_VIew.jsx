@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Trophy, RotateCcw } from 'lucide-react'
+import { Trophy, RotateCcw, Pencil } from 'lucide-react'
 import api from '../../api'
 
 /* ------------------------------------------------------------------ */
@@ -334,35 +334,76 @@ function BracketTree({ bracket, onScore }) {
 function PlaceCard({ label, team, icon, featured = false }) {
   return (
     <div
-      className={`h-full w-full rounded-md border border-yellow-200 bg-white/60 text-center space-y-1 ${
-        featured ? 'p-5' : 'p-4'
+      // RESPONSIVE: smaller padding on phones
+      className={`w-full text-center space-y-1 ${
+        featured ? 'p-3 sm:p-5' : 'p-2 sm:p-4'
       }`}
     >
       {icon}
-      <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>{label}</p>
 
-      <p className={`font-bold capitalize text-black ${featured ? 'text-2xl' : 'text-base'}`}>
+      <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>
+        {label}
+      </p>
+
+      {/* RESPONSIVE: smaller text on phones + break-words so long names wrap */}
+      <p
+        className={`break-words font-bold capitalize text-black ${
+          featured ? 'text-base sm:text-xl' : 'text-sm sm:text-base'
+        }`}
+      >
         {team ? pairLabel(team) : ''}
       </p>
-      <p className={`text-sm ${team ? 'text-gray-900' : 'text-gray-400'}`}>
+
+      <p
+        className={`mt-1 break-words ${
+          featured ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'
+        } ${team ? 'text-gray-900' : 'text-gray-400'}`}
+      >
         {team ? team.name : 'TBD'}
       </p>
     </div>
   )
 }
 
-function ChampionBanner({ champion, runnerUp }) {
+function ChampionBanner({ champion, runnerUp, third, showThird = false }) {
   return (
-    <div className="rounded-md border border-yellow-300 bg-yellow-100 p-6">
-      <PlaceCard
-        featured
-        label="Champion"
-        team={champion}
-        icon={<Trophy className="mx-auto mb-1 text-yellow-600" size={36} />}
-      />
+    <div className="mx-auto w-full rounded-xl border border-yellow-300 bg-yellow-50 p-4 sm:p-6">
+      <div className="flex items-end justify-center gap-2 sm:gap-4">
 
-      <div className="mt-4 grid grid-cols-1 gap-3">
-        <PlaceCard label="1st place" team={runnerUp} />
+
+        {/* Champion */}
+        <div className="flex flex-1 flex-col items-center min-w-0">
+          <PlaceCard featured label="" team={champion} />
+
+          <div className="flex h-36 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-yellow-500 bg-gradient-to-b from-yellow-300 to-yellow-500 shadow-xl">
+            <span className="text-5xl font-black text-yellow-900">1</span>
+            <span className="text-sm font-black text-yellow-900">CHAMPION</span>
+          </div>
+        </div>
+ 
+        {/* 2nd Place */}
+        <div className="flex flex-1 flex-col items-center min-w-0">
+          <PlaceCard label="" team={runnerUp} />
+
+          <div className="relative flex h-24 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-gray-400 bg-gradient-to-b from-gray-200 to-gray-400 shadow-lg">
+            <span className="text-3xl font-black text-gray-700">2</span>
+            <span className="text-xs font-bold text-gray-700">SECOND</span>
+          </div>
+        </div>
+
+        
+        {/* 3rd Place */}
+        {showThird && (
+          <div className="flex flex-1 flex-col items-center min-w-0">
+            <PlaceCard label="" team={third} />
+
+            <div className="flex h-16 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-orange-500 bg-gradient-to-b from-orange-300 to-orange-500 shadow-lg">
+              <span className="text-2xl font-black text-orange-900">3</span>
+              <span className="text-xs font-bold text-orange-900">THIRD</span>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )
@@ -446,10 +487,9 @@ export const Bracket_Single_VIew = ({
         <button
           onClick={"onReset"}
           className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
-        >
-          <RotateCcw size={16} />
-          Edit tournament
-        </button>
+          >
+            <Pencil size={16} /> Edit Tournament
+          </button>
       </div>
 
       {champion && <ChampionBanner champion={champion} runnerUp={runnerUp} />}
