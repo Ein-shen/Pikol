@@ -24,16 +24,19 @@ router.get("/leaderboard", requireAuth, async (req, res) => {
 });
 
 // =====================================================
-// GET ALL TOURNAMENTS
+// GET ALL TOURNAMENTS (with total count)
 // GET /api/tournaments
 // =====================================================
-
 router.get("/tournaments", requireAuth, async (req, res) => {
     try {
         const { rows } = await pool.query(
-            "SELECT * FROM tournaments ORDER BY id DESC"
+            "SELECT *, COUNT(*) OVER() AS total_count FROM tournaments ORDER BY id DESC"
         );
-        res.json(rows);
+
+        res.json({
+            total: rows.length ? Number(rows[0].total_count) : 0,
+            tournaments: rows,
+        });
     } catch (err) {
         console.error("GET TOURNAMENTS ERROR:", err);
         res.status(500).json({ message: "Could not load tournaments." });
@@ -262,6 +265,8 @@ router.get("/single/:id", requireAuth, async (req, res) => {
         res.status(500).json({ message: "Could not load the tournament." });
     }
 });
+
+
 
 
 // =====================================================
