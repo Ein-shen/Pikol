@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
+import { Signout } from './Signout';
 
 export const Hero = () => {
   const navigate = useNavigate();
@@ -292,14 +293,9 @@ export const Hero = () => {
                 Add account
               </button>
 
-              <button
-                type="button"
-                role="menuitem"
-                onClick={handleLogout}
-                className="w-full px-4 py-2 text-left text-xs theme-hover"
-              >
-                Logout
-              </button>
+              <Signout
+              className='w-full border-b border-white/10 px-4 py-2 text-left text-xs theme-hover '
+               />
             </div>
           )}
         </div>
