@@ -113,7 +113,7 @@ export const Navbar = () => {
               <button type='button' onClick={() => go('/dashboard/about_components')} className={`${itemClass} border-b`}>
                 About
               </button>
-              <button type='button' onClick={() => go('')} className={`${itemClass} border-b`}>
+              <button type='button' onClick={() => go('/dashboard/settings_components')} className={`${itemClass} border-b`}>
                 Settings
               </button>
               <Signout className={`${itemClass} rounded-b-md`} />
