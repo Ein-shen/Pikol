@@ -16,7 +16,6 @@ const TYPE_LABELS = {
   double: 'Double Elimination',
   top2: 'Standard Tournament',
   top3: 'Top 3 Bracketing',
-  
 }
 
 export const Matching = () => {
@@ -27,7 +26,11 @@ export const Matching = () => {
 
   useEffect(() => {
     api.get('/tournaments')
-      .then((res) => setDataTournament(res.data))
+      .then((res) => {
+        // API now returns { total, tournaments }
+        const list = Array.isArray(res.data) ? res.data : res.data.tournaments
+        setDataTournament(list ?? [])
+      })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false))
   }, [])
@@ -103,7 +106,7 @@ export const Matching = () => {
                     height={10}
                     width={15}
                   />
-                  
+
                   {count} {count === 1 ? 'tournament' : 'tournaments'}
                 </span>
               </button>
@@ -139,32 +142,28 @@ export const Matching = () => {
             <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
               <button
                 onClick={() => navigate('/dashboard/single')}
-                className="h-16 w-full rounded-md border theme-border theme-card theme-hover text/30 p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Single Elimination
               </button>
 
-              
-
               <button
                 onClick={() => navigate('/dashboard/top2')}
-                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Tournament
               </button>
 
-
-
               {/* <button
                 onClick={() => navigate('/dashboard/top3')}
-                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold  sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Top 3 Bracketing
               </button> */}
 
               <button
                 onClick={() => navigate('/dashboard/double')}
-                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold   sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
+                className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Open Play to All
               </button>
