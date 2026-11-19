@@ -33,7 +33,7 @@ export const Settings_components = () => {
           className="w-full border-b pb-4 px-6 gap-1 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
-            handleNavigate('/dashboard/about')
+            handleNavigate(' ')
           }}
         >
           
@@ -48,7 +48,7 @@ export const Settings_components = () => {
           className="w-full border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
-            handleNavigate('/dashboard/support')
+            handleNavigate(' ')
           }}
         >
           <span className='flex flex-row item-center gap-2'>
@@ -62,7 +62,7 @@ export const Settings_components = () => {
           className="w-full border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
-            handleNavigate('/dashboard/help')
+            handleNavigate(' ')
           }}
         >
           <span className='flex flex-row item-center gap-2'>
