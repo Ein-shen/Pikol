@@ -110,7 +110,7 @@ export const Navbar = () => {
                 Support
               </button>
               {/* TODO: go('') stays on the current route. Point this at your About page. */}
-              <button type='button' onClick={() => go('')} className={`${itemClass} border-b`}>
+              <button type='button' onClick={() => go('/dashboard/about_components')} className={`${itemClass} border-b`}>
                 About
               </button>
               <button type='button' onClick={() => go('')} className={`${itemClass} border-b`}>
