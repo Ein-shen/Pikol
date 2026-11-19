@@ -43,15 +43,9 @@ export const About_components = () => {
 
         <h1 className="font-bold text-lg">About</h1>
 
-        <div>
-
-          <h1 className='text-xl font-bold'>
-            Standard Tournament
-          </h1>
-
-
+        <button>
           
-        </div> 
+        </button>
       </header>
     </div>
   )
