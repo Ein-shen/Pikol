@@ -2,6 +2,29 @@ import React from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
+
+
+
+const about_matching = [
+  {
+    label:' Standard Tournament',
+    Explain: 'bla bla',
+
+  },
+
+  {
+    label:'Single Elimination',
+    Explain: 'bla bla',
+
+  },
+
+  {
+    label:'Open play',
+    Explain: 'bla bla',
+
+  },
+
+]
 export const About_components = () => {
   const navigate = useNavigate()
 
@@ -20,12 +43,15 @@ export const About_components = () => {
 
         <h1 className="font-bold text-lg">About</h1>
 
-        <button
+        <div>
+
+          <h1 className='text-xl font-bold'>
+            Standard Tournament
+          </h1>
+
+
           
-          className="flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
-        >
-          
-        </button>
+        </div> 
       </header>
     </div>
   )
