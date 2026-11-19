@@ -287,7 +287,7 @@ export const Hero = () => {
               <button
                 type="button"
                 role="menuitem"
-                onClick={() => go('/add-account')}
+                onClick={() => go(' ')}
                 className="w-full border-b border-white/10 px-4 py-2 text-left text-xs theme-hover"
               >
                 Add account
