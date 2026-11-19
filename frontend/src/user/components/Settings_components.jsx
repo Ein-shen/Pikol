@@ -7,11 +7,10 @@ export const Settings_components = () => {
 
   const navigate = useNavigate()
 
-  const [showOpen, setShowOpen] = useState(false)
+  // const [showOpen, setShowOpen] = useState(false)
 
   const handleNavigate = (path) => {
     navigate(path)
-
   }
    
 
@@ -24,13 +23,13 @@ export const Settings_components = () => {
         </h1>
       </div>
 
-      <div className=" theme-card py-4 space-y-4 theme-border border px-3 rounded-md w-[70%] mx-auto flex flex-col justify-center items-stretch">
+      <div className=" theme-card py-4 space-y-4 theme-border border px-3 rounded-md w-[90%] mx-auto flex flex-col justify-center items-stretch">
   
         
 
         {/* About Button */}
         <button 
-          className="w-full border-b pb-4 px-6 gap-1 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
+          className="w-full theme-border border-b pb-4 px-6 gap-1 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
             handleNavigate(' ')
@@ -45,7 +44,7 @@ export const Settings_components = () => {
 
         {/* Support Button */}
         <button
-          className="w-full border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
+          className="w-full theme-border border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
             handleNavigate(' ')
@@ -59,7 +58,7 @@ export const Settings_components = () => {
 
         {/* Help Button */}
         <button
-          className="w-full border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
+          className="w-full theme-border border-b pb-4 px-6 sm:px-8 md:px-12 lg:px-5 font-mono text-md transition-colors hover:opacity-80 flex items-center justify-between"
           onClick={() => {
             setShowOpen(false)
             handleNavigate(' ')
