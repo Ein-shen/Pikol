@@ -21,12 +21,14 @@ export const Support_components = () => {
   return (
     <div w-full>
       <header className="flex justify-between flex-row items-center">
-        <button 
-                  onClick={() => navigate(-1)}
-                  >
-                  <ArrowLeft />
-              
-                </button>
+        <button
+             type="button"
+             className="rounded-md p-2 opacity-60 transition hover:opacity-100"
+             onClick={() => navigate(-1)}
+             aria-label="Go back"
+             >
+              <ArrowLeft />
+         </button>
 
         <h1 className="font-bold text-lg">Support </h1>
 
