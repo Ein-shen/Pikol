@@ -7,13 +7,14 @@ import { useNavigate } from 'react-router-dom'
   return (
     <div w-full>
       <header className="flex justify-between flex-row items-center">
-        <button 
-          className='theme-hover p-2 rounded-md '
-          onClick={() => navigate(-1)}
-          >
-          <ArrowLeft />
-      
-        </button>
+        <button
+             type="button"
+              className="rounded-md p-2 opacity-60 transition hover:opacity-100"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+              >
+              <ArrowLeft />
+         </button>
 
         <h1 className="font-bold text-lg">Settings</h1>
 
