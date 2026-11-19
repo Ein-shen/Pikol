@@ -32,12 +32,9 @@ export const Support_components = () => {
 
         <h1 className="font-bold text-lg">Support </h1>
 
-        <button
+        <div className='w-full flex flex-col'>
           
-          className="flex flex-row rounded-md p-2 items-center space-x-3 text-md font-bold"
-        >
-          
-        </button>
+        </div>
       </header>
     </div>
   )
