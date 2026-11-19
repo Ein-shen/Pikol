@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom'
 
 export const About_components = () => {
   const navigate = useNavigate()
+
+  
   return (
     <div w-full>
       <header className="flex justify-between flex-row items-center">
