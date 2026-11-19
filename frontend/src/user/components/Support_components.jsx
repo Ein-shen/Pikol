@@ -28,7 +28,7 @@ export const Support_components = () => {
               
                 </button>
 
-        <h1 className="font-bold text-lg">Support</h1>
+        <h1 className="font-bold text-lg">Support </h1>
 
         <button
           
