@@ -165,7 +165,7 @@ export const Matching = () => {
                 onClick={() => navigate('/dashboard/double')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
-                Open Play to All
+                Open Play 
               </button>
             </div>
           </div>
