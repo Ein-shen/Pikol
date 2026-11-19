@@ -33,35 +33,18 @@ export const Hero = () => {
   // FETCH USER
   // ==========================================
 
-  // Define an async function so we can use "await" inside it
   const fetchUser = async () => {
-    // try/catch lets us handle network or server errors without crashing the page
     try {
-      // Send a GET request to /api/me (base URL comes from api.js).
-      // The auth token is sent along, so the server knows which user this is.
-      // "await" pauses here until the server responds.
       const res = await api.get('/me');
-
-      // axios puts the server's JSON body in res.data.
-      // If the server wraps it as { user: {...} }, use res.data.user;
-      // otherwise (the "||" fallback) use res.data directly.
       const userData = res.data.user || res.data;
-
-      // Save the user in React state. This triggers a re-render, so the
-      // username, full name, email, and photo appear on screen.
       setUser(userData);
     } catch (err) {
-      // Runs if the request fails (401, 404, 500, network down...).
-      // We only log it; the page keeps rendering with user = null.
       console.error('Get User error:', err);
     }
   };
 
-  // Run code after the component first renders
   useEffect(() => {
-    // Call fetchUser once to load the profile when the page opens
     fetchUser();
-    // Empty dependency array [] means "run only once, on mount"
   }, []);
 
   // ==========================================
@@ -158,7 +141,6 @@ export const Hero = () => {
 
     try {
       const res = await api.put('/me', form);
-
       const updatedUser = res.data.user || res.data;
 
       setUser(updatedUser);
@@ -196,7 +178,6 @@ export const Hero = () => {
       return;
     }
 
-    // Show an instant local preview while uploading
     setPhotoPreview(URL.createObjectURL(file));
     setUploadingPhoto(true);
 
@@ -204,7 +185,6 @@ export const Hero = () => {
       const imageData = new FormData();
       imageData.append('photo', file); // must match upload.single("photo") on the server
 
-      // Explicit multipart header so it works even if api.js defaults to JSON
       const response = await api.post('/me/photo', imageData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -212,11 +192,11 @@ export const Hero = () => {
       const updatedUser = response.data.user;
 
       setUser(updatedUser);
-      setPhotoPreview(''); // was null
+      setPhotoPreview('');
     } catch (err) {
       console.error('Profile photo upload error:', err);
       alert(err.response?.data?.message || 'Failed to upload profile photo.');
-      setPhotoPreview(''); // was null
+      setPhotoPreview('');
     } finally {
       setUploadingPhoto(false);
       e.target.value = '';
@@ -236,12 +216,12 @@ export const Hero = () => {
   }, [photoPreview]);
 
   return (
-    <div className="flex w-full flex-col gap-10 sm:gap-20">
+    <div className="flex w-full flex-col gap-8 sm:gap-12">
       {/* HEADER */}
-      <header className="flex flex-row items-center justify-between">
+      <header className="flex flex-row items-center justify-between gap-2">
         <button
           type="button"
-          className="rounded-md p-2 opacity-60 transition hover:opacity-100"
+          className="shrink-0 rounded-md p-2 opacity-60 transition hover:opacity-100"
           onClick={() => navigate(-1)}
           aria-label="Go back"
         >
@@ -249,9 +229,11 @@ export const Hero = () => {
         </button>
 
         {/* USERNAME DROPDOWN */}
-        <div ref={menuRef} className="relative">
-          <div className="flex flex-row items-center gap-1 text-xl font-bold">
-            <span>@{user?.username}</span>
+        <div ref={menuRef} className="relative min-w-0">
+          <div className="flex min-w-0 flex-row items-center gap-1 text-lg font-bold sm:text-xl">
+            <span className="max-w-[40vw] truncate sm:max-w-xs">
+              {user?.username ? `@${user.username}` : ''}
+            </span>
 
             <button
               type="button"
@@ -259,7 +241,7 @@ export const Hero = () => {
               aria-label="Toggle menu"
               aria-haspopup="menu"
               aria-expanded={showDropdown}
-              className="theme-text rounded-lg p-1 opacity-60 transition hover:opacity-100"
+              className="theme-text shrink-0 rounded-lg p-1 opacity-60 transition hover:opacity-100"
             >
               <ChevronDown
                 size={20}
@@ -273,13 +255,13 @@ export const Hero = () => {
           {showDropdown && (
             <div
               role="menu"
-              className="theme-card theme-border theme-text absolute left-1/2 top-full z-50 mt-2 flex min-w-44 -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg"
+              className="theme-card theme-border theme-text absolute left-1/2 top-full z-50 mt-2 flex w-44 max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg sm:w-52"
             >
               <button
                 type="button"
                 role="menuitem"
                 onClick={openEdit}
-                className="w-full border-b border-white/10 px-4 py-2  text-left text-xs theme-hover"
+                className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5"
               >
                 Edit profile
               </button>
@@ -288,26 +270,24 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={() => go(' ')}
-                className="w-full border-b border-white/10 px-4 py-2 text-left text-xs theme-hover"
+                className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5"
               >
                 Add account
               </button>
 
-              <Signout
-              className='w-full border-b border-white/10 px-4 py-2 text-left text-xs theme-hover '
-               />
+              <Signout className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5" />
             </div>
           )}
         </div>
 
-        <div className="w-10" />
+        {/* Spacer keeps the username centered (same width as the back button) */}
+        <div className="w-10 shrink-0" />
       </header>
 
       {/* PROFILE CONTENT */}
-      <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-stretch sm:justify-center">
+      <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
         {/* PROFILE PHOTO */}
-        {/* PROFILE PHOTO */}
-        <div className="relative flex flex-col items-center">
+        <div className="relative flex shrink-0 flex-col items-center">
           <input
             type="file"
             accept="image/*"
@@ -320,7 +300,7 @@ export const Hero = () => {
             type="button"
             disabled={uploadingPhoto}
             onClick={() => fileInputRef.current?.click()}
-            className="theme-border theme-accent flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border sm:h-32 sm:w-32 disabled:opacity-50"
+            className="theme-border theme-accent flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border disabled:opacity-50 sm:h-32 sm:w-32"
           >
             <img
               src={
@@ -334,7 +314,7 @@ export const Hero = () => {
           </button>
 
           {uploadingPhoto && (
-            <span className="absolute left-0 right-0 top-full mt-1 text-center text-xs opacity-60">
+            <span className="absolute left-0 right-0 top-full mt-1 whitespace-nowrap text-center text-xs opacity-60">
               Uploading photo...
             </span>
           )}
@@ -344,18 +324,17 @@ export const Hero = () => {
         {isEditing ? (
           <form
             onSubmit={handleSave}
-            className="flex w-full max-w-xs flex-col gap-3 sm:w-72"
+            className="flex w-full max-w-sm flex-col gap-3 sm:w-72"
           >
             <div className="flex flex-col gap-1.5">
               <label htmlFor="edit-fullname" className="text-sm font-semibold">
                 Name
               </label>
-
               <input
                 id="edit-fullname"
                 value={form.fullname}
                 onChange={(e) => setForm({ ...form, fullname: e.target.value })}
-                className="theme-border w-full rounded-md border bg-transparent px-3 py-1.5 text-sm outline-none"
+                className="theme-border w-full rounded-md border bg-transparent px-3 py-2 text-base outline-none sm:py-1.5 sm:text-sm"
                 required
                 autoFocus
               />
@@ -365,23 +344,22 @@ export const Hero = () => {
               <label htmlFor="edit-username" className="text-sm font-semibold">
                 Username
               </label>
-
               <input
                 id="edit-username"
                 value={form.username}
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
-                className="theme-border w-full rounded-md border bg-transparent px-3 py-1.5 text-sm outline-none"
+                className="theme-border w-full rounded-md border bg-transparent px-3 py-2 text-base outline-none sm:py-1.5 sm:text-sm"
                 required
               />
             </div>
 
             {error && <p className="text-xs text-red-500">{error}</p>}
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-60"
+                className="flex-1 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 disabled:opacity-60 sm:flex-none sm:py-1.5"
               >
                 {saving ? 'Saving...' : 'Save'}
               </button>
@@ -389,33 +367,39 @@ export const Hero = () => {
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="theme-card theme-border theme-hover rounded-md border px-4 py-1.5 text-sm font-semibold"
+                className="theme-card theme-border theme-hover flex-1 rounded-md border px-4 py-2 text-sm font-semibold sm:flex-none sm:py-1.5"
               >
                 Cancel
               </button>
             </div>
           </form>
         ) : (
-         <div className="flex w-full min-w-0 max-w-xs flex-col justify-between self-stretch text-center sm:w-auto sm:text-left">
-          <div className="flex flex-col gap-1">
-            <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
-              {user?.fullname}
-            </span>
-            <span className="theme-muted break-all text-sm">
-              {user?.email}
-            </span>
-          </div>
+          <div className="flex w-full min-w-0 max-w-[16rem] flex-col items-center gap-3 self-center text-center sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:items-stretch sm:justify-between sm:self-stretch sm:text-left">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
+                {user?.fullname}
+              </span>
+              <span className="theme-muted break-all text-sm">
+                {user?.email}
+              </span>
+            </div>
 
-          <button
-            type="button"
-            aria-label="Edit profile"
-            onClick={openEdit}
-            className="flex w-full items-center justify-center gap-2 rounded-md border px-2 py-1 text-xs opacity-60 transition hover:opacity-100 theme-border-2"
-          >
-            Edit Profile
-            <img src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000" alt="" height={14} width={14} className="theme-icon" />
-          </button>
-        </div>
+            <button
+              type="button"
+              aria-label="Edit profile"
+              onClick={openEdit}
+              className="theme-border-2 flex w-full items-center justify-center gap-2 rounded-md border px-3 py-2 text-xs opacity-60 transition hover:opacity-100 sm:py-1"
+            >
+              Edit Profile
+              <img
+                src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000"
+                alt=""
+                height={14}
+                width={14}
+                className="theme-icon"
+              />
+            </button>
+          </div>
         )}
       </div>
     </div>
