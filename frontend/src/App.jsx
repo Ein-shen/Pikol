@@ -13,7 +13,7 @@ import { Matching } from './user/Matching.jsx'
 import { Overview } from './user/Overview.jsx'
 
 import { SingleElilmination } from './user/Create_select_game/SingleElilmination.jsx'
-import { DoubleElimination } from './user/Create_select_game/DoubleElimination.jsx'
+ 
 import { Top2_Brackets } from './user/Create_select_game/Top2_Brackets.jsx'
 import { Top3_Brackets } from './user/Create_select_game/Top3_Brackets.jsx'
 import { OpenPlay } from './user/Create_select_game/OpenPlay.jsx'
@@ -67,7 +67,7 @@ function App() {
  
         <Route path="/dashboard/matching" element={<Matching />} />
         <Route path="/dashboard/single" element={<SingleElilmination />} />
-        <Route path="/dashboard/double" element={<DoubleElimination />} />
+ 
         <Route path="/dashboard/top2" element={<Top2_Brackets />} />
         <Route path="/dashboard/top3" element={<Top3_Brackets />} />
         <Route path="/dashboard/openplay" element={<OpenPlay />} />
