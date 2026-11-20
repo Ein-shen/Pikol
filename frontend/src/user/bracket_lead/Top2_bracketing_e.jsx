@@ -320,7 +320,7 @@ function WaitCard({ item }) {
         borderRadius: 6,
       }}
     >
-      <p className="text-[11px] uppercase tracking-wide text-gray-500">Waiting for next round</p>
+      <p className="text-[11px] uppercase tracking-wide text-gray-500"> (BYE) team Waiting  for next round</p>
       <p className="mt-1 text-[13px]" style={nameStyle(item.team1)}>
         {item.team1 ? pairLabel(item.team1) : 'TBD'}
       </p>
@@ -1420,12 +1420,18 @@ export function Top2_View({
       {bracket && (
         <>
           {/* RESPONSIVE: less top space on phones */}
-          <h3 className="text-lg pt-6 sm:pt-10 font-bold">Playoffs (Single Elimination)</h3>
+          <h3 className="text-lg pt-6  sm:pt-10  font-bold">Playoffs (Single Elimination)</h3>
           {groups.length === 3 && (
-            <p className="text-xs theme-muted">
-              The top 2 of each group (6 teams) are seeded by group finish. Seeds 1 and 2 get a bye, the
-              other 4 teams play the quarter-finals (upper and lower bracket), so 4 teams reach the semi-finals.
+            <p className="text-md theme-muted flex flex-col gap-3">
+              Playoffs Format:
+              <span>- The top 2 teams from each bracket A, B, & C (6 teams total) advance to the playoffs.</span>
+              <span>- The 4 lower-ranked qualifiers compete in the Quarterfinals ( Lower Brackets ).</span>
+              
+              <span>
+                - The top-ranked teams from Brackets A, B, and C will be compared (Point system) based on their group-stage performance. The two best-performing teams will be awarded BYEs in the bracket below (Semi-final).
+              </span>
             </p>
+             
           )}
           {/* overflow-x-auto lets the wide tree scroll sideways on small screens */}
           {/* RESPONSIVE: p-3 on phones, original p-6 from sm: and up */}
