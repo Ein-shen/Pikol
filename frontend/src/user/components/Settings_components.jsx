@@ -12,26 +12,51 @@ export const Settings_components = () => {
   const items = [
     {
       label: 'About',
-      path: ' ',
+      path: '/dashboard/about_components',
       icon: 'https://img.icons8.com/?size=100&id=PUULuXvUfB6u&format=png&color=000000',
       alt: 'about',
     },
     {
       label: 'Support',
-      path: ' ',
+      path: '/dashboard/support_components ',
       icon: 'https://img.icons8.com/?size=100&id=CKanVNIbMiJO&format=png&color=000000',
       alt: 'support',
     },
-    {
-      label: 'Ask for help',
-      path: ' ',
-      icon: 'https://img.icons8.com/?size=100&id=wYfd7Y8cWmet&format=png&color=000000',
-      alt: 'help',
-    },
+     
     {
       label: 'Language',
       path: ' ',
       icon: 'https://img.icons8.com/?size=100&id=ceTqKjlDTFsp&format=png&color=000000',
+      alt: 'language',
+    },
+    {
+      label: 'Terms & Condition',
+      path: ' ',
+      icon: 'https://img.icons8.com/?size=100&id=102559&format=png&color=000000',
+      alt: 'language',
+    },
+    {
+      label: 'Display',
+      path: ' ',
+      icon: 'https://img.icons8.com/?size=100&id=35128&format=png&color=000000',
+      alt: 'language',
+    },
+    {
+      label: 'Activity Center',
+      path: ' ',
+      icon: 'https://img.icons8.com/?size=100&id=V8DoLg02M4Fb&format=png&color=000000',
+      alt: 'language',
+    },
+    {
+      label: 'Time Management',
+      path: ' ',
+      icon: 'https://img.icons8.com/?size=100&id=84306&format=png&color=000000',
+      alt: 'language',
+    },
+    {
+      label: 'Privacy center',
+      path: ' ',
+      icon: 'https://img.icons8.com/?size=100&id=EUM1sHPZXmLO&format=png&color=000000',
       alt: 'language',
     },
   ]
@@ -54,7 +79,7 @@ export const Settings_components = () => {
         <div className="w-10" />
       </header>
 
-      <div className="theme-card py-4 space-y-4 theme-border border px-3 rounded-md w-[90%] mx-auto flex flex-col justify-center items-stretch">
+      <div className="theme-card py-6 space-y-6 theme-border border px-3 rounded-md w-[90%] mx-auto flex flex-col justify-center items-stretch">
         {items.map((item, index) => (
           <button
             key={item.label}
@@ -65,7 +90,7 @@ export const Settings_components = () => {
             onClick={() => handleNavigate(item.path)}
           >
             <span className="flex flex-row items-center gap-2">
-              <img src={item.icon} alt={item.alt} height={10} width={20} />
+              <img src={item.icon} alt={item.alt} height={15} width={25} />
               {item.label}
             </span>
             <ChevronRight size={25} />
