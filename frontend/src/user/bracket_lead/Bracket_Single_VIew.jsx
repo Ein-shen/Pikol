@@ -486,7 +486,7 @@ export const Bracket_Single_VIew = ({
 
         <button
           onClick={"onReset"}
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-sm theme-border theme-hover theme-accent"
           >
             <Pencil size={16} /> Edit Tournament
           </button>
