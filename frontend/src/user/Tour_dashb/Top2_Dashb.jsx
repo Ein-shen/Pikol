@@ -201,7 +201,7 @@ export const Top2_Dashb = () => {
                             // py-3 on mobile for easier tapping, text-sm on mobile
                             className="theme-hover theme-border w-full border-b px-4 py-3 text-left text-sm sm:py-2 sm:text-xs"
                           >
-                            Rename
+                            Edit 
                           </button>
                           <button
                             type="button"
