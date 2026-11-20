@@ -2,47 +2,32 @@
  * ====================================================================
  * OVERVIEW
  * ====================================================================
- * This file renders a two-stage tournament for pairs of players:
+ * Two-stage tournament for pairs of players:
  *
  *   STAGE 1 - "Brackets" (round robin groups)
- *     Teams are split into 1, 2, 3 or 4 groups depending on how many pairs
- *     there are (see FORMATS). Inside each group
- *     every team plays every other team once. A standings table is
- *     computed live from the scores.
+ *     Teams are split into 1, 2, 3 or 4 groups (see FORMATS). Inside each
+ *     group every team plays every other team once. Standings are live.
  *
  *   STAGE 2 - "Playoffs" (single elimination)
- *     When all group matches are scored, the user "locks" the groups.
- *     The top 2 teams of each group are seeded into a knockout tree
- *     (semi-finals for 2 groups, quarter-finals for 4 groups).
+ *     When all group matches are scored, the user locks the groups.
+ *     The top 2 of each group are seeded into a knockout tree.
  *     The two semi-final LOSERS also play a 3rd-place match.
  *
- *   12 PAIRS = 3 GROUPS (A, B, C) of 4:
- *     The top 2 of each group = 6 teams. They are ranked as seeds 1-6
- *     (3 group winners, then 3 runners-up). Seeds 1 and 2 get a BYE,
- *     so only 2 quarter-finals are played (2 teams are eliminated) and
- *     4 teams reach the semi-finals:
- *
- *       Upper bracket:  seed 1 (bye)  +  seed 4 vs seed 5
- *       Lower bracket:  seed 2 (bye)  +  seed 3 vs seed 6
- *       Semi-finals:    seed 1 vs W(4/5)      seed 2 vs W(3/6)
+ *   12 PAIRS = 3 GROUPS (A, B, C) of 4: top 2 of each = 6 teams, seeds 1-2
+ *   get a BYE, 2 quarter-finals, then 4 teams in the semi-finals.
  *
  * Scores are saved to the backend through `api` on every change.
  *
- * CHANGED (fix summary):
- *   1. API base URL: /quadro/... -> /top2/...   (this was the cause of the 404s)
- *   2. Top2_bracketing_e page: GET/DELETE now use /top2/:id
- *   3. GroupCard <thead>: comments moved onto their own lines
- *      (removes the "whitespace text nodes cannot be a child of <tr>" warning)
- *   4. GroupCard <tbody>: indentation tidied
- *   5. Removed the invalid `rounded: 'medium'` style key
- *   6. Renamed Quadro_View -> Top2_View (alias kept at the bottom of the file)
- *   7. New 3-group format for 12 pairs (FORMATS, createThreeGroupBracket)
- *   8. RESPONSIVE: layout/spacing tweaks only (search "RESPONSIVE:")
+ * NEW IN THIS VERSION:
+ *   - "Edit Tournament" opens the registration form (Top2_Brackets) in EDIT
+ *     mode, pre-filled, so players can be changed and teams added or removed.
+ *   - FIX: "Team N" label in GroupCard was wrong for group D and for
+ *     2 groups of 5. It now counts from the real position in the list.
  */
 
 import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { RotateCcw, Lock, Unlock, Trophy, Pencil} from 'lucide-react'
+import { Lock, Unlock, Pencil } from 'lucide-react'
 import api from '../../api'
 // createBracket: builds an empty knockout tree from a list of seeded teams
 // applyResults:  fills that tree with scores that were saved earlier
@@ -51,6 +36,10 @@ import { createBracket, applyResults } from './Bracket_Single_VIew'
 // Route to go back to the list of tournaments
 const LIST_ROUTE = '/dashboard/top2dashb'
 
+// Route of the registration form (Top2_Brackets). MUST match your router.
+// TODO: change this to the real path of the page that renders <Top2_Brackets />.
+const CREATE_ROUTE = '/dashboard/top2'
+
 /* ------------------------------------------------------------------ */
 /* Score input helpers                                                 */
 /* ------------------------------------------------------------------ */
@@ -58,11 +47,8 @@ const LIST_ROUTE = '/dashboard/top2dashb'
 // Highest score allowed in a match (games are played to 11)
 const MAX_SCORE = 11
 
-// Cleans what the user types into a score box:
-//  1. removes everything that is not a digit
-//  2. removes leading zeros ("007" -> "7")
-//  3. caps the number at MAX_SCORE
-// Returns '' when the box is empty so the placeholder "-" shows again.
+// Keeps digits only, removes leading zeros, caps at MAX_SCORE.
+// Returns '' when empty so the placeholder "-" shows again.
 const cleanScore = (value) => {
   const digits = value.replace(/\D/g, '').replace(/^0+(?=\d)/, '')
   if (digits === '') return ''
@@ -72,22 +58,20 @@ const cleanScore = (value) => {
 /* ------------------------------------------------------------------ */
 /* Layout constants for the knockout tree (all values are pixels)      */
 /* ------------------------------------------------------------------ */
-const CARD_WIDTH = 200 // width of one match card
-const ROUND_GAP = 56 // horizontal space between two rounds (where lines go)
-const ROW_HEIGHT = 150 // vertical space reserved for each first-round match
-const HEADER = 40 // space at the top for the round title
-const LINE_COLOR = '#1ba3c6' // color of the lines connecting matches
-const COLUMN = CARD_WIDTH + ROUND_GAP // total width of one round column
+const CARD_WIDTH = 200
+const ROUND_GAP = 56
+const ROW_HEIGHT = 150
+const HEADER = 40
+const LINE_COLOR = '#1ba3c6'
+const COLUMN = CARD_WIDTH + ROUND_GAP
 
 // A team's unique id. Saved teams use `pairId`; fall back to `id`.
-// Returns null for an empty slot (so two empty slots compare as equal).
 const teamKey = (t) => (t ? t.pairId ?? t.id : null)
 
 // Shows the two players of a team, e.g. "Ana & Bia"
 const pairLabel = (t) => `${t.player1} & ${t.player2}`
 
-// Title shown above each round column.
-// Counts from the END so the last round is always "Final", etc.
+// Title above each round column (counted from the END)
 function getRoundName(roundIndex, totalRounds) {
   if (roundIndex === totalRounds - 1) return 'Final'
   if (roundIndex === totalRounds - 2) return 'Semi-finals'
@@ -99,9 +83,7 @@ function getRoundName(roundIndex, totalRounds) {
 /* Knockout logic                                                      */
 /* ------------------------------------------------------------------ */
 
-// Decides who won a knockout match.
-// Returns null if the match can't have a winner yet:
-//  - a team is missing, or a score is empty, or the scores are tied.
+// Winner of a knockout match, or null if not decided yet.
 function getWinner(match) {
   if (!match.team1 || !match.team2) return null
   if (match.score1 === '' || match.score2 === '') return null
@@ -111,37 +93,27 @@ function getWinner(match) {
   return s1 > s2 ? match.team1 : match.team2
 }
 
-// Recalculates the WHOLE bracket after a score changed.
-// It walks round by round (left to right):
-//   - round 0 teams never change (they come from the groups)
-//   - later rounds take their teams from the winners of the matches
-//     that "feed" them (item.feeds)
-// If the teams of a match changed, its old scores are no longer valid,
-// so they are reset, and the match is remembered in `cleared` so the
-// caller can also delete those scores on the server.
-// NOTE: this MUTATES the bracket it receives (the caller passes a copy).
+// Recalculates the WHOLE bracket after a score changed (MUTATES the copy it gets).
+// Returns `cleared`: matches whose old scores were erased because their teams
+// changed, so the caller can delete them on the server too.
 function propagate(bracket) {
   const cleared = []
   bracket.forEach((round, r) => {
     round.forEach((item, m) => {
       if (r > 0) {
-        // Look up the winner of a feeder match (or null if none yet)
         const from = (f) => (f ? bracket[f.r][f.m].winner : null)
 
         if (item.kind === 'wait') {
-          // "wait" item = a bye: only one feeder, the team just waits
-          // for the next round
+          // "wait" item = a bye: one feeder, the team just waits
           item.team1 = from(item.feeds[0])
         } else {
           const t1 = from(item.feeds[0])
           const t2 = from(item.feeds[1])
 
-          // Did either team in this match change?
           const changed =
             teamKey(t1) !== teamKey(item.team1) || teamKey(t2) !== teamKey(item.team2)
 
           if (changed) {
-            // Only report it if there was a score that is about to be erased
             if (item.score1 !== '' || item.score2 !== '') {
               cleared.push({ round: r + 1, matchNumber: m + 1 })
             }
@@ -152,18 +124,13 @@ function propagate(bracket) {
           item.team2 = t2
         }
       }
-      // A bye's "winner" is simply the waiting team;
-      // a normal match's winner comes from the scores
       item.winner = item.kind === 'wait' ? item.team1 : getWinner(item)
     })
   })
   return cleared
 }
 
-// Works out the vertical (y) center of every card in the tree.
-// Round 0 cards are spaced evenly. Every later card sits exactly in
-// the middle of the matches that feed it - this gives the classic
-// "bracket" shape.
+// Vertical (y) center of every card in the tree.
 function computeLayout(bracket) {
   const ys = bracket.map(() => [])
   bracket.forEach((round, r) => {
@@ -172,7 +139,6 @@ function computeLayout(bracket) {
         ys[r][m] = HEADER + m * ROW_HEIGHT + ROW_HEIGHT / 2
       } else {
         const feederYs = item.feeds.map((f) => ys[f.r][f.m])
-        // average of the feeder positions = the middle point
         ys[r][m] = feederYs.reduce((a, b) => a + b, 0) / feederYs.length
       }
     })
@@ -180,26 +146,20 @@ function computeLayout(bracket) {
   return ys
 }
 
-// The loser of a finished match = the team that is NOT the winner.
-// Returns null while there is no winner yet.
+// The loser of a finished match. Null while there is no winner yet.
 function getLoser(match, winner) {
   if (!winner) return null
   return teamKey(winner) === teamKey(match.team1) ? match.team2 : match.team1
 }
 
-// A 3rd-place match only makes sense when the round before the final has
-// exactly 2 real matches (the two semi-finals). This is true for both
-// 4 qualifiers (semis + final) and 8 qualifiers (quarters + semis + final).
+// A 3rd-place match only exists when the round before the final has 2 real matches.
 function hasThirdPlace(bracket) {
   if (bracket.length < 2) return false
   const semis = bracket[bracket.length - 2]
   return semis.length === 2 && semis.every((m) => m.kind !== 'wait')
 }
 
-// The 3rd-place teams are the LOSERS of the two semi-finals.
-// Returns [loserOfSemi1, loserOfSemi2]; a slot is null until that semi is decided.
-// Nothing is stored for these teams - they are always worked out from the bracket,
-// so they can never get out of sync with the semi-final scores.
+// 3rd-place teams = losers of the two semi-finals (never stored, always derived).
 function getThirdPlaceTeams(bracket) {
   if (!hasThirdPlace(bracket)) return [null, null]
   const semis = bracket[bracket.length - 2]
@@ -210,8 +170,6 @@ function getThirdPlaceTeams(bracket) {
 /* Inline styles for the score inputs and names                        */
 /* ------------------------------------------------------------------ */
 
-// Yellow score box used in the playoff cards
-// CHANGED: removed the invalid `rounded: 'medium'` key (borderRadius already does the job)
 const knockoutScoreBox = {
   width: 50,
   height: 24,
@@ -225,7 +183,6 @@ const knockoutScoreBox = {
   outline: 'none',
 }
 
-// Yellow score box used in the group (round robin) lists - a bit bigger
 const groupScoreBox = {
   width: 44,
   height: 28,
@@ -236,11 +193,9 @@ const groupScoreBox = {
   fontWeight: 600,
   color: '#333',
   border: 'none',
-  flexShrink: 0, // RESPONSIVE: the box keeps its size on narrow screens (names shrink instead)
+  flexShrink: 0,
 }
 
-// Style for a team name: bold + dark when a team is known,
-// light grey when it is still "TBD"
 const nameStyle = (team) => ({
   fontWeight: team ? 600 : 400,
   color: team ? '#222' : '#999',
@@ -252,10 +207,8 @@ const nameStyle = (team) => ({
 /* ------------------------------------------------------------------ */
 
 // One playoff match: two score inputs on top, team names below.
-// `onScore(key, value)` is called with 'score1' or 'score2'.
 function MatchCard({ match, onScore }) {
   const { team1, team2 } = match
-  // Scores can only be typed once BOTH teams are known
   const canEnterScore = team1 && team2
 
   return (
@@ -269,11 +222,10 @@ function MatchCard({ match, onScore }) {
         boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
       }}
     >
-      {/* Score row:  [ score1 ] : [ score2 ] */}
       <div className="flex justify-center items-center gap-1.5" style={{ margin: '8px 0' }}>
         <input
           type="text"
-          inputMode="numeric" // shows the number keypad on phones
+          inputMode="numeric"
           maxLength={2}
           aria-label="Score team 1"
           disabled={!canEnterScore}
@@ -296,7 +248,6 @@ function MatchCard({ match, onScore }) {
         />
       </div>
 
-      {/* Names row:  Team 1 vs Team 2  (or "TBD" if not decided yet) */}
       <div className="flex flex-row flex-wrap justify-center rounded-md items-center gap-1 text-[13px]">
         <span style={nameStyle(team1)}>{team1 ? pairLabel(team1) : 'TBD'}</span>
         <span className="text-gray-500">vs</span>
@@ -306,8 +257,7 @@ function MatchCard({ match, onScore }) {
   )
 }
 
-// Dashed card for a "bye": a team with no opponent this round,
-// so it just waits for the next round.
+// Dashed card for a "bye": a team with no opponent this round.
 function WaitCard({ item }) {
   return (
     <div
@@ -320,7 +270,9 @@ function WaitCard({ item }) {
         borderRadius: 6,
       }}
     >
-      <p className="text-[11px] uppercase tracking-wide text-gray-500"> (BYE) team Waiting  for next round</p>
+      <p className="text-[11px] uppercase tracking-wide text-gray-500">
+        (BYE) team waiting for next round
+      </p>
       <p className="mt-1 text-[13px]" style={nameStyle(item.team1)}>
         {item.team1 ? pairLabel(item.team1) : 'TBD'}
       </p>
@@ -328,29 +280,22 @@ function WaitCard({ item }) {
   )
 }
 
-// Draws the full knockout tree: round titles, connecting lines, cards.
-// Cards are placed with `position: absolute` using the coordinates
-// from computeLayout(). Lines are drawn in one SVG layer behind them.
+// Full knockout tree: round titles, connecting lines, cards.
 // `thirdPlace` (optional) = { match, onScore } for the 3rd-place match.
-// It is drawn in the FINAL's column, one row below the final.
 function BracketTree({ bracket, onScore, thirdPlace }) {
   if (!bracket.length) return null
 
-  const ys = computeLayout(bracket) // y position of every card
-  const width = bracket.length * COLUMN - ROUND_GAP // total tree width
+  const ys = computeLayout(bracket)
+  const width = bracket.length * COLUMN - ROUND_GAP
 
-  const lastCol = (bracket.length - 1) * COLUMN // x of the final's column
-  const finalY = ys[bracket.length - 1][0] // y of the final's card
-  const thirdY = finalY + ROW_HEIGHT // y of the 3rd-place card
+  const lastCol = (bracket.length - 1) * COLUMN
+  const finalY = ys[bracket.length - 1][0]
+  const thirdY = finalY + ROW_HEIGHT
   const treeHeight = Math.max(...ys.flat()) + ROW_HEIGHT / 2
-  // Make the tree taller if the 3rd-place card would not fit
   const height = thirdPlace ? Math.max(treeHeight, thirdY + ROW_HEIGHT / 2) : treeHeight
 
   return (
-    // RESPONSIVE: shrink-0 stops the tree from being squashed inside its
-    // scrolling parent; the parent scrolls sideways on small screens instead
     <div className="relative shrink-0 rounded-md" style={{ width, height }}>
-      {/* Round titles ("Quarter-finals", "Semi-finals", "Final") */}
       {bracket.map((_, r) => (
         <h3
           key={r}
@@ -361,7 +306,6 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
         </h3>
       ))}
 
-      {/* Connecting lines. pointerEvents none = clicks pass through to the cards */}
       <svg
         width={width}
         height={height}
@@ -370,18 +314,15 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
       >
         {bracket.flatMap((round, r) =>
           round.flatMap((item, m) =>
-            // One line for each feeder match -> this match
             item.feeds.map((f, k) => {
-              const x1 = f.r * COLUMN + CARD_WIDTH // right edge of the feeder card
-              const y1 = ys[f.r][f.m] // feeder's vertical center
-              const x2 = r * COLUMN // left edge of this card
-              const y2 = ys[r][m] // this card's vertical center
-              const midX = x2 - ROUND_GAP / 2 // where the line turns vertical
+              const x1 = f.r * COLUMN + CARD_WIDTH
+              const y1 = ys[f.r][f.m]
+              const x2 = r * COLUMN
+              const y2 = ys[r][m]
+              const midX = x2 - ROUND_GAP / 2
               return (
                 <path
                   key={`${item.id}-${k}`}
-                  // H = horizontal line, V = vertical line:
-                  // go right, go up/down, go right again (elbow shape)
                   d={`M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`}
                   fill="none"
                   stroke={LINE_COLOR}
@@ -394,26 +335,22 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
         )}
       </svg>
 
-      {/* The cards themselves */}
       {bracket.flatMap((round, r) =>
         round.map((item, m) => (
           <div
             key={item.id}
             className="absolute"
-            // translateY(-50%) centers the card on its y coordinate
             style={{ left: r * COLUMN, top: ys[r][m], transform: 'translateY(-50%)' }}
           >
             {item.kind === 'wait' ? (
               <WaitCard item={item} />
             ) : (
-              // Tell the parent WHICH match (round r, match m) changed
               <MatchCard match={item} onScore={(key, value) => onScore(r, m, key, value)} />
             )}
           </div>
         ))
       )}
 
-      {/* "Championship" label right above the final's card (same style as "Fighting for 3rd") */}
       <h3
         className="absolute text-center text-xs font-semibold"
         style={{ left: lastCol, top: finalY - 70, width: CARD_WIDTH }}
@@ -421,7 +358,6 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
         Championship
       </h3>
 
-      {/* 3rd place match: losers of the two semi-finals */}
       {thirdPlace && (
         <>
           <h3
@@ -444,27 +380,25 @@ function BracketTree({ bracket, onScore, thirdPlace }) {
 
 function PlaceCard({ label, team, icon, featured = false }) {
   return (
-    <div
-      // RESPONSIVE: smaller padding on phones
-      className={`w-full   text-center space-y-1 ${
-        featured ? 'p-3 sm:p-5' : 'p-2 sm:p-4'
-      }`}
-    >
+    <div className={`w-full text-center space-y-1 ${featured ? 'p-3 sm:p-5' : 'p-2 sm:p-4'}`}>
       {icon}
 
       <p className={`font-medium text-yellow-800 ${featured ? 'text-sm' : 'text-xs'}`}>
         {label}
       </p>
 
-      {/* RESPONSIVE: smaller text on phones + break-words so long names wrap */}
-      <p className={`break-words font-bold capitalize text-black ${featured ? 'text-base sm:text-xl' : 'text-sm sm:text-base'}`}>
+      <p
+        className={`break-words font-bold capitalize text-black ${
+          featured ? 'text-base sm:text-xl' : 'text-sm sm:text-base'
+        }`}
+      >
         {team ? pairLabel(team) : ''}
       </p>
 
       <p
-        className={`mt-1 break-words ${featured ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'} ${
-          team ? 'text-gray-900' : 'text-gray-400'
-        }`}
+        className={`mt-1 break-words ${
+          featured ? 'text-xs sm:text-sm' : 'text-sm sm:text-base'
+        } ${team ? 'text-gray-900' : 'text-gray-400'}`}
       >
         {team ? team.name : 'TBD'}
       </p>
@@ -472,18 +406,13 @@ function PlaceCard({ label, team, icon, featured = false }) {
   )
 }
 
-
-
-function ChampionBanner({ champion, second, third, fourth, showThird }) {
+function ChampionBanner({ champion, second, third, showThird }) {
   return (
-   <div className="mx-auto w-full rounded-xl border border-yellow-300 bg-yellow-50 p-4 sm:p-6">
-
+    <div className="mx-auto w-full rounded-xl border border-yellow-300 bg-yellow-50 p-4 sm:p-6">
       <div className="flex items-end justify-center gap-2 sm:gap-4">
-
         {/* 2nd Place */}
         <div className="flex flex-1 flex-col items-center min-w-0">
           <PlaceCard label="" team={second} />
-
           <div className="relative flex h-24 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-gray-400 bg-gradient-to-b from-gray-200 to-gray-400 shadow-lg">
             <span className="text-3xl font-black text-gray-700">2</span>
             <span className="text-xs font-bold text-gray-700">SECOND</span>
@@ -492,13 +421,7 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
 
         {/* Champion */}
         <div className="flex flex-1 flex-col items-center min-w-0">
-          <PlaceCard
-            featured
-            label=""
-            team={champion}
-             
-          />
-
+          <PlaceCard featured label="" team={champion} />
           <div className="flex h-36 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-yellow-500 bg-gradient-to-b from-yellow-300 to-yellow-500 shadow-xl">
             <span className="text-5xl font-black text-yellow-900">1</span>
             <span className="text-sm font-black text-yellow-900">CHAMPION</span>
@@ -509,52 +432,41 @@ function ChampionBanner({ champion, second, third, fourth, showThird }) {
         {showThird && (
           <div className="flex flex-1 flex-col items-center min-w-0">
             <PlaceCard label=" " team={third} />
-
             <div className="flex h-16 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-orange-500 bg-gradient-to-b from-orange-300 to-orange-500 shadow-lg">
               <span className="text-2xl font-black text-orange-900">3</span>
               <span className="text-xs font-bold text-orange-900">THIRD</span>
             </div>
           </div>
         )}
-
       </div>
     </div>
   )
 }
 
-
-
 /* ------------------------------------------------------------------ */
 /* Group stage: splitting teams into groups                            */
-/* (how many groups / who advances depends on the pairs: see FORMATS)  */
 /* ------------------------------------------------------------------ */
 
 // The tournament format for each size. The FIRST row that fits is used:
 //   - a row with `exact` fits only those pair counts
 //   - any other row fits when the pairs are <= `maxPairs`
-// To change a limit, just edit the numbers here.
-//   groups  = group letters (how many round-robin groups there are)
-//   advance = how many teams of EACH group go to the playoffs
 const FORMATS = [
-  // 12 pairs  : 3 groups (A, B, C) of 4, top 2 of each = 6 teams
-  //             -> Quarter-finals with 2 byes, then semi-finals
+  // 12 pairs  : 3 groups of 4, top 2 each = 6 teams (2 byes) -> semi-finals
   { exact: [12], groups: ['A', 'B', 'C'], advance: 2 },
-  // 2-3 pairs : 1 group, top 2 play the Final (no semi-finals, no 3rd place)
+  // 2-3 pairs : 1 group, top 2 play the Final
   { maxPairs: 3, groups: ['A'], advance: 2 },
-  // 4-5 pairs : 1 group, top 4 -> Semi-finals (1st vs 4th, 2nd vs 3rd)
+  // 4-5 pairs : 1 group, top 4 -> Semi-finals
   { maxPairs: 5, groups: ['A'], advance: 4 },
-  // 6-10 pairs: 2 groups, top 2 of each = 4 teams -> Semi-finals
+  // 6-10 pairs: 2 groups, top 2 each = 4 teams -> Semi-finals
   { maxPairs: 10, groups: ['A', 'B'], advance: 2 },
-  // 11+ pairs : 4 groups, top 2 of each = 8 teams -> Quarter-finals
+  // 11+ pairs : 4 groups, top 2 each = 8 teams -> Quarter-finals
   { maxPairs: Infinity, groups: ['A', 'B', 'C', 'D'], advance: 2 },
 ]
 
 const getFormat = (teamsCount) =>
   FORMATS.find((f) => (f.exact ? f.exact.includes(teamsCount) : teamsCount <= f.maxPairs))
 
-// One-line description of the format for a team count, e.g. for the
-// "new tournament" page, so its helper text always matches the real bracket:
-//   getFormatSummary(10) -> "10 teams are split into 2 groups (A-B), up to 5 per group. The top 4 qualify for the semi-finals."
+// One-line description of the format (used by the "new tournament" page).
 export function getFormatSummary(teamsCount) {
   const f = getFormat(teamsCount)
   const perGroup = Math.ceil(teamsCount / f.groups.length)
@@ -572,14 +484,11 @@ export function getFormatSummary(teamsCount) {
   return `${teamsCount} teams are split into ${groupText}, up to ${perGroup} per group. The top ${qualifiers} qualify for the ${roundText}.`
 }
 
-// Which group letters to use for this many teams
 function getGroupNamesForTeams(teamsCount) {
   return getFormat(teamsCount).groups
 }
 
-// Which group a team ends up in, from its position in the team list (0 = first team).
-// Uses the same slicing as splitIntoGroups(), so the registration form can show
-// "Group A/B/C/D" next to each team and it always matches the real bracket.
+// Which group a team ends up in, from its position in the list (0 = first team).
 export function getGroupLabel(index, teamsCount) {
   const names = getGroupNamesForTeams(teamsCount)
   const size = Math.ceil(teamsCount / names.length)
@@ -587,8 +496,6 @@ export function getGroupLabel(index, teamsCount) {
 }
 
 // Cuts the team list into equal slices, one per group.
-// Example: 10 teams, 2 groups -> size 5 -> A = teams 0-4, B = teams 5-9.
-// If it doesn't divide evenly the last group is just smaller.
 function splitIntoGroups(teams) {
   const groupNames = getGroupNamesForTeams(teams.length)
   const size = Math.ceil(teams.length / groupNames.length)
@@ -599,26 +506,20 @@ function splitIntoGroups(teams) {
   }))
 }
 
-// Classic "circle method" round robin schedule: every team plays every
-// other team exactly once. Returns an array of rounds, each round is a
-// list of [teamA, teamB] pairings.
+// Circle-method round robin: every team plays every other team once.
 function roundRobin(teams) {
   const list = [...teams]
-  // Odd number of teams -> add a "null" dummy so someone sits out each round
   if (list.length % 2) list.push(null)
   const n = list.length
   const rounds = []
   for (let r = 0; r < n - 1; r++) {
     const games = []
     for (let i = 0; i < n / 2; i++) {
-      // Pair the first half with the second half (mirrored)
       const a = list[i]
       const b = list[n - 1 - i]
-      // Skip pairings with the dummy (that team has a bye)
       if (a && b) games.push([a, b])
     }
     rounds.push(games)
-    // Rotate: keep the first team fixed, move the last team to position 1
     list.splice(1, 0, list.pop())
   }
   return rounds
@@ -637,9 +538,7 @@ function buildGroupMatches(group) {
   )
 }
 
-// Reads the typed scores of a group match and returns the result,
-// or null if it's not finished (empty box or a tie).
-// `scores` looks like: { [matchId]: { score1: '11', score2: '7' } }
+// Result of a group match, or null if not finished (empty box or a tie).
 function getResult(match, scores) {
   const s = scores[match.id]
   if (!s || s.score1 === '' || s.score2 === '') return null
@@ -649,30 +548,23 @@ function getResult(match, scores) {
   return { score1, score2, winner: score1 > score2 ? match.team1 : match.team2 }
 }
 
-// Ranking rule for two standings rows (also used to rank teams ACROSS groups
-// when the playoff seeds are drawn). Tie-breakers, in order:
-//  1. most wins
-//  2. best point difference (pf - pa)
-//  3. most points scored
-//  4. team name A-Z (so the order is always stable)
+// Ranking rule (also used to rank teams ACROSS groups for playoff seeds):
+//  1. most wins  2. best point difference  3. most points  4. team name A-Z
 const compareRows = (x, y) =>
   y.wins - x.wins ||
   y.pf - y.pa - (x.pf - x.pa) ||
   y.pf - x.pf ||
   x.team.name.localeCompare(y.team.name, undefined, { numeric: true })
 
-// Builds the standings table of ONE group.
-// Each row tracks: played, wins, losses, points for (pf), points against (pa)
+// Standings table of ONE group.
 function computeStandings(group, matches, scores) {
-  // Start every team with zeros, keyed by team id for fast lookup
   const rows = Object.fromEntries(
     group.teams.map((t) => [t.id, { team: t, played: 0, wins: 0, losses: 0, pf: 0, pa: 0 }])
   )
 
-  // Add each finished match to both teams' rows
   matches.forEach((m) => {
     const res = getResult(m, scores)
-    if (!res) return // unfinished matches don't count
+    if (!res) return
     const a = rows[m.team1.id]
     const b = rows[m.team2.id]
     a.played++
@@ -690,70 +582,51 @@ function computeStandings(group, matches, scores) {
     }
   })
 
-  // Sort the table with the shared ranking rule
   return Object.values(rows).sort(compareRows)
 }
 
-// Standings for ALL groups at once: { A: [...rows], B: [...rows], ... }
+// Standings for ALL groups: { A: [...rows], B: [...rows], ... }
 const standingsFor = (groups, matchesByGroup, scores) =>
   Object.fromEntries(
     groups.map((g) => [g.name, computeStandings(g, matchesByGroup[g.name], scores)])
   )
 
-// Picks the playoff teams from the standings and puts them in bracket order.
-// The order matters: consecutive pairs play each other in round 1, and the
-// pattern keeps teams from the same group apart (they meet later on).
-// (Index [0] = 1st place, [1] = 2nd place.)
-// NOTE: only used for 1, 2 and 4 groups. The 3-group format (12 pairs)
-// builds its own tree in createThreeGroupBracket().
+// Picks the playoff teams and puts them in bracket order.
+// (Only for 1, 2 and 4 groups. 3 groups use createThreeGroupBracket.)
 function seedQualifiers(standingsByGroup) {
   const groupNames = Object.keys(standingsByGroup)
 
-  // 1 group (few pairs): everybody is in group A
   if (groupNames.length === 1) {
     const T = standingsByGroup['A'].map((r) => r.team)
-    // 4+ pairs -> top 4 -> semi-finals: 1st vs 4th, 2nd vs 3rd
     if (T.length >= 4) return [T[0], T[3], T[1], T[2]]
-    // 2-3 pairs -> top 2 go straight to the final
     return [T[0], T[1]]
   }
 
   if (groupNames.length === 2) {
-    // 2 groups -> 4 playoff teams -> semi-finals
-    //   Semi 1: A1 vs B2     Semi 2: B1 vs A2
     const A = standingsByGroup['A'].map((r) => r.team)
     const B = standingsByGroup['B'].map((r) => r.team)
     return [A[0] || null, B[1] || null, B[0] || null, A[1] || null]
   }
 
-  // 4 groups -> 8 playoff teams -> quarter-finals
-  //   QF1: A1 vs B2   QF2: C1 vs D2   QF3: B1 vs A2   QF4: D1 vs C2
   const A = standingsByGroup['A'].map((r) => r.team)
   const B = standingsByGroup['B'].map((r) => r.team)
   const C = standingsByGroup['C'].map((r) => r.team)
   const D = standingsByGroup['D'].map((r) => r.team)
 
-  return [A[0] || null, B[1] || null, C[0] || null, D[1] || null, B[0] || null, A[1] || null, D[0] || null, C[1] || null]
+  return [
+    A[0] || null, B[1] || null, C[0] || null, D[1] || null,
+    B[0] || null, A[1] || null, D[0] || null, C[1] || null,
+  ]
 }
 
 /* ------------------------------------------------------------------ */
 /* 3-group playoff (12 pairs): 6 teams, seeds 1-2 have a bye          */
 /* ------------------------------------------------------------------ */
 
-// Builds the 6-team knockout tree from the standings of groups A, B and C.
-// The top 2 of every group are ranked into seeds 1-6:
-//   seeds 1-3 = the group winners, seeds 4-6 = the runners-up
-// (inside each tier: most wins, then point difference, then points scored).
-//
-//   Quarter-finals                Semi-finals              Final
-//   UPPER  [ seed 1 - bye ] ------\
-//          [ 4 vs 5       ] ------/ Semi 1: 1 vs W(4/5) ---\
-//                                                           Final
-//   LOWER  [ seed 2 - bye ] ------\                        /
-//          [ 3 vs 6       ] ------/ Semi 2: 2 vs W(3/6) ---/
-//
-// 2 quarter-finals are played, so 2 teams are eliminated and 4 reach the semis.
-// If 3 vs 6 would be two teams of the same group, seeds 5 and 6 are swapped.
+// Seeds 1-3 = group winners, seeds 4-6 = runners-up (ranked with compareRows).
+//   Upper:  seed 1 (bye) + 4 vs 5  -> Semi 1
+//   Lower:  seed 2 (bye) + 3 vs 6  -> Semi 2
+// If 3 vs 6 / 4 vs 5 would be two teams of the same group, seeds 5 and 6 swap.
 function createThreeGroupBracket(standingsByGroup) {
   const names = Object.keys(standingsByGroup)
   const tier = (rank) =>
@@ -762,16 +635,15 @@ function createThreeGroupBracket(standingsByGroup) {
       .filter(Boolean)
       .sort(compareRows)
       .map((row) => row.team)
-  const seeds = [...tier(0), ...tier(1)] // index 0 = seed 1
+  const seeds = [...tier(0), ...tier(1)]
 
-  // Avoid a quarter-final between two teams of the same group
   const groupOf = {}
   names.forEach((n) => standingsByGroup[n].forEach((r) => (groupOf[r.team.id] = n)))
   const sameGroup = (a, b) => !!a && !!b && groupOf[a.id] === groupOf[b.id]
   const clashes = (q) =>
     [[3, 6], [4, 5]].filter(([x, y]) => sameGroup(q[x - 1], q[y - 1])).length
   const swapped = seeds.slice()
-  ;[swapped[4], swapped[5]] = [swapped[5], swapped[4]] // swap seeds 5 and 6
+  ;[swapped[4], swapped[5]] = [swapped[5], swapped[4]]
   const order = [seeds, swapped].find((q) => clashes(q) === 0) || seeds
   const S = (n) => order[n - 1] || null
 
@@ -787,31 +659,24 @@ function createThreeGroupBracket(standingsByGroup) {
   })
 
   const bracket = [
-    // Round 0: quarter-finals (2 byes + 2 real matches)
     [
-      bye('r0-m0', S(1)), // upper bracket: seed 1 waits
-      match('r0-m1', [], S(4), S(5)), // upper bracket: 4 vs 5
-      bye('r0-m2', S(2)), // lower bracket: seed 2 waits
-      match('r0-m3', [], S(3), S(6)), // lower bracket: 3 vs 6
+      bye('r0-m0', S(1)),
+      match('r0-m1', [], S(4), S(5)),
+      bye('r0-m2', S(2)),
+      match('r0-m3', [], S(3), S(6)),
     ],
-    // Round 1: semi-finals
     [
       match('r1-m0', [{ r: 0, m: 0 }, { r: 0, m: 1 }]),
       match('r1-m1', [{ r: 0, m: 2 }, { r: 0, m: 3 }]),
     ],
-    // Round 2: final
     [match('r2-m0', [{ r: 1, m: 0 }, { r: 1, m: 1 }])],
   ]
 
-  propagate(bracket) // puts the two bye teams into the semi-finals
+  propagate(bracket)
   return bracket
 }
 
-// Fills a fresh 3-group tree with scores that were saved on the server.
-// `results` rows look like { round, matchNumber, pair1Id, pair2Id, score1, score2 }.
-// Goes round by round so each round already knows its teams before its
-// scores are applied. The server may have stored the two teams in the
-// opposite order, so the scores are swapped when needed.
+// Fills a fresh 3-group tree with scores saved on the server.
 function applyThreeGroupResults(bracket, results) {
   const next = bracket.map((round) => round.map((item) => ({ ...item })))
   next.forEach((round, r) => {
@@ -840,33 +705,26 @@ function createPlayoffBracket(standingsByGroup) {
 // Rebuilds the knockout tree and refills it with the scores saved earlier
 function restorePlayoffBracket(standingsByGroup, savedKnockout) {
   const fresh = createPlayoffBracket(standingsByGroup)
-  // The saved 3rd-place match is stored as round = (number of rounds + 1).
-  // The tree has no such round, so keep it away from the apply function.
+  // The saved 3rd-place match is stored as round = (number of rounds + 1)
   const treeResults = savedKnockout.filter((x) => x.round <= fresh.length)
   return Object.keys(standingsByGroup).length === 3
     ? applyThreeGroupResults(fresh, treeResults)
     : applyResults(fresh, treeResults)
 }
 
-// Takes the group scores saved on the server and converts them to the
-// `scores` format used by this component ({ [matchId]: {score1, score2} }).
-// The server may have stored a match with the teams in the opposite order,
-// so we check both orders and swap the scores when needed.
+// Converts saved group scores to the local `scores` format.
 function restoreScores(matchesByGroup, saved) {
   const out = {}
   Object.values(matchesByGroup)
     .flat()
     .forEach((m) => {
-      // Find the saved row for this match (same group, same two pairs,
-      // in either order)
       const s = saved.find(
         (x) =>
           x.group === m.group &&
           ((x.pair1Id === m.team1.pairId && x.pair2Id === m.team2.pairId) ||
             (x.pair1Id === m.team2.pairId && x.pair2Id === m.team1.pairId))
       )
-      if (!s) return // no saved score for this match
-      // true = saved in the same order as our match
+      if (!s) return
       const same = s.pair1Id === m.team1.pairId
       out[m.id] = {
         score1: String(same ? s.score1 : s.score2),
@@ -877,10 +735,9 @@ function restoreScores(matchesByGroup, saved) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Standings legend: explains the abbreviations used in the tables     */
+/* Standings legend                                                    */
 /* ------------------------------------------------------------------ */
 const STANDINGS_LEGEND = [
-  
   { abbr: 'W', label: 'Wins', text: 'Matches won.' },
   { abbr: 'L', label: 'Losses', text: 'Matches lost.' },
   { abbr: 'GP', label: 'Game Played', text: 'Total matches completed.' },
@@ -892,27 +749,23 @@ const STANDINGS_LEGEND = [
 /* ------------------------------------------------------------------ */
 /* GroupCard: UI for one group (standings table + list of matches)     */
 /* ------------------------------------------------------------------ */
-// `advance` = how many teams of this group go to the playoffs (they are shown in bold)
-function GroupCard({ group, matches, standings, scores, locked, onScore, advance }) {
+// `advance`    = how many teams of this group go to the playoffs (bold rows)
+// `teamOffset` = how many teams are in the groups before this one (for "Team N")
+function GroupCard({ group, matches, standings, scores, locked, onScore, advance, teamOffset }) {
   return (
     <div className="theme-card rounded-xl border theme-border p-4 space-y-4">
-      {/* RESPONSIVE: flex-wrap + gap so the "Top N advance" note drops under the title on narrow screens */}
-      <h3 className="text-lg font-bold flex flex-wrap gap-2 justify-between items-center w-full items-center ">Bracket {group.name}
-         <p className="text-xs text-right theme-muted">Top {advance} (bold) advance to the playoffs.</p>
+      <h3 className="text-lg font-bold flex flex-wrap gap-2 justify-between items-center w-full">
+        Bracket {group.name}
+        <p className="text-xs text-right theme-muted">Top {advance} (bold) advance to the playoffs.</p>
       </h3>
-      
 
       {/* Standings table */}
       <div className="overflow-x-auto">
-        {/* RESPONSIVE: min-w keeps the columns readable; the wrapper scrolls sideways on small screens */}
         <table className="w-full min-w-[440px] text-sm">
-          {/* CHANGED: every comment is on its own line, so no whitespace text
-              nodes end up inside <tr> (fixes the React hydration warning) */}
           <thead>
             <tr className="text-left text-xs theme-muted">
               <th className="py-1">Rank</th>
               <th>Team</th>
-              
               {/* W = Wins */}
               <th className="text-center">W</th>
               {/* L = Losses */}
@@ -931,16 +784,17 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
             {standings.map((row, i) => (
               <tr
                 key={row.team.id}
-                // The qualifying rows are bold, the rest are faded
-                className={`  border-b border-t theme-border space-y-1 ${i < advance ? 'font-semibold' : 'opacity-70'}`}
+                className={`border-b border-t theme-border space-y-1 ${
+                  i < advance ? 'font-semibold' : 'opacity-70'
+                }`}
               >
-                <td className="py-3 pr-3  align-top text-sm">{i + 1}</td>
-                {/* CHANGED: indentation tidied */}
-                <td className="py-3 align-top border-b border-white/10 theme-border ">
+                <td className="py-3 pr-3 align-top text-sm">{i + 1}</td>
+                <td className="py-3 align-top border-b border-white/10 theme-border">
                   <div className="text-sm capitalize">{pairLabel(row.team)}</div>
-                  <div className="mt-0.5 text-xs font-normal capitalize theme-muted">{row.team.name}</div>
+                  <div className="mt-0.5 text-xs font-normal capitalize theme-muted">
+                    {row.team.name}
+                  </div>
                 </td>
-              
                 <td className="text-center">{row.wins}</td>
                 <td className="text-center">{row.losses}</td>
                 <td className="text-center">{row.played}</td>
@@ -951,137 +805,105 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
             ))}
           </tbody>
         </table>
-       
       </div>
- 
-    {/* List of this group's matches, each with two score inputs */}
-    {/* RESPONSIVE: stacked (column) on phones, side by side from sm: and up */}
-    <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-2">
 
-        {/* RESPONSIVE: full width on phones, original min width from sm: and up */}
+      {/* Teams list + round robin matches */}
+      <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-2">
         <div className="flex flex-col items-center w-full sm:w-auto min-w-[120px]">
           <h1 className="font-bold mb-1">List of teams</h1>
 
-          <span className="text-xs theme-muted mb-4">
-            Bracket {group.name}
-          </span>
+          <span className="text-xs theme-muted mb-4">Bracket {group.name}</span>
 
-          {group.teams.map((team, index) => {
-            const teamNumber =
-              (['A', 'B', 'C'].indexOf(group.name) * 4) + index + 1
+          {group.teams.map((team, index) => (
+            <div key={team.id} className="w-full py-1">
+              <div className="font-semibold text-center text-sm">{pairLabel(team)}</div>
+              {/* FIXED: counts from the real position (old code broke for group D) */}
+              <div className="text-xs text-center theme-muted mt-1">
+                Team {teamOffset + index + 1}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <span className="hidden sm:block border-r border-white/10"> </span>
+
+        <div className="w-full min-w-0 flex flex-col space-y-2 items-center">
+          <span className="flex items-center text-center font-bold pb-2">Round Robin</span>
+
+          {matches.map((m) => {
+            const s = scores[m.id] || { score1: '', score2: '' }
 
             return (
               <div
-                key={team.id}
-                className="w-full py-1   "
+                key={m.id}
+                className="flex items-center justify-between gap-1 sm:gap-2 w-full text-[13px]"
               >
-                <div className="font-semibold text-center  text-sm">
-                  {pairLabel(team)}
-                </div>
+                {/* Team 1 */}
+                <span className="min-w-0 flex-1 text-right break-words leading-tight">
+                  <span className="font-semibold">{m.team1.name}</span>
+                  <span className="text-xs capitalize theme-muted ml-1">
+                    ({pairLabel(m.team1)})
+                  </span>
+                </span>
 
-                <div className="text-xs text-center  theme-muted mt-1">
-                  Team {teamNumber}
-                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={2}
+                  disabled={locked}
+                  placeholder="-"
+                  value={s.score1}
+                  style={groupScoreBox}
+                  aria-label={`${m.team1.name} score`}
+                  onChange={(e) => onScore(m, 'score1', cleanScore(e.target.value))}
+                />
+
+                <span className="font-bold">:</span>
+
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={2}
+                  disabled={locked}
+                  placeholder="-"
+                  value={s.score2}
+                  style={groupScoreBox}
+                  aria-label={`${m.team2.name} score`}
+                  onChange={(e) => onScore(m, 'score2', cleanScore(e.target.value))}
+                />
+
+                {/* Team 2 */}
+                <span className="min-w-0 flex-1 break-words leading-tight">
+                  <span className="font-semibold">{m.team2.name}</span>
+                  <span className="text-xs capitalize theme-muted ml-1">
+                    ({pairLabel(m.team2)})
+                  </span>
+                </span>
               </div>
             )
           })}
         </div>
-
-        {/* RESPONSIVE: the vertical divider only shows when the two columns are side by side */}
-        <span className='hidden sm:block border-r border-white/10'> </span>
-      <div className="w-full min-w-0 flex flex-col space-y-2 items-center">
-
-        <span className="flex items-center text-center font-bold pb-2">
-          Round Robin
-        </span>
-
-        {matches.map((m) => {
-          const s = scores[m.id] || { score1: '', score2: '' }
-
-          return (
-            <div
-              key={m.id}
-              className="flex items-center justify-between gap-1 sm:gap-2 w-full text-[13px]"
-            >
-
-              {/* Team 1 */}
-              <span className="min-w-0 flex-1 text-right break-words leading-tight">
-                <span className="font-semibold">
-                  {m.team1.name}
-                </span>
-                <span className="text-xs capitalize theme-muted ml-1">
-                  ({pairLabel(m.team1)})
-                </span>
-              </span>
-
-              {/* Score 1 */}
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={2}
-                disabled={locked}
-                placeholder="-"
-                value={s.score1}
-                style={groupScoreBox}
-                aria-label={`${m.team1.name} score`}
-                onChange={(e) =>
-                  onScore(m, 'score1', cleanScore(e.target.value))
-                }
-              />
-
-              <span className="font-bold">:</span>
-
-              {/* Score 2 */}
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={2}
-                disabled={locked}
-                placeholder="-"
-                value={s.score2}
-                style={groupScoreBox}
-                aria-label={`${m.team2.name} score`}
-                onChange={(e) =>
-                  onScore(m, 'score2', cleanScore(e.target.value))
-                }
-              />
-
-              {/* Team 2 */}
-              <span className="min-w-0 flex-1 break-words leading-tight">
-                <span className="font-semibold">
-                  {m.team2.name}
-                </span>
-                <span className="text-xs capitalize theme-muted ml-1">
-                  ({pairLabel(m.team2)})
-                </span>
-              </span>
-
-            </div>
-          )
-        })}
-
       </div>
     </div>
-</div>
-
   )
 }
 
 /* ------------------------------------------------------------------ */
-/* Top2_View: the main component. Holds all the state and logic.     */
+/* Top2_View: the main component. Holds all the state and logic.       */
 /* ------------------------------------------------------------------ */
 export function Top2_View({
   tournamentId,
   tournamentName,
   teams,
-  savedGroupMatches = [], // group scores already saved on the server
-  savedKnockout = [], // playoff scores already saved on the server
+  savedGroupMatches = [],
+  savedKnockout = [],
   onReset,
 }) {
-  // ---- Derived data (recomputed only when its inputs change) ----
-  // Team numbers: a team still carrying an auto name ("Team 2") is renamed from its
-  // position in the list, so the groups always show Team 1-4, Team 5-8, Team 9-12 ...
-  // even if the server stored an old or duplicated default name. Custom names are kept.
+  const navigate = useNavigate()
+
+  // ---- Derived data ----
+  // A team still carrying an auto name ("Team 2") is renamed from its position,
+  // so groups always show Team 1-4, Team 5-8 ... Custom names are kept.
   const numberedTeams = useMemo(
     () =>
       teams.map((t, i) =>
@@ -1094,38 +916,29 @@ export function Top2_View({
     () => Object.fromEntries(groups.map((g) => [g.name, buildGroupMatches(g)])),
     [groups]
   )
-  // Saved server scores converted to the local `scores` format
   const initialScores = useMemo(
     () => restoreScores(groupMatches, savedGroupMatches),
     [groupMatches, savedGroupMatches]
   )
 
   // ---- State ----
-  // scores:   group-stage scores typed so far
   const [scores, setScores] = useState(initialScores)
 
-  // bracket:  the knockout tree, or null if playoffs haven't started.
-  // If playoff scores were saved before, rebuild the tree and refill it.
   const [bracket, setBracket] = useState(() => {
     if (!savedKnockout.length) return null
     const st = standingsFor(groups, groupMatches, initialScores)
     return restorePlayoffBracket(st, savedKnockout)
   })
 
-  // champion: winner of the final (last round, first match), if any
   const [champion, setChampion] = useState(
     () => bracket?.[bracket.length - 1]?.[0]?.winner ?? null
   )
 
-  // thirdScores: scores of the 3rd-place match.
-  // Only the scores are stored; the two teams come from the semi-final losers.
   const [thirdScores, setThirdScores] = useState(() => {
     const empty = { score1: '', score2: '' }
     if (!bracket) return empty
-    // saved as round = rounds + 1, match number 1
     const saved = savedKnockout.find((x) => x.round === bracket.length + 1)
     if (!saved) return empty
-    // the server may have saved the two teams in the opposite order: swap if so
     const [t1] = getThirdPlaceTeams(bracket)
     const same = saved.pair1Id === teamKey(t1)
     return {
@@ -1134,14 +947,10 @@ export function Top2_View({
     }
   })
 
-  // error:    message shown at the bottom when an API call fails
   const [error, setError] = useState('')
 
-  // Base URL for all API calls of this tournament
-  // CHANGED: was `/quadro/${tournamentId}` - this was causing the 404s
   const base = `/top2/${tournamentId}`
 
-  // Live standings tables, updated whenever a score changes
   const standings = useMemo(
     () => standingsFor(groups, groupMatches, scores),
     [groups, groupMatches, scores]
@@ -1149,10 +958,10 @@ export function Top2_View({
 
   // ---- Progress info ----
   const allMatches = Object.values(groupMatches).flat()
-  const doneCount = allMatches.filter((m) => getResult(m, scores)).length // finished matches
-  const groupsDone = doneCount === allMatches.length // true when every group match has a result
-  const locked = !!bracket // groups are locked once playoffs exist
-  const advance = getFormat(teams.length).advance // teams per group that qualify
+  const doneCount = allMatches.filter((m) => getResult(m, scores)).length
+  const groupsDone = doneCount === allMatches.length
+  const locked = !!bracket
+  const advance = getFormat(teams.length).advance
 
   // ---- 3rd place match (derived from the bracket) ----
   const showThird = !!bracket && hasThirdPlace(bracket)
@@ -1161,35 +970,28 @@ export function Top2_View({
     [bracket]
   )
   const thirdMatch = { team1: thirdTeams[0], team2: thirdTeams[1], ...thirdScores }
-  const thirdWinner = getWinner(thirdMatch) // null until it has a clear winner
+  const thirdWinner = getWinner(thirdMatch)
 
-  // ---- Final ranking: 1st-4th ----
-  // 1st = champion (winner of the final)      2nd = loser of the final
-  // 3rd = winner of the 3rd-place match       4th = loser of the 3rd-place match
+  // ---- Final ranking ----
   const finalMatch = bracket ? bracket[bracket.length - 1][0] : null
   const runnerUp = finalMatch ? getLoser(finalMatch, champion) : null
-  const fourth = getLoser(thirdMatch, thirdWinner)
 
   // ---- Handlers ----
 
-  // Called when a score box in a GROUP match changes
+  // A score box in a GROUP match changed
   const updateGroupScore = (match, key, value) => {
-    // Remember if this match already had a valid result BEFORE the change
     const hadResult = !!getResult(match, scores)
 
-    // Save the new value in local state right away (UI feels instant)
     const next = {
       ...scores,
       [match.id]: { ...(scores[match.id] || { score1: '', score2: '' }), [key]: value },
     }
     setScores(next)
 
-    // Does the match have a valid result AFTER the change?
     const res = getResult(match, next)
     const ids = { group: match.group, pair1Id: match.team1.pairId, pair2Id: match.team2.pairId }
 
     if (res) {
-      // Valid result -> save it on the server
       api
         .put(`${base}/group-matches`, {
           ...ids,
@@ -1199,22 +1001,20 @@ export function Top2_View({
         })
         .catch(() => setError('Could not save the score.'))
     } else if (hadResult) {
-      // It HAD a result but not anymore (user erased or tied it)
-      // -> delete it from the server
-      api.delete(`${base}/group-matches`, { data: ids }).catch(() => setError('Could not clear the score.'))
+      api
+        .delete(`${base}/group-matches`, { data: ids })
+        .catch(() => setError('Could not clear the score.'))
     }
   }
 
-  // "Lock brackets & start playoffs" button:
-  // seeds the top teams of each group into a fresh knockout tree
+  // "Lock brackets" button
   const startKnockout = () => {
     setBracket(createPlayoffBracket(standings))
     setChampion(null)
     setThirdScores({ score1: '', score2: '' })
   }
 
-  // "Unlock brackets" button: goes back to the group stage.
-  // Playoff scores are deleted on the server, after the user confirms.
+  // "Unlock brackets" button
   const unlockGroups = () => {
     if (!window.confirm('Unlock the brackets? Playoff scores will be cleared.')) return
     api.delete(`${base}/matches`).catch(() => setError('Could not clear playoff scores.'))
@@ -1223,20 +1023,17 @@ export function Top2_View({
     setThirdScores({ score1: '', score2: '' })
   }
 
-  // Called when a score box in a PLAYOFF match changes.
-  // r = round index, m = match index inside that round.
+  // A score box in a PLAYOFF match changed (r = round index, m = match index)
   const updateKnockoutScore = (r, m, key, value) => {
-    // Copy the whole tree so we never mutate React state directly
     const next = bracket.map((round) => round.map((item) => ({ ...item })))
     const item = next[r][m]
 
-    const before = teamKey(item.winner) // winner before the change
-    item[key] = value // apply the typed score
-    const cleared = propagate(next) // recompute winners & later rounds
-    const after = teamKey(item.winner) // winner after the change
+    const before = teamKey(item.winner)
+    item[key] = value
+    const cleared = propagate(next)
+    const after = teamKey(item.winner)
 
-    // If a semi-final result changed, the 3rd-place teams may have changed too.
-    // Their old score no longer belongs to these teams, so wipe it (also on the server).
+    // If a semi-final result changed, the 3rd-place teams may have changed too
     const newThird = getThirdPlaceTeams(next)
     const thirdChanged =
       teamKey(newThird[0]) !== teamKey(thirdTeams[0]) ||
@@ -1249,11 +1046,9 @@ export function Top2_View({
     }
 
     setBracket(next)
-    // The champion is the winner of the final (the last round's only match)
     setChampion(next[next.length - 1][0].winner || null)
 
     if (item.winner) {
-      // This match has a winner -> save it on the server
       api
         .put(`${base}/matches`, {
           round: r + 1,
@@ -1266,12 +1061,11 @@ export function Top2_View({
         })
         .catch(() => setError('Could not save the score.'))
     } else if (before !== after) {
-      // It used to have a winner but doesn't now -> delete the saved result
-      api.delete(`${base}/matches/${r + 1}/${m + 1}`).catch(() => setError('Could not clear the score.'))
+      api
+        .delete(`${base}/matches/${r + 1}/${m + 1}`)
+        .catch(() => setError('Could not clear the score.'))
     }
 
-    // Later matches whose teams changed had their scores wiped
-    // by propagate(); delete those from the server too
     cleared.forEach((c) =>
       api
         .delete(`${base}/matches/${c.round}/${c.matchNumber}`)
@@ -1279,15 +1073,14 @@ export function Top2_View({
     )
   }
 
-  // Called when a score box in the 3rd-place match changes.
-  // Saved like a normal playoff match, using round = (number of rounds + 1), match 1.
+  // A score box in the 3rd-place match changed
   const updateThirdScore = (key, value) => {
     const nextScores = { ...thirdScores, [key]: value }
     setThirdScores(nextScores)
 
-    const hadWinner = !!getWinner(thirdMatch) // winner BEFORE the change
+    const hadWinner = !!getWinner(thirdMatch)
     const match = { ...thirdMatch, ...nextScores }
-    const winner = getWinner(match) // winner AFTER the change
+    const winner = getWinner(match)
     const round = bracket.length + 1
 
     if (winner) {
@@ -1303,43 +1096,39 @@ export function Top2_View({
         })
         .catch(() => setError('Could not save the 3rd place score.'))
     } else if (hadWinner) {
-      api.delete(`${base}/matches/${round}/1`).catch(() => setError('Could not clear the 3rd place score.'))
+      api
+        .delete(`${base}/matches/${round}/1`)
+        .catch(() => setError('Could not clear the 3rd place score.'))
     }
   }
 
   // ---- Render ----
   return (
     <section className="space-y-5">
-      {/* Header: tournament name, summary line and reset button */}
-      {/* RESPONSIVE: p-4 on phones, original p-5 from sm: and up */}
+      {/* Header: tournament name, summary line and edit button */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-4 sm:p-5">
         <div className="min-w-0">
           <h2 className="break-words text-xl font-bold capitalize">{tournamentName}</h2>
           <p className="mt-1 text-sm text-gray-500">
-            {teams.length} teams · {groups.length} {groups.length === 1 ? 'Bracket' : 'Brackets'} of {Math.ceil(teams.length / groups.length)} · Group matches{' '}
-            {doneCount}/{allMatches.length}
+            {teams.length} teams · {groups.length} {groups.length === 1 ? 'Bracket' : 'Brackets'} of{' '}
+            {Math.ceil(teams.length / groups.length)} · Group matches {doneCount}/{allMatches.length}
           </p>
         </div>
 
-        {/* RESPONSIVE: flex-wrap so the two buttons wrap instead of overflowing on narrow screens */}
         <div className="flex w-full flex-row flex-wrap justify-end gap-2">
-          {/* <button
-            onClick={onReset}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
-          >
-            <RotateCcw size={16} /> Reset tournament
-          </button> */}
-
+          {/* Opens the registration form, pre-filled, so teams can be changed, added or removed */}
           <button
-            onClick={ ""}
+            onClick={() =>
+              navigate(CREATE_ROUTE, {
+                state: { edit: true, tournamentId, tournamentName, teams },
+              })
+            }
             className="flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-sm theme-border theme-hover theme-accent"
           >
             <Pencil size={16} /> Edit Tournament
           </button>
         </div>
-
-        </div>
-        
+      </div>
 
       {/* Champion banner (only when the final is decided) */}
       {champion && (
@@ -1347,12 +1136,11 @@ export function Top2_View({
           champion={champion}
           second={runnerUp}
           third={thirdWinner}
-          fourth={fourth}
           showThird={showThird}
         />
       )}
 
-      {/* Legend: explains the standings columns */}
+      {/* Legend */}
       <div className="border theme-border rounded-xl w-full">
         <h3 className="px-4 pt-3 font-bold text-sm sm:text-base">Standings key</h3>
 
@@ -1369,24 +1157,15 @@ export function Top2_View({
         </div>
       </div>
 
-      {/* Group stage title + Lock / Unlock button */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-lg font-bold">Bracket Stage (Round Robin)</h3>
-        
       </div>
 
-      {/* One card per group: 1 column on mobile, 2 on large screens
-          (always 1 if there is a single group, 3 on wide screens if there are 3 groups) */}
+      {/* One card per group */}
       <div
-        className={`grid gap-4 ${
-          groups.length === 1
-            ? 'grid-cols-1'
-            : groups.length === 3
-              ? 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-2'
-              : 'grid-cols-1 lg:grid-cols-2'
-        }`}
+        className={`grid gap-4 ${groups.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}
       >
-        {groups.map((g) => (
+        {groups.map((g, gi) => (
           <GroupCard
             key={g.name}
             group={g}
@@ -1396,14 +1175,15 @@ export function Top2_View({
             locked={locked}
             onScore={updateGroupScore}
             advance={advance}
+            teamOffset={groups.slice(0, gi).reduce((n, x) => n + x.teams.length, 0)}
           />
         ))}
       </div>
 
+      {/* Lock / Unlock + hint */}
       <div className="flex items-center gap-3 py-4">
         {!locked ? (
           <>
-            {/* Disabled until every group match has a result */}
             <button
               disabled={!groupsDone}
               onClick={startKnockout}
@@ -1432,26 +1212,20 @@ export function Top2_View({
         )}
       </div>
 
-     
       {/* Playoff tree (only after the groups were locked) */}
       {bracket && (
         <>
-          {/* RESPONSIVE: less top space on phones */}
-          <h3 className="text-lg pt-6  sm:pt-10  font-bold">Playoffs (Single Elimination)</h3>
+          <h3 className="text-lg pt-6 sm:pt-10 font-bold">Playoffs (Single Elimination)</h3>
           {groups.length === 3 && (
             <p className="text-md theme-muted flex flex-col gap-3">
               Playoffs Format:
               <span>- The top 2 teams from each bracket A, B, & C (6 teams total) advance to the playoffs.</span>
               <span>- The 4 lower-ranked qualifiers compete in the Quarterfinals ( Lower Brackets ).</span>
-              
               <span>
                 - The top-ranked teams from Brackets A, B, and C will be compared (Point system) based on their group-stage performance. The two best-performing teams will be awarded BYEs in the bracket below (Semi-final).
               </span>
             </p>
-             
           )}
-          {/* overflow-x-auto lets the wide tree scroll sideways on small screens */}
-          {/* RESPONSIVE: p-3 on phones, original p-6 from sm: and up */}
           <div className="overflow-x-auto rounded-xl p-3 sm:p-6 theme-accent">
             <BracketTree
               bracket={bracket}
@@ -1464,33 +1238,32 @@ export function Top2_View({
 
       {/* API error message */}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+
     </section>
   )
 }
 
 /* ------------------------------------------------------------------ */
 /* Top2_bracketing_e: the page component (used by the router).         */
-/* Loads the tournament from the API and hands it to Top2_View.      */
+/* Loads the tournament from the API and hands it to Top2_View.        */
 /* ------------------------------------------------------------------ */
 export const Top2_bracketing_e = () => {
-  const { id } = useParams() // tournament id from the URL
+  const { id } = useParams()
   const navigate = useNavigate()
-  const [data, setData] = useState(null) // tournament data from the server
+  const [data, setData] = useState(null)
   const [status, setStatus] = useState('loading') // 'loading' | 'ready' | 'error'
 
-  // Fetch the tournament whenever the id changes
   useEffect(() => {
-    let cancelled = false // protects against setting state after unmount
+    let cancelled = false
     setStatus('loading')
     api
-      .get(`/top2/${id}`) // CHANGED: was /quadro/${id}
+      .get(`/top2/${id}`)
       .then((res) => {
         if (cancelled) return
         setData(res.data)
         setStatus('ready')
       })
       .catch(() => !cancelled && setStatus('error'))
-    // Cleanup: if the component unmounts or id changes, ignore the old request
     return () => {
       cancelled = true
     }
@@ -1500,17 +1273,15 @@ export const Top2_bracketing_e = () => {
   const handleReset = async () => {
     if (!window.confirm('Reset this tournament? All scores will be lost.')) return
     try {
-      await api.delete(`/top2/${id}`) // CHANGED: was /quadro/${id}
+      await api.delete(`/top2/${id}`)
     } catch {
       // Ignore errors: we navigate away either way
     }
     navigate(LIST_ROUTE)
   }
 
-  // RESPONSIVE (3 places below): px-4 on phones, original px-10 from sm: and up
   if (status === 'loading') return <p className="px-4 sm:px-10 theme-muted">Loading tournament...</p>
 
-  // Error, no data, or fewer than 2 teams = nothing to play
   if (status === 'error' || !data || data.teams.length < 2) {
     return (
       <div className="w-full space-y-4 px-4 sm:px-10">
@@ -1542,5 +1313,4 @@ export const Top2_bracketing_e = () => {
 }
 
 // Backwards-compatible alias: Top2_Dashb.jsx still imports { Quadro_View }.
-// Once you change that import to { Top2_View }, you can delete this line.
 export const Quadro_View = Top2_View
