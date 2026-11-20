@@ -230,7 +230,7 @@ export const Hero = () => {
 
         {/* USERNAME DROPDOWN */}
         <div ref={menuRef} className="relative min-w-0">
-          <div className="flex min-w-0 flex-row items-center gap-1 text-lg font-bold sm:text-xl">
+          <div className="flex min-w-0 flex-row items-center gap-1 text-lg font-bold sm:text-2xl">
             <span className="max-w-[40vw] truncate sm:max-w-xs">
               {user?.username ? `@${user.username}` : ''}
             </span>
@@ -255,13 +255,13 @@ export const Hero = () => {
           {showDropdown && (
             <div
               role="menu"
-              className="theme-card theme-border theme-text absolute left-1/2 top-full z-50 mt-2 flex w-44 max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg sm:w-52"
+              className="theme-card theme-border border-b theme-text absolute left-1/2 top-full z-50 mt-2 flex w-44 max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg sm:w-52"
             >
               <button
                 type="button"
                 role="menuitem"
                 onClick={openEdit}
-                className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5"
+                className="theme-hover w-full theme-border border-b   px-4 py-3 text-left text-sm sm:py-2.5"
               >
                 Edit profile
               </button>
@@ -270,12 +270,12 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={() => go(' ')}
-                className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5"
+                className="theme-hover w-full theme-border border-b px-4 py-3 text-left text-sm sm:py-2.5"
               >
                 Add account
               </button>
 
-              <Signout className="theme-hover w-full border-b border-white/10 px-4 py-3 text-left text-sm sm:py-2.5" />
+              <Signout className="theme-hover w-full  theme-border border-b  px-4 py-3 text-left text-sm sm:py-2.5" />
             </div>
           )}
         </div>
@@ -285,7 +285,7 @@ export const Hero = () => {
       </header>
 
       {/* PROFILE CONTENT */}
-      <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:justify-center sm:gap-6">
+     <div className="flex flex-row items-center justify-center pt-10 gap-4 sm:gap-6">
         {/* PROFILE PHOTO */}
         <div className="relative flex shrink-0 flex-col items-center">
           <input
@@ -300,7 +300,7 @@ export const Hero = () => {
             type="button"
             disabled={uploadingPhoto}
             onClick={() => fileInputRef.current?.click()}
-            className="theme-border theme-accent flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border disabled:opacity-50 sm:h-32 sm:w-32"
+            className="theme-border theme-accent flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border disabled:opacity-50 sm:h-44 sm:w-44"
           >
             <img
               src={
@@ -324,9 +324,9 @@ export const Hero = () => {
         {isEditing ? (
           <form
             onSubmit={handleSave}
-            className="flex w-full max-w-sm flex-col gap-3 sm:w-72"
+            className="flex w-full max-w-sm flex-col  gap-3 sm:w-72"
           >
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col   gap-1.5">
               <label htmlFor="edit-fullname" className="text-sm font-semibold">
                 Name
               </label>
@@ -375,11 +375,11 @@ export const Hero = () => {
           </form>
         ) : (
           <div className="flex w-full min-w-0 max-w-[16rem] flex-col items-center gap-3 self-center text-center sm:w-auto sm:min-w-[12rem] sm:max-w-xs sm:items-stretch sm:justify-between sm:self-stretch sm:text-left">
-            <div className="flex min-w-0 flex-col gap-1">
-              <span className="break-words text-xl font-bold capitalize leading-tight sm:text-2xl">
+            <div className="flex min-w-0 flex-col gap-3">
+              <span className="break-words text-2xl font-bold capitalize leading-tight sm:text-2xl">
                 {user?.fullname}
               </span>
-              <span className="theme-muted break-all text-sm">
+              <span className="theme-muted break-all text-md">
                 {user?.email}
               </span>
             </div>
