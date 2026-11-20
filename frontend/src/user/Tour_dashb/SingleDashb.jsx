@@ -66,22 +66,30 @@ export const SingleDashb = () => {
     }
   }
 
-  const deleteTournament = async (id, e) => {
-    e.stopPropagation()
-     setOpenError('')
-    try {
-      await api.delete(`/single/${id}`)
-      setTournaments((prev) => prev.filter((t) => t.id !== id))
-      if (current?.tournamentId === id) {
-        navigate(DASH_ROUTE, { replace: true, state: null })
-      }
-      setConfirmId(null)
-      setMenuId(null)
-    } catch (err) {
-      console.error('Delete tournament error:', err)
-      setOpenError(err.response?.data?.message || 'Could not delete the tournament.')
+const deleteTournament = async (id, e) => {
+  e.stopPropagation();
+
+  try {
+    await api.delete(`/single/${id}`);
+
+    setTournaments((prev) =>
+      prev.filter((t) => t.id !== id)
+    );
+
+    if (current?.tournamentId === id) {
+      navigate(DASH_ROUTE, { replace: true, state: null });
     }
+
+  } catch (err) {
+    console.error("Delete tournament error:", err);
+    setOpenError(
+      err.response?.data?.message || "Could not delete the tournament."
+    );
   }
+
+  setConfirmId(null);
+  setMenuId(null);
+};
 
   const renameTournament = async (id, e) => {
     e.preventDefault()
