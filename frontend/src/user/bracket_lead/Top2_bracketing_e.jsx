@@ -1372,23 +1372,7 @@ export function Top2_View({
       {/* Group stage title + Lock / Unlock button */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-lg font-bold">Bracket Stage (Round Robin)</h3>
-        {!locked ? (
-          // Disabled until every group match has a result
-          <button
-            disabled={!groupsDone}
-            onClick={startKnockout}
-            className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold theme-accent disabled:opacity-40"
-          >
-            <Lock size={16} /> Lock brackets &amp; start playoffs
-          </button>
-        ) : (
-          <button
-            onClick={unlockGroups}
-            className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm theme-border theme-hover"
-          >
-            <Unlock size={16} /> Unlock brackets
-          </button>
-        )}
+        
       </div>
 
       {/* One card per group: 1 column on mobile, 2 on large screens
@@ -1416,6 +1400,39 @@ export function Top2_View({
         ))}
       </div>
 
+      <div className="flex items-center gap-3 py-4">
+        {!locked ? (
+          <>
+            {/* Disabled until every group match has a result */}
+            <button
+              disabled={!groupsDone}
+              onClick={startKnockout}
+              className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold theme-accent disabled:opacity-40"
+            >
+              <Lock size={16} /> Lock brackets 
+            </button>
+
+            {groupsDone ? (
+              <span className="text-sm text-green-600">
+                Playoff is now ready. Click "Lock brackets".
+              </span>
+            ) : (
+              <span className="text-sm opacity-70">
+                Complete the scoring to proceed to the playoffs.
+              </span>
+            )}
+          </>
+        ) : (
+          <button
+            onClick={unlockGroups}
+            className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm theme-border theme-hover"
+          >
+            <Unlock size={16} /> Unlock brackets
+          </button>
+        )}
+      </div>
+
+     
       {/* Playoff tree (only after the groups were locked) */}
       {bracket && (
         <>
