@@ -1332,7 +1332,7 @@ export function Top2_View({
 
           <button
             onClick={ ""}
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm theme-border theme-hover theme-accent"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-sm theme-border theme-hover theme-accent"
           >
             <Pencil size={16} /> Edit Tournament
           </button>
@@ -1409,7 +1409,7 @@ export function Top2_View({
               onClick={startKnockout}
               className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold theme-accent disabled:opacity-40"
             >
-              <Lock size={16} /> Lock brackets 
+              <Lock size={16} /> Lock brackets
             </button>
 
             {groupsDone ? (
