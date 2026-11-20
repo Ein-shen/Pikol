@@ -201,7 +201,7 @@ const deleteTournament = async (id, e) => {
                           }}
                           className="theme-hover theme-border w-full border-b px-4 py-3 text-left text-sm sm:py-2 sm:text-xs"
                         >
-                          Rename
+                          Edit 
                         </button>
                         <button
                           type="button"
