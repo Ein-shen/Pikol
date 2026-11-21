@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Menu, X } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-
+import { RecentTournaments } from './extra/RecentTournaments'
 const navItems = [
   {
     label: 'Overview',
@@ -88,6 +88,10 @@ export const Sidebar = () => {
             )
           })}
         </div>
+        
+
+        <RecentTournaments />
+        
       </div>
     </>
   )
