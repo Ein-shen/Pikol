@@ -63,8 +63,8 @@ export const Overview = () => {
               <h1 className='flex flex-col gap-2'>
 
                 Reminder:
-                <span> - show recent winners</span>
-                  <span> - show recent tournament used</span>
+                 
+                  
                   <span> - show tournament anlytics</span>
                   <span> - show AI chatbot</span>
                   <span> - show Policies </span>
