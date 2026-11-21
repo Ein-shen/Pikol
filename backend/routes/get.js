@@ -43,6 +43,27 @@ router.get("/tournaments", requireAuth, async (req, res) => {
     }
 });
 
+
+// =====================================================
+// GET the 6 most recent tournaments (for the sidebar)
+// GET /api/tournaments/recent
+// =====================================================
+router.get("/tournaments/recent", requireAuth, async (req, res) => {
+    try {
+        const { rows } = await pool.query(
+            `SELECT id, name, type, created_at
+             FROM tournaments
+             ORDER BY created_at DESC
+             LIMIT 5`
+        );
+        res.json(rows);
+    } catch (err) {
+        console.error("GET RECENT TOURNAMENTS ERROR:", err);
+        res.status(500).json({ message: "Could not load recent tournaments." });
+    }
+});
+
+
 // =====================================================
 // GET tournament by id (teams in entry order + saved matches)
 // =====================================================
