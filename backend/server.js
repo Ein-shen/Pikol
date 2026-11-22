@@ -2,13 +2,17 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import getRoutes from "./routes/get.js";
 import postRoutes from "./routes/post.js";
 import putRoutes from "./routes/put.js";
 import deleteRoutes from "./routes/delete.js";
 import pool from "./db.js";
-import path from "path";   
+
+// ES modules don't have __dirname, so recreate it
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -20,23 +24,18 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Serve uploaded images  // <-- add
+// Serve uploaded images
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// =====================================================
+// API ROUTES
+// =====================================================
 
 app.use("/api/auth", authRoutes);
 app.use("/api", getRoutes);
 app.use("/api", postRoutes);
 app.use("/api", putRoutes);
 app.use("/api", deleteRoutes);
-
-
-// =====================================================
-// TEST ROUTES
-// =====================================================
-
-app.get("/", (req, res) => {
-    res.send("Backend is working!");
-});
 
 app.get("/api/test-db", async (req, res) => {
     try {
@@ -54,8 +53,35 @@ app.get("/api/test-db", async (req, res) => {
     }
 });
 
+// =====================================================
+// SERVE THE BUILT REACT APP (production / Docker)
+// =====================================================
+
+const publicDir = path.join(__dirname, "public");
+
+app.use(express.static(publicDir));
+
+// Fallback so React Router routes work on refresh.
+// Written with app.use so it works on both Express 4 and 5.
+app.use((req, res, next) => {
+    if (
+        req.method !== "GET" ||
+        req.path.startsWith("/api") ||
+        req.path.startsWith("/uploads")
+    ) {
+        return next();
+    }
+    res.sendFile(path.join(publicDir, "index.html"), (err) => {
+        if (err) next();
+    });
+});
+
+// =====================================================
+// START
+// =====================================================
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
 });
