@@ -83,7 +83,7 @@ export const Overview = () => {
                   <span> - show Policies </span>
                   <span> - Add more precise Explaination of the tournament</span>
                    <span> - Add Confirmation popup in the delete and signout buttons</span>
-                    <span> - Implement Lower bracket and upper braket type tournament</span>
+                    <span> - add loacal storage each and fix the multer in the hero pic</span>
                      <span> - Implement Openplay backend andfrontend</span>
                       <span> - Add delay animation this web</span>
               </h1>
