@@ -41,7 +41,7 @@ function App() {
 
         <PulseLoader color='#A8D38D' size={12} margin={4} />
       </div>
-    )
+    )  
   }
 
   return (
