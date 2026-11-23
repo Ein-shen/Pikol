@@ -102,8 +102,8 @@ function TeamsForm({
 
       <div className="space-y-4 p-5">
         {isEdit && (
-          <p className="rounded-lg border theme-border p-3 text-xs theme-muted">
-            Changing only player names keeps all scores. Adding or removing a team rebuilds the
+          <p className="rounded-lg border theme-border space-y-2 p-3 text-xs theme-muted">
+            <span className='text-red-500 text-md font-bold'>Note:</span>  Changing only player names keeps all scores. Adding or removing a team rebuilds the
             groups, so <strong>all group and playoff scores will be cleared</strong>.
           </p>
         )}
