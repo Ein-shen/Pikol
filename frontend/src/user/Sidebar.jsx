@@ -62,14 +62,14 @@ export const Sidebar = () => {
         {/* Close button - mobile only. Brings the Menu button back */}
         <button
           onClick={() => setIsOpen(false)}
-          className="md:hidden absolute top-1 p-1 rounded-md theme-hover right-1 theme-text   "
+          className="md:hidden absolute top-1 p-1 rounded-md theme-hover right-1 theme-text  pt-1  "
           aria-label="Close menu"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Main Navigation */}
-        <div className="w-full space-y-4 px-6 pt-5">
+        <div className="w-full space-y-4 px-6 pt-10">
           {navItems.map(({ label, iconSrc, path }) => {
             const isActive =
               location.pathname === path || location.pathname.startsWith(path + '/')
@@ -78,7 +78,7 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex items-center gap-2 font-mono rounded-md p-2 transition-colors theme-hover ${
+                className={`w-full flex items-center gap-2 font-mono rounded-md p-2  transition-colors theme-hover ${
                   isActive ? 'border border-theme-border/10 theme-bg' : ''
                 }`}
               >
@@ -90,7 +90,7 @@ export const Sidebar = () => {
         </div>
         
 
-        <RecentTournaments />
+        <RecentTournaments onNavigate={() => setIsOpen(false)} />
         
       </div>
     </>
