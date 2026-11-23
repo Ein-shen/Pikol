@@ -13,6 +13,16 @@ const baseConfig = process.env.DATABASE_URL
           password: process.env.DB_PASSWORD,
       };
 
+// Temporary debug lines: print only a yes/no and the host name (never the password)
+console.log('DATABASE_URL present:', Boolean(process.env.DATABASE_URL));
+try {
+    console.log('Connecting to host:', process.env.DATABASE_URL
+        ? new URL(process.env.DATABASE_URL).host
+        : (process.env.DB_HOST || 'localhost'));
+} catch (e) {
+    console.log('DATABASE_URL could not be parsed as a URL (check for spaces, quotes, or a missing postgresql://)');
+}
+
 const pool = new Pool({
     ...baseConfig,
     max: 10,
