@@ -1,14 +1,25 @@
+
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../../api'
 
 // One row per matching type: label, icon, the dashboard page, and the GET route that loads it.
 const TYPE_INFO = {
-  top2:   { label: 'Standard tournament',  icon: '🏆', route: '/dashboard/top2dashb',   load: (id) => `/top2/${id}` },
-  single: { label: 'Single', icon: '🥊', route: '/dashboard/singledashb', load: (id) => `/tournaments/${id}` },
+  top2: {
+    label: 'Standard tournament',
+    icon: '🏆',
+    route: '/dashboard/top2dashb',
+    load: (id) => `/top2/${id}`,
+  },
+  single: {
+    label: 'Single',
+    icon: '🥊',
+    route: '/dashboard/singledashb',
+    load: (id) => `/tournaments/${id}`,
+  },
 }
 
-export function RecentTournaments() {
+export const RecentTournaments = ({ onNavigate }) => {
   const [items, setItems] = useState([])
   const { pathname } = useLocation()
   const navigate = useNavigate()
@@ -17,21 +28,24 @@ export function RecentTournaments() {
   // (so a tournament you just created shows up)
   useEffect(() => {
     let cancelled = false
+
     api
       .get('/tournaments/recent')
       .then((res) => !cancelled && setItems(res.data))
       .catch(() => !cancelled && setItems([]))
+
     return () => {
       cancelled = true
     }
   }, [pathname])
 
   // Load the full tournament, then open its dashboard with the data in router state
-  // (the same thing the dashboard does when you click a card)
   const openTournament = async (t) => {
     const info = TYPE_INFO[t.type]
+
     try {
       const { data } = await api.get(info.load(t.id))
+
       navigate(info.route, {
         state: {
           tournamentId: data.id,
@@ -41,6 +55,10 @@ export function RecentTournaments() {
           savedKnockout: data.matches,
         },
       })
+
+      // Close the mobile sidebar after successful navigation
+      onNavigate?.()
+
     } catch {
       // ignore: the item just doesn't open
     }
@@ -48,8 +66,7 @@ export function RecentTournaments() {
 
   if (!items.length) return null
 
-
-  // getting the recent tournament used for matching the player
+  // Getting the recent tournament used for matching the player
   return (
     <div className="mt-20 pb-10 space-y-3">
       <p className="text-xs font-semibold text-left items-center flex flex-row gap-1 pb-5">
@@ -64,7 +81,7 @@ export function RecentTournaments() {
 
       {items.map((t) => {
         const info = TYPE_INFO[t.type]
-        if (!info) return null // unknown type: skip
+        if (!info) return null
 
         return (
           <button
