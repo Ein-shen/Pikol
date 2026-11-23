@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../api' // adjust to your axios instance path
+import { PulseLoader } from 'react-spinners'
+
 
 export const Overview = () => {
   const [tournaments, setTournaments] = useState([])
@@ -27,7 +29,18 @@ export const Overview = () => {
   // Already sorted newest first by the API (ORDER BY id DESC)
   const recent = tournaments.slice(0, 5)
 
-  if (loading) return <p>Loading...</p>
+  if (loading) return (
+
+    <div className='flex flex-row items-center gap-2'>
+
+      <h1 className='text-lg font-semibold'>
+          Loading Overview
+      </h1>
+        <PulseLoader color='#A8D38D' size={12} margin={4} />
+    
+    </div>
+  
+  )
 
   return (
     <div className="flex flex-col gap-4">
