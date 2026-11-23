@@ -422,9 +422,9 @@ function ChampionBanner({ champion, second, third, showThird }) {
         {/* Champion */}
         <div className="flex flex-1 flex-col items-center min-w-0">
           <PlaceCard featured label="" team={champion} />
-          <div className="flex h-36 w-full max-w-[200px] flex-col items-center justify-center rounded-t-lg border-2 border-yellow-500 bg-gradient-to-b from-yellow-300 to-yellow-500 shadow-xl">
+          <div className="flex h-36 w-full max-w-[200px]  flex-col items-center justify-center rounded-t-lg border-2 border-yellow-500 bg-gradient-to-b from-yellow-300 to-yellow-500 shadow-xl">
             <span className="text-5xl font-black text-yellow-900">1</span>
-            <span className="text-sm font-black text-yellow-900">CHAMPION</span>
+            <span className="text-xs sm:text-ms font-black text-yellow-900">CHAMPION</span>
           </div>
         </div>
 
@@ -789,10 +789,10 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
                 }`}
               >
                 <td className="py-3 pr-3 align-top text-sm">{i + 1}</td>
-                <td className="py-3 align-top border-b border-white/10 theme-border">
+                <td className="py-3 align-top border-b zzzzzzborder-white/10 theme-border">
                   <div className="text-sm capitalize">{pairLabel(row.team)}</div>
                   <div className="mt-0.5 text-xs font-normal capitalize theme-muted">
-                    {row.team.name}
+                    {row.team.name} 
                   </div>
                 </td>
                 <td className="text-center">{row.wins}</td>
@@ -819,7 +819,7 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
               <div className="font-semibold text-center text-sm">{pairLabel(team)}</div>
               {/* FIXED: counts from the real position (old code broke for group D) */}
               <div className="text-xs text-center theme-muted mt-1">
-                Team {teamOffset + index + 1}
+                Team  {teamOffset + index + 1}
               </div>
             </div>
           ))}
@@ -840,9 +840,11 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
               >
                 {/* Team 1 */}
                 <span className="min-w-0 flex-1 text-right break-words leading-tight">
-                  <span className="font-semibold">{m.team1.name}</span>
-                  <span className="text-xs capitalize theme-muted ml-1">
-                    ({pairLabel(m.team1)})
+                  <span className="flex flex-row flex-wrap items-baseline justify-end gap-x-1 sm:flex-col sm:items-end">
+                    <span className="font-semibold">{m.team1.name}</span>
+                    <span className="text-xs capitalize theme-muted">
+                      ({pairLabel(m.team1)})
+                    </span>
                   </span>
                 </span>
 
@@ -874,11 +876,14 @@ function GroupCard({ group, matches, standings, scores, locked, onScore, advance
 
                 {/* Team 2 */}
                 <span className="min-w-0 flex-1 break-words leading-tight">
-                  <span className="font-semibold">{m.team2.name}</span>
-                  <span className="text-xs capitalize theme-muted ml-1">
-                    ({pairLabel(m.team2)})
+                  <span className="flex flex-row flex-wrap items-baseline gap-x-1 sm:flex-col sm:items-start">
+                    <span className="font-semibold">{m.team2.name}</span>
+                    <span className="text-xs capitalize theme-muted">
+                      ({pairLabel(m.team2)})
+                    </span>
                   </span>
                 </span>
+                
               </div>
             )
           })}
@@ -1123,7 +1128,7 @@ export function Top2_View({
                 state: { edit: true, tournamentId, tournamentName, teams },
               })
             }
-            className="flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-sm theme-border theme-hover theme-accent"
+            className="flex items-center gap-2   rounded-lg px-3 py-2 font-semibold text-sm theme-border theme-hover theme-accent"
           >
             <Pencil size={16} /> Edit Tournament
           </button>
