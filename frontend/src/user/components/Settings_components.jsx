@@ -29,10 +29,10 @@ export const Settings_components = () => {
       icon: 'https://img.icons8.com/?size=100&id=ceTqKjlDTFsp&format=png&color=000000',
       alt: 'language',
     },
-    {
-      label: 'Terms & Condition',
+     {
+      label: 'Privacy center',
       path: ' ',
-      icon: 'https://img.icons8.com/?size=100&id=102559&format=png&color=000000',
+      icon: 'https://img.icons8.com/?size=100&id=EUM1sHPZXmLO&format=png&color=000000',
       alt: 'language',
     },
     {
@@ -41,6 +41,8 @@ export const Settings_components = () => {
       icon: 'https://img.icons8.com/?size=100&id=35128&format=png&color=000000',
       alt: 'language',
     },
+    
+    
     {
       label: 'Activity Center',
       path: ' ',
@@ -54,11 +56,12 @@ export const Settings_components = () => {
       alt: 'language',
     },
     {
-      label: 'Privacy center',
+      label: 'Terms & Condition',
       path: ' ',
-      icon: 'https://img.icons8.com/?size=100&id=EUM1sHPZXmLO&format=png&color=000000',
+      icon: 'https://img.icons8.com/?size=100&id=102559&format=png&color=000000',
       alt: 'language',
     },
+   
   ]
 
   return (
