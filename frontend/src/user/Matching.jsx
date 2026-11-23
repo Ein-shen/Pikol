@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Plus, X, Trophy } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
+import { PulseLoader } from 'react-spinners'
 
 // Where each tournament type's list page lives
 const TYPE_ROUTES = {
@@ -64,7 +65,13 @@ export const Matching = () => {
         </button>
       </header>
 
-      {loading && <p className="text-gray-500">Loading...</p>}
+      {loading && <div className='flex flex-row gap-2 items-center'>
+                    <h1 className='font-semibold text-lg'>
+                      Loading Tournament Matching
+                    </h1>
+
+                      <PulseLoader color='#A8D38D' size={12} margin={4} />
+                  </div>}
 
       {/* NO DATA */}
       {!loading && !hasTournaments && (
@@ -162,7 +169,7 @@ export const Matching = () => {
               </button> */}
 
               <button
-                onClick={() => navigate('/dashboard/double')}
+                onClick={() => navigate('')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
               >
                 Open Play 
