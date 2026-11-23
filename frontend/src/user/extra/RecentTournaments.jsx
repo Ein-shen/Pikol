@@ -48,6 +48,8 @@ export function RecentTournaments() {
 
   if (!items.length) return null
 
+
+  // getting the recent tournament used for matching the player
   return (
     <div className="mt-20 pb-10 space-y-3">
       <p className="text-xs font-semibold text-left items-center flex flex-row gap-1 pb-5">
