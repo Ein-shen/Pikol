@@ -218,15 +218,15 @@ export const Hero = () => {
   return (
     <div className="flex w-full flex-col gap-8 sm:gap-12">
       {/* HEADER */}
-      <header className="flex flex-row items-center justify-between gap-2">
-        <button
+      <header className="flex flex-row items-center justify-center gap-2">
+        {/* <button
           type="button"
           className="shrink-0 rounded-md p-2 opacity-60 transition hover:opacity-100"
           onClick={() => navigate(-1)}
           aria-label="Go back"
         >
           <ArrowLeft />
-        </button>
+        </button> */}
 
         {/* USERNAME DROPDOWN */}
         <div ref={menuRef} className="relative min-w-0">
