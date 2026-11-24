@@ -53,10 +53,10 @@ export const Navbar = () => {
     navigate(path)
   }
 
-  const itemClass = 'text-left text-xs px-4 py-2 theme-hover theme-card theme-border w-full'
+  const itemClass = 'flex flex-row gap-2 items-center text-left text-xs px-4 py-2 theme-hover theme-card theme-border w-full'
 
   return (
-    <div className='fixed top-0 left-0 right-0 h-16 z-50 flex flex-col w-full theme-gradient'>
+    <div className='fixed animate-fade-in animation-delay-200  top-0 left-0 right-0 h-16 z-50 flex flex-col w-full theme-gradient'>
       <div className='h-16 border-b theme-border flex flex-row justify-between items-center py-3 px-1'>
         {/* Logo */}
         <button
@@ -101,22 +101,49 @@ export const Navbar = () => {
           </button>
 
           {showDropdown && (
-            <div className='absolute right-0 top-full mt-2 w-40 border theme-border rounded-md shadow-md z-50 flex flex-col'>
+            <div className='absolute animate-fade-in animation-delay-100  right-0 top-full mt-2 w-40 border theme-border rounded-md shadow-md z-50 flex flex-col'>
               <button type='button' onClick={() => go('/dashboard/hero')} className={`${itemClass} rounded-t-md border-b`}>
+                <img
+                  src="https://img.icons8.com/?size=100&id=Cssf43cjx2fu&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
                 Profile
               </button>
               {/* Fixed: removed the trailing space in the path */}
               <button type='button' onClick={() => go('/dashboard/support_components')} className={`${itemClass} border-b`}>
+                <img
+                  src="https://img.icons8.com/?size=100&id=83273&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
                 Support
               </button>
               {/* TODO: go('') stays on the current route. Point this at your About page. */}
               <button type='button' onClick={() => go('/dashboard/about_components')} className={`${itemClass} border-b`}>
+                <img
+                  src="https://img.icons8.com/?size=100&id=14313&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
                 About
               </button>
-              <button type='button' onClick={() => go('/dashboard/settings_components')} className={`${itemClass} border-b`}>
-                Settings
-              </button>
-              <Signout className={`${itemClass} rounded-b-md`} />
+              <span className='theme-hover flex flex-row items-center gap-2 w-full    px-4   text-left text-xs sm:py-2.5'> 
+                <img
+                  src="https://img.icons8.com/?size=100&id=96qSfJhNi0UF&format=png&color=000000"
+                    alt=""
+                    height={18}
+                    width={18}
+                    className="theme-icon"
+                      />
+                <Signout className="theme-hover w-full text-left text-xs  " />
+            </span>
             </div>
           )}
         </div>
