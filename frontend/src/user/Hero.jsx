@@ -331,16 +331,17 @@ export const Hero = () => {
             onClick={() => fileInputRef.current?.click()}
             className="theme-border theme-accent flex h-28 w-28 items-center justify-center overflow-hidden rounded-xl border disabled:opacity-50 sm:h-44 sm:w-44"
           >
-            <img
+           <img
               src={
                 photoPreview ||
-                user?.photo_url ||
-                'https://img.icons8.com/?size=100&id=12438&format=png&color=000000'
+                (user?.photo_url
+                  ? user.photo_url.replace(/^http:\/\//i, 'https://')
+                  : 'https://img.icons8.com/?size=100&id=12438&format=png&color=000000')
               }
               alt="Profile"
               className="h-full w-full object-cover"
             />
-          </button>
+            </button>
 
           {uploadingPhoto && (
             <span className="absolute left-0 right-0 top-full mt-1 whitespace-nowrap text-center text-xs opacity-60">

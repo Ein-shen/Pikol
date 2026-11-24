@@ -16,6 +16,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
+// Render sits behind a proxy: trust it so req.protocol is "https" (fixes Mixed Content)
+app.set("trust proxy", 1);
+
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
