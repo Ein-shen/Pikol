@@ -82,7 +82,7 @@ export const Settings_components = () => {
         <div className="w-10" />
       </header>
 
-      <div className="theme-card py-6 space-y-6 theme-border border px-3 rounded-md w-[90%] mx-auto flex flex-col justify-center items-stretch">
+      <div className="theme-card py-6 space-y-6 theme-border  animate-fade-in animation-delay-100 border px-3 rounded-md w-[90%] mx-auto flex flex-col justify-center items-stretch">
         {items.map((item, index) => (
           <button
             key={item.label}
