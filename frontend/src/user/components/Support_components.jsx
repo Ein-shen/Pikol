@@ -72,7 +72,7 @@ export const Support_components = () => {
         <div className="w-10" />
       </header>
 
-      <div className="theme-card theme-border border rounded-md w-[90%] mx-auto py-4 px-3 flex flex-col gap-4">
+      <div className="theme-card theme-border border animate-fade-in animation-delay-100 rounded-md w-[90%] mx-auto py-4 px-3 flex flex-col gap-4">
         {contacts.map((contact, index) => {
           const external = contact.href.startsWith('http')
 
