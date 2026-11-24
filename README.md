@@ -32,19 +32,7 @@ Whether organizing casual games or competitive tournaments, Pikol provides tools
 
 ### Authentication
 
-- User registration and login. \<td className="py-3 pr-3 align-top text-sm">{i + 1}\</td>
-
-                  \<td className="py-3 align-top border-b flex flex-col sm\:flex flex-row border-white/10 theme-border">
-
-                    \<div className="text-sm capitalize">{pairLabel(row\.team)}\</div>
-
-                    \<div className="mt-0.5 text-xs font-normal capitalize theme-muted">
-
-                      {row\.team.name}&#x20;
-
-                    \</div>
-
-                  \</td
+- User registration and login. 
 - Password hashing.
 - JWT-based authentication using HTTP-only cookies.
 - Protected routes for authenticated users.
