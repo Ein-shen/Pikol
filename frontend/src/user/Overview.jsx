@@ -80,7 +80,6 @@ export const Overview = () => {
                   
                   <span> - show tournament anlytics</span>
                   <span> - show AI chatbot</span>
-                  <span> - show Policies </span>
                   <span> - Add more precise Explaination of the tournament</span>
                    <span> - Add Confirmation popup in the delete and signout buttons</span>
                     <span> - add loacal storage each and fix the multer in the hero pic</span>
