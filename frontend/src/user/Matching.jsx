@@ -93,9 +93,9 @@ export const Matching = () => {
       {/* HAS DATA */}
       {!loading && hasTournaments && (
         <div className="flex flex-col gap-6">
-          <h2 className="text-lg font-bold">Used match for tournaments</h2>
+          <h2 className="text-lg animate-fade-in animation-delay-100 font-bold">Used match for tournaments</h2>
 
-          <div className="flex w-full flex-col flex-wrap gap-4 pt-5">
+          <div className="flex w-full animate-fade-in animation-delay-200  flex-col flex-wrap gap-4 pt-5">
             {Object.entries(typeCounts).map(([type, count]) => (
               <button
                 onClick={() =>
@@ -141,12 +141,12 @@ export const Matching = () => {
             </button>
 
             <div className="flex items-center justify-center">
-              <h2 className="pr-6 text-center text-base font-semibold sm:pr-0 sm:text-lg">
+              <h2 className="pr-6 text-center animate-fade-in animation-delay-100  text-base font-semibold sm:pr-0 sm:text-lg">
                 Select your game management
               </h2>
             </div>
 
-            <div className="flex flex-col items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
+            <div className="flex  flex-col animate-fade-in animation-delay-200  items-stretch gap-3 pt-4 sm:flex-row sm:pt-8">
               <button
                 onClick={() => navigate('/dashboard/single')}
                 className="h-16 w-full rounded-md border theme-border theme-card theme-hover p-3 text-center text-sm font-semibold sm:h-24 sm:flex-1 sm:p-6 sm:text-base"
