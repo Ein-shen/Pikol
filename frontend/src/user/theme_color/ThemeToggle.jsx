@@ -14,7 +14,7 @@ export const ThemeToggle = () => {
       onClick={toggleTheme}
       aria-label="Toggle light and dark mode"
       aria-pressed={!isLight}
-      className="relative flex h-8 w-14 items-center rounded-full px-1 theme-gradient theme-border transition-colors duration-300"
+      className="relative flex h-8 w-14 items-center rounded-full px-1 theme-gradient theme-border shadow-md  transition-colors duration-300"
     >
       <span
         className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full theme-border shadow-md transition-transform duration-300 ${
