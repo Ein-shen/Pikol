@@ -255,14 +255,22 @@ export const Hero = () => {
           {showDropdown && (
             <div
               role="menu"
-              className="theme-card theme-border border-b theme-text absolute left-1/2 top-full z-50 mt-2 flex w-44 max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg sm:w-52"
+              className="theme-card theme-border animate-fade-in animation-delay-100  border-b theme-text absolute left-1/2 top-full z-50 mt-2 flex w-44 max-w-[calc(100vw-2rem)] -translate-x-1/2 flex-col overflow-hidden rounded-md border shadow-lg sm:w-52"
             >
               <button
                 type="button"
                 role="menuitem"
                 onClick={openEdit}
-                className="theme-hover w-full theme-border border-b   px-4 py-3 text-left text-sm sm:py-2.5"
+                className="theme-hover w-full theme-border border-b flex flex-row items-center gap-2  px-4 py-3 text-left text-sm sm:py-2.5"
               >
+                <img
+                  src="https://img.icons8.com/?size=100&id=11737&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
+
                 Edit profile
               </button>
 
@@ -270,12 +278,33 @@ export const Hero = () => {
                 type="button"
                 role="menuitem"
                 onClick={() => go(' ')}
-                className="theme-hover w-full theme-border border-b px-4 py-3 text-left text-sm sm:py-2.5"
+                className="theme-hover flex flex-row items-center gap-2 w-full theme-border border-b px-4 py-3 text-left text-sm sm:py-2.5"
               >
+                <img
+                  src="https://img.icons8.com/?size=100&id=24717&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
                 Add account
               </button>
 
-              <Signout className="theme-hover w-full  theme-border border-b  px-4 py-3 text-left text-sm sm:py-2.5" />
+              <span className='theme-hover flex flex-row items-center gap-2 w-full    px-4 py-3 text-left text-sm sm:py-2.5'> 
+                <img
+                  src="https://img.icons8.com/?size=100&id=96qSfJhNi0UF&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
+                 
+                 <Signout className="theme-hover w-full     text-left text-sm  " />
+
+
+              </span>
+
+             
             </div>
           )}
         </div>
