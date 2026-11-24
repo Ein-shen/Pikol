@@ -68,7 +68,7 @@ export const RecentTournaments = ({ onNavigate }) => {
 
   // Getting the recent tournament used for matching the player
   return (
-    <div className="mt-20 pb-10 space-y-3">
+    <div className="mt-20 pb-10 space-y-3 animate-fade-in animation-delay-100 ">
       <p className="text-xs font-semibold text-left items-center flex flex-row gap-1 pb-5">
         <img
           src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000"
