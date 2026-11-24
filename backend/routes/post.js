@@ -1,36 +1,71 @@
+
 import express from "express";
 import pool from "../db.js";
 import { requireAuth } from "../middleware/auth.js";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "crypto";
 
 const router = express.Router();
 
 // =====================================================
-// MULTER SETUP (profile photos)
+// SUPABASE SETUP (profile photos)
 // =====================================================
-const uploadDir = path.join(process.cwd(), "uploads", "profile");
-fs.mkdirSync(uploadDir, { recursive: true });
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
+const BUCKET_NAME = "profile-photos";
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadDir),
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        cb(null, `user-${req.user.id}-${Date.now()}${ext}`);
-    },
-});
+const supabase =
+    SUPABASE_URL && SUPABASE_SECRET_KEY
+        ? createClient(SUPABASE_URL, SUPABASE_SECRET_KEY)
+        : null;
 
+// =====================================================
+// MULTER SETUP (memory storage)
+// =====================================================
 const upload = multer({
-    storage,
+    storage: multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
     fileFilter: (req, file, cb) => {
-        if (!file.mimetype.startsWith("image/")) {
-            return cb(new Error("Only image files are allowed."));
+        const allowedTypes = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif",
+            "image/avif",
+        ];
+
+        if (!allowedTypes.includes(file.mimetype)) {
+            return cb(new Error("Only JPG, PNG, WEBP, GIF, and AVIF images are allowed."));
         }
+
         cb(null, true);
     },
 });
+
+// =====================================================
+// HELPER: GET OLD SUPABASE PHOTO PATH
+// =====================================================
+function getSupabasePhotoPath(photoUrl) {
+    if (!photoUrl || !SUPABASE_URL) return null;
+
+    try {
+        const photo = new URL(photoUrl);
+        const project = new URL(SUPABASE_URL);
+
+        if (photo.origin !== project.origin) return null;
+
+        const marker = `/storage/v1/object/public/${BUCKET_NAME}/`;
+
+        if (!photo.pathname.includes(marker)) return null;
+
+        return decodeURIComponent(
+            photo.pathname.split(marker)[1]
+        );
+    } catch {
+        return null;
+    }
+}
 
 // =====================================================
 // POST /api/me/photo : upload profile photo
@@ -42,6 +77,7 @@ router.post("/me/photo", requireAuth, (req, res) => {
                 err.code === "LIMIT_FILE_SIZE"
                     ? "Image must be smaller than 5 MB."
                     : err.message || "Upload failed.";
+
             return res.status(400).json({ message });
         }
 
@@ -49,19 +85,61 @@ router.post("/me/photo", requireAuth, (req, res) => {
             return res.status(400).json({ message: "No photo uploaded." });
         }
 
-        const photoUrl = `${req.protocol}://${req.get("host")}/uploads/profile/${req.file.filename}`;
+        if (!supabase) {
+            return res.status(500).json({
+                message: "Supabase environment variables are not configured.",
+            });
+        }
+
+        const extensionByType = {
+            "image/jpeg": "jpg",
+            "image/png": "png",
+            "image/webp": "webp",
+            "image/gif": "gif",
+            "image/avif": "avif",
+        };
+
+        const extension = extensionByType[req.file.mimetype];
+
+        const filePath = `user-${req.user.id}/${Date.now()}-${randomUUID()}.${extension}`;
+
+        let uploaded = false;
 
         try {
-            // Delete the previous photo file (if it was one of ours)
+            // Get previous profile photo
             const old = await pool.query(
                 "SELECT photo_url FROM users WHERE id = $1",
                 [req.user.id]
             );
+
             const oldUrl = old.rows[0]?.photo_url;
-            if (oldUrl && oldUrl.includes("/uploads/profile/")) {
-                fs.unlink(path.join(uploadDir, path.basename(oldUrl)), () => {});
+
+            // Upload new image to Supabase Storage
+            const { error: uploadError } = await supabase.storage
+                .from(BUCKET_NAME)
+                .upload(filePath, req.file.buffer, {
+                    contentType: req.file.mimetype,
+                    upsert: false,
+                });
+
+            if (uploadError) {
+                console.error("SUPABASE UPLOAD ERROR:", uploadError);
+
+                return res.status(500).json({
+                    message: "Could not upload profile photo.",
+                });
             }
 
+            uploaded = true;
+
+            // Get permanent public HTTPS URL
+            const { data: publicData } = supabase.storage
+                .from(BUCKET_NAME)
+                .getPublicUrl(filePath);
+
+            const photoUrl = publicData.publicUrl;
+
+            // Save photo URL in NeonDB
             const result = await pool.query(
                 `UPDATE users SET photo_url = $1 WHERE id = $2
                  RETURNING id, username, email, full_name AS fullname,
@@ -69,10 +147,48 @@ router.post("/me/photo", requireAuth, (req, res) => {
                 [photoUrl, req.user.id]
             );
 
+            if (result.rows.length === 0) {
+                await supabase.storage
+                    .from(BUCKET_NAME)
+                    .remove([filePath]);
+
+                return res.status(404).json({
+                    message: "User not found.",
+                });
+            }
+
+            // Delete previous Supabase photo only after successful DB update
+            const oldPath = getSupabasePhotoPath(oldUrl);
+
+            if (oldPath && oldPath !== filePath) {
+                const { error: deleteError } = await supabase.storage
+                    .from(BUCKET_NAME)
+                    .remove([oldPath]);
+
+                if (deleteError) {
+                    console.error("OLD PHOTO DELETE ERROR:", deleteError);
+                }
+            }
+
             res.json({ user: result.rows[0] });
-        } catch (dbErr) {
-            console.error("UPLOAD PHOTO ERROR:", dbErr);
-            res.status(500).json({ message: "Could not save profile photo." });
+
+        } catch (uploadErr) {
+            console.error("UPLOAD PHOTO ERROR:", uploadErr);
+
+            // Remove the newly uploaded image if saving to the database failed
+            if (uploaded) {
+                const { error: cleanupError } = await supabase.storage
+                    .from(BUCKET_NAME)
+                    .remove([filePath]);
+
+                if (cleanupError) {
+                    console.error("PHOTO CLEANUP ERROR:", cleanupError);
+                }
+            }
+
+            res.status(500).json({
+                message: "Could not save profile photo.",
+            });
         }
     });
 });
