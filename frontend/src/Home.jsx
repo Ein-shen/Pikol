@@ -29,8 +29,8 @@ export const Home = () => {
       <div className='absolute inset-0 bg-black/30' />
 
       {/* Fixed top bar (translucent, single row, no backdrop-blur) */}
-      <header className='fixed top-0 inset-x-0 z-50 border-b border-white/20 bg-black/60'>
-        <div className='flex items-center justify-between h-14 sm:h-16 px-4 sm:px-8 md:px-12 lg:px-20'>
+<header className='animate-fade-in animation-delay-100 fixed top-0 inset-x-0 z-50 border-b border-white/20 bg-black/60'>
+  <div className=' flex items-center justify-between h-14 sm:h-16 px-4 sm:px-8 md:px-12 lg:px-20'>
 
           {/* Logo */}
           <h1 className='font-bold italic text-gray-200 text-base sm:text-lg md:text-xl tracking-wide whitespace-nowrap'>
@@ -83,7 +83,7 @@ export const Home = () => {
 
         {/* Mobile dropdown menu */}
         {menuOpen && (
-          <nav className='md:hidden flex flex-col px-4 sm:px-8 pb-3 border-t border-white/10'>
+          <nav className='md:hidden  flex flex-col px-4 sm:px-8 pb-3 border-t border-white/10'>
             {navLinks.map((l) => (
               <a
                 key={l.label}
@@ -102,11 +102,11 @@ export const Home = () => {
       <div className='relative z-10 h-14 sm:h-16 shrink-0' />
 
       {/* Hero section */}
-      <main className='relative z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-center px-4 sm:px-8 md:px-12 pt-8 md:pt-12 pb-8 gap-8 md:gap-10 lg:gap-12'>
+      <main className='relative   z-10 w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-center px-4 sm:px-8 md:px-12 pt-8 md:pt-12 pb-8 gap-8 md:gap-10 lg:gap-12'>
 
         {/* Left text content */}
-        <div className='w-full md:flex-1 max-w-xl text-center md:text-left flex flex-col items-center md:items-start'>
-          <h1 className='text-gray-100 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight pb-3 sm:pb-4'>
+        <div className='w-full  md:flex-1 max-w-xl text-center md:text-left flex flex-col items-center md:items-start'>
+          <h1 className='animate-fade-in animation-delay-200 text-gray-100 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight pb-3 sm:pb-4'>
             One platform that can manage{' '}
             <span className='text-[#A8D38D] block sm:inline'>
               your open play & tournaments
@@ -114,11 +114,11 @@ export const Home = () => {
             efficiently
           </h1>
 
-          <p className='text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl pb-5 sm:pb-6 max-w-lg leading-relaxed'>
+          <p className='text-gray-400 animate-fade-in animation-delay-300  text-sm sm:text-base md:text-lg lg:text-xl pb-5 sm:pb-6 max-w-lg leading-relaxed'>
             Streamline scheduling, brackets, and player management — all in one place.
           </p>
 
-          <div className='flex flex-row gap-3 sm:gap-4 w-full sm:w-auto'>
+          <div className='flex flex-row animate-fade-in animation-delay-600 gap-3 sm:gap-4 w-full sm:w-auto'>
             <Link
               to='/signup'
               className='w-full sm:w-fit px-6 py-3 rounded-md bg-white/10 text-gray-200 font-bold text-sm sm:text-base hover:bg-black/10 transition-colors text-center border border-white/10'
@@ -136,11 +136,11 @@ export const Home = () => {
         </div>
 
         {/* Right content: video in a window */}
-        <div className='w-full md:flex-1 max-w-xl flex flex-col relative drop-shadow-2xl mt-4 md:mt-0'>
+        <div className='animate-fade-in animation-delay-200 w-full md:flex-1 max-w-xl flex flex-col relative drop-shadow-2xl mt-4 md:mt-0'>
           <div className='w-full bg-[#1e1e1e] border-2 border-gray-700/60 rounded-xl overflow-hidden shadow-2xl'>
 
             {/* Title bar */}
-            <div className='w-full h-7 sm:h-8 bg-[#1a1a1a] flex items-center px-3 sm:px-4 border-b border-gray-700/60 justify-between'>
+            <div className='w-full h-7 sm:h-8 bg-[#1a1a1a] animate-fade-in animation-delay-300 flex items-center px-3 sm:px-4 border-b border-gray-700/60 justify-between'>
               <div className='flex items-center gap-1.5'>
                 <div className='w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FF5F57] border border-black/10' />
                 <div className='w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#FEB024] border border-black/10' />
@@ -155,7 +155,7 @@ export const Home = () => {
             </div>
 
             {/* Video */}
-            <div className='w-full aspect-video md:aspect-[13/10] bg-black relative'>
+            <div className='w-full animate-fade-in animation-delay-300 aspect-video md:aspect-[13/10] bg-black relative'>
               <video
                 src={pikolVideo}
                 autoPlay
@@ -170,7 +170,7 @@ export const Home = () => {
       </main>
 
       {/* About + Support */}
-      <div className='relative z-10'>
+      <div className='relative z-10 animate-fade-in animation-delay-300'>
         <About />
         <Support />
       </div>
