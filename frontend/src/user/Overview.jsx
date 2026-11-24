@@ -44,16 +44,16 @@ export const Overview = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-lg font-bold">Overview</h1>
+      <h1 className="text-lg  animate-fade-in animation-delay-100  font-bold">Overview</h1>
 
       {/* Total */}
-      <div className="border theme-border p-6 rounded-md theme-hover theme-card">
+      <div className="border animate-fade-in animation-delay-300  theme-border p-6 rounded-md theme-hover theme-card">
         <p className="text-sm text-gray-500">Total tournaments</p>
         <p className="text-3xl font-black">{total}</p>
       </div>
 
       {/* Count by type */}
-      <div className=" gap-4 w-full flex flex-row   ">
+      <div className=" gap-4 w-full flex flex-row animate-fade-in animation-delay-400   ">
         
         {Object.entries(typeCounts).map(([type, count]) => (
           <div key={type} className="flex flex-row justify-between w-full theme-hover theme-card rounded-md p-4 space-y-3 border theme-border">
