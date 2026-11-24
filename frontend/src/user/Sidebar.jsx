@@ -33,7 +33,7 @@ export const Sidebar = () => {
         <button
           onClick={() => setIsOpen(true)}
           aria-label="Open menu"
-          className="md:hidden fixed left-4 top-[4.75rem] z-30 flex items-center gap-2 rounded-md border theme-border theme-card theme-text px-2 py-2 font-mono text-sm"
+          className="md:hidden animate-fade-in animation-delay-100  fixed left-4 top-[4.75rem] z-30 flex items-center gap-2 rounded-md border theme-border theme-card theme-text px-2 py-2 font-mono text-sm"
         >
           <Menu className="w-4 h-4" />
         </button>
@@ -49,7 +49,7 @@ export const Sidebar = () => {
 
       {/* Sidebar: always starts right below the navbar */}
       <div
-        className={`theme-card w-56 py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center theme-text border-r theme-border z-40 transform overflow-y-auto ${
+        className={`theme-card w-56 animate-fade-in animation-delay-100  py-0 sm:pt-5 fixed left-0 top-16 bottom-0 flex flex-col items-center text-center theme-text border-r theme-border z-40 transform overflow-y-auto ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
         // Slide in from the left. Tailwind v4 moves the drawer with the CSS `translate`
