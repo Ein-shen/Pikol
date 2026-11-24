@@ -119,7 +119,7 @@ const deleteTournament = async (id, e) => {
   const getTeamCount = (t) => t.teams?.length ?? t.teamCount ?? null
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-4 sm:gap-6">
+    <div className="flex w-full min-w-0  frontend/src/user/theme_color/ThemeToggle.jsx flex-col gap-4 sm:gap-6">
       <header className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <button
