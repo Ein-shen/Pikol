@@ -134,6 +134,17 @@ export const Navbar = () => {
                 />
                 About
               </button>
+
+              <button type='button' onClick={() => go('/dashboard/settings_components')} className={`${itemClass} border-b`}>
+                <img
+                  src="https://img.icons8.com/?size=100&id=364&format=png&color=000000"
+                  alt=""
+                  height={18}
+                  width={18}
+                  className="theme-icon"
+                />
+                Settings
+              </button>
               <span className='theme-hover flex flex-row items-center gap-2 w-full    px-4  py-2 text-left text-xs sm:py-2.5'> 
                 <img
                   src="https://img.icons8.com/?size=100&id=96qSfJhNi0UF&format=png&color=000000"
