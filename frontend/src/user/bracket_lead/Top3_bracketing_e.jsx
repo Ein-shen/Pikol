@@ -1344,7 +1344,7 @@ export function Top3_View({
 
   // ---- Render ----
   return (
-    <section className="space-y-5">
+    <section className="space-y-5  animate-fade-in animation-delay-100">
       {/* Header: tournament name, summary line and reset button */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl rounded-md border theme-muted p-5">
         <div>
