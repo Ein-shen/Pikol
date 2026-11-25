@@ -85,47 +85,58 @@ export const About_components = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="w-full">
-      <header className="flex flex-row items-center justify-between pb-6 sm:pb-10">
-        <button
-          type="button"
-          className="rounded-md p-2 opacity-60 transition hover:opacity-100"
-          onClick={() => navigate(-1)}
-          aria-label="Go back"
-        >
-          <ArrowLeft />
-        </button>
+  <div className="flex h-screen w-full flex-col overflow-hidden">
 
-        <h1 className="text-lg font-bold">About</h1>
+    {/* Fixed header: does not scroll */}
+    <header className="flex shrink-0 flex-row items-center justify-between pb-6 pt-2 sm:pb-8">
+      <button
+        type="button"
+        className="rounded-md p-2 opacity-60 transition hover:opacity-100"
+        onClick={() => navigate(-1)}
+        aria-label="Go back"
+      >
+        <ArrowLeft />
+      </button>
 
-        {/* Spacer keeps the title centered */}
-        <div className="w-10" />
-      </header>
+      <h1 className="text-lg font-bold">About</h1>
 
-      <div className="mx-auto flex w-[100%] animate-fade-in animation-delay-100 flex-col gap-6 sm:gap-8">
+      {/* Spacer keeps the title centered */}
+      <div className="w-10" />
+    </header>
+
+    {/* Only this section scrolls */}
+    <div className="min-h-0 flex-1 overflow-y-auto">
+      <div className="mx-auto flex w-full animate-fade-in animation-delay-100 flex-col gap-6 pb-6 sm:gap-8">
         {about_matching.map((format) => (
           <article
             key={format.label}
             className="theme-card theme-border space-y-5 rounded-xl border p-4 sm:p-6"
           >
-            {/* Format title + one-line summary */}
             <div>
-              <h2 className="text-xl font-bold sm:text-2xl">{format.label}</h2>
-              <p className="theme-muted mt-1 text-sm sm:text-base">{format.summary}</p>
+              <h2 className="text-xl font-bold sm:text-2xl">
+                {format.label}
+              </h2>
+              <p className="theme-muted mt-1 text-sm sm:text-base">
+                {format.summary}
+              </p>
             </div>
 
-            {/* Sections */}
             {format.sections.map((section) => {
               const List = section.ordered ? 'ol' : 'ul'
+
               return (
                 <section
                   key={section.title}
                   className="theme-border space-y-2 border-t pt-4"
                 >
-                  <h3 className="text-base font-semibold sm:text-lg">{section.title}</h3>
+                  <h3 className="text-base font-semibold sm:text-lg">
+                    {section.title}
+                  </h3>
 
                   {section.intro && (
-                    <p className="text-sm leading-relaxed sm:text-base">{section.intro}</p>
+                    <p className="text-sm leading-relaxed sm:text-base">
+                      {section.intro}
+                    </p>
                   )}
 
                   {section.points && (
@@ -141,7 +152,9 @@ export const About_components = () => {
                   )}
 
                   {section.note && (
-                    <p className="theme-muted text-sm leading-relaxed">{section.note}</p>
+                    <p className="theme-muted text-sm leading-relaxed">
+                      {section.note}
+                    </p>
                   )}
                 </section>
               )
@@ -150,5 +163,6 @@ export const About_components = () => {
         ))}
       </div>
     </div>
-  )
+  </div>
+)
 }
