@@ -1109,7 +1109,7 @@ export function Top2_View({
 
   // ---- Render ----
   return (
-    <section className="space-y-5">
+    <section className="space-y-5  animate-fade-in animation-delay-100">
       {/* Header: tournament name, summary line and edit button */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-4 sm:p-5">
         <div className="min-w-0">
