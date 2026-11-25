@@ -250,7 +250,7 @@ export const Overview = () => {
           <span>- Show AI chatbot</span>
           <span>- Add more precise explanation of the tournament</span>
           <span>- Add confirmation popup in the delete and signout buttons</span>
-          <span>- Add localStorage to each and fix Multer in the hero pic</span>
+          <span>- Add loading components</span>
           <span>- Implement Open Play backend and frontend</span>
           <span>- Add delay animation to this website</span>
 
