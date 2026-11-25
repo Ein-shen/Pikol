@@ -67,6 +67,7 @@ function getSupabasePhotoPath(photoUrl) {
     }
 }
 
+
 // =====================================================
 // POST /api/me/photo : upload profile photo
 // =====================================================
@@ -106,6 +107,21 @@ router.post("/me/photo", requireAuth, (req, res) => {
         let uploaded = false;
 
         try {
+            // =========================================
+            // SUPABASE DEBUG INFORMATION
+            // =========================================
+            console.log("========== SUPABASE UPLOAD DEBUG ==========");
+            console.log("SUPABASE URL:", SUPABASE_URL);
+            console.log("SUPABASE BUCKET:", BUCKET_NAME);
+            console.log("SUPABASE FILE PATH:", filePath);
+            console.log(
+                "STORAGE REQUEST URL:",
+                `${SUPABASE_URL}/storage/v1/object/${BUCKET_NAME}/${filePath}`
+            );
+            console.log("FILE MIME TYPE:", req.file.mimetype);
+            console.log("FILE SIZE:", req.file.size);
+            console.log("============================================");
+
             // Get previous profile photo
             const old = await pool.query(
                 "SELECT photo_url FROM users WHERE id = $1",
@@ -124,6 +140,9 @@ router.post("/me/photo", requireAuth, (req, res) => {
 
             if (uploadError) {
                 console.error("SUPABASE UPLOAD ERROR:", uploadError);
+                console.error("ERROR STATUS:", uploadError.status);
+                console.error("ERROR CODE:", uploadError.code);
+                console.error("ERROR MESSAGE:", uploadError.message);
 
                 return res.status(500).json({
                     message: "Could not upload profile photo.",
@@ -138,6 +157,8 @@ router.post("/me/photo", requireAuth, (req, res) => {
                 .getPublicUrl(filePath);
 
             const photoUrl = publicData.publicUrl;
+
+            console.log("SUPABASE PUBLIC PHOTO URL:", photoUrl);
 
             // Save photo URL in NeonDB
             const result = await pool.query(
@@ -170,6 +191,8 @@ router.post("/me/photo", requireAuth, (req, res) => {
                 }
             }
 
+            console.log("PROFILE PHOTO UPLOAD SUCCESS");
+
             res.json({ user: result.rows[0] });
 
         } catch (uploadErr) {
@@ -192,6 +215,7 @@ router.post("/me/photo", requireAuth, (req, res) => {
         }
     });
 });
+
 
 // =====================================================
 // CREATE TOURNAMENT + SAVE PAIRS
