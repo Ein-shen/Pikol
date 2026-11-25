@@ -477,7 +477,7 @@ export const Bracket_Single_VIew = ({
   }
 
   return (
-    <section className="space-y-5">
+    <section className="space-y-5  animate-fade-in animation-delay-100">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border theme-muted p-5">
         <div>
           <h2 className="text-xl font-bold capitalize">{tournamentName}</h2>
