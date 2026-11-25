@@ -102,7 +102,7 @@ export const About_components = () => {
         <div className="w-10" />
       </header>
 
-      <div className="mx-auto flex w-[90%] animate-fade-in animation-delay-100   flex-col gap-6 sm:gap-8">
+      <div className="mx-auto flex w-[100%] animate-fade-in animation-delay-100 flex-col gap-6 sm:gap-8">
         {about_matching.map((format) => (
           <article
             key={format.label}
