@@ -78,7 +78,7 @@ export const Sidebar = () => {
               <button
                 key={label}
                 onClick={() => handleNavigate(path)}
-                className={`w-full flex items-center gap-2 font-mono rounded-md p-2  transition-colors theme-hover ${
+                className={`w-full flex items-center gap-2 font-mono rounded-md p-2 theme-border border transition-colors theme-hover ${
                   isActive ? 'border border-theme-border/10 theme-bg' : ''
                 }`}
               >
