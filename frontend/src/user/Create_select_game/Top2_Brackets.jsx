@@ -1,20 +1,64 @@
-import React, { useState } from 'react'
+
+import React, { useState, useEffect } from 'react'
 import { ArrowLeft, Trash2 } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import api from '../../api'
+
 // getFormatSummary: one-line text describing the format for a team count
-// getGroupLabel:    which group (A-D) a team falls in, from its position in the list
+// getGroupLabel: which group (A-D) a team falls in, from its position in the list
 import { getFormatSummary, getGroupLabel } from '../bracket_lead/Top2_bracketing_e'
 
-// Team counts the user can pick.
+// =====================================================
+// TEAM SETTINGS
+// =====================================================
 const TEAM_COUNT_OPTIONS = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 28, 32]
 const DEFAULT_TEAM_COUNT = 8
 
-// Route of the Top 2 dashboard (list + bracket view). MUST match your router.
+// Route of the Top 2 dashboard
 const DASH_ROUTE = '/dashboard/top2dashb'
 
-// Form rows get their own local id (1, 2, 3 ...). Teams loaded from the server also
-// keep their database `pairId`; a row WITHOUT a pairId is a new team.
+// =====================================================
+// LOCAL STORAGE CACHE
+// =====================================================
+
+const CACHE_KEY_PREFIX = 'cachedTop2Draft_'
+
+const getCacheKey = (tournamentId = 'new') =>
+  `${CACHE_KEY_PREFIX}${tournamentId}`
+
+// Read cached tournament draft
+const readCache = (key) => {
+  try {
+    const cached = localStorage.getItem(key)
+    return cached !== null ? JSON.parse(cached) : null
+  } catch (error) {
+    console.error('Failed to read tournament cache:', error)
+    return null
+  }
+}
+
+// Save tournament draft
+const saveCache = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data))
+  } catch (error) {
+    console.error('Failed to save tournament cache:', error)
+  }
+}
+
+// Clear tournament draft
+const clearCache = (key) => {
+  try {
+    localStorage.removeItem(key)
+  } catch (error) {
+    console.error('Failed to clear tournament cache:', error)
+  }
+}
+
+// =====================================================
+// TEAM HELPERS
+// =====================================================
+
 function createEmptyTeam(id) {
   return { id, name: `Team ${id}`, player1: '', player2: '' }
 }
@@ -24,19 +68,23 @@ function createEmptyTeams(count) {
 }
 
 // Grow or shrink the list while keeping what was already typed.
-// New ids start after the biggest id in use, so they never clash.
 function resizeTeams(prev, count) {
   if (count <= prev.length) return prev.slice(0, count)
+
   const start = Math.max(0, ...prev.map((t) => t.id))
+
   const extra = Array.from({ length: count - prev.length }, (_, i) =>
     createEmptyTeam(start + i + 1)
   )
+
   return [...prev, ...extra]
 }
 
-// Team names are hidden in the form and always follow the position ("Team 1", "Team 2" ...)
+// Team names are hidden in the form and always follow the position.
 const autoName = (team, index) =>
-  /^team\s*\d+$/i.test((team.name || '').trim()) ? { ...team, name: `Team ${index + 1}` } : team
+  /^team\s*\d+$/i.test((team.name || '').trim())
+    ? { ...team, name: `Team ${index + 1}` }
+    : team
 
 function trimTeam(team) {
   return {
@@ -46,6 +94,10 @@ function trimTeam(team) {
     player2: team.player2.trim(),
   }
 }
+
+// =====================================================
+// VALIDATION
+// =====================================================
 
 function validateTournament(name, teams) {
   if (!name) return 'Please enter a tournament name.'
@@ -59,16 +111,26 @@ function validateTournament(name, teams) {
   }
 
   const names = teams.map((t) => t.name.toLowerCase())
+
   if (new Set(names).size !== names.length) {
     return 'Each team name must be unique.'
   }
 
-  const players = teams.flatMap((t) => [t.player1.toLowerCase(), t.player2.toLowerCase()])
+  const players = teams.flatMap((t) => [
+    t.player1.toLowerCase(),
+    t.player2.toLowerCase()
+  ])
+
   if (new Set(players).size !== players.length) {
     return 'Each player must belong to only one team.'
   }
+
   return ''
 }
+
+// =====================================================
+// TEAMS FORM
+// =====================================================
 
 function TeamsForm({
   isEdit,
@@ -93,6 +155,7 @@ function TeamsForm({
         <h2 className="text-lg font-bold capitalize">
           {isEdit ? 'Edit tournament' : 'Standard Tournament'}
         </h2>
+
         <p className="text-sm theme-muted">
           {isEdit
             ? `Change players, or add / remove teams. Now: ${teamCount} teams.`
@@ -103,13 +166,17 @@ function TeamsForm({
       <div className="space-y-4 p-5">
         {isEdit && (
           <p className="rounded-lg border theme-border space-y-2 p-3 text-xs theme-muted">
-            <span className='text-red-500 text-md font-bold'>Note:</span>  Changing only player names keeps all scores. Adding or removing a team rebuilds the
+            <span className="text-red-500 text-md font-bold">Note:</span>{' '}
+            Changing only player names keeps all scores. Adding or removing a team rebuilds the
             groups, so <strong>all group and playoff scores will be cleared</strong>.
           </p>
         )}
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Tournament name</label>
+          <label className="mb-1 block text-sm font-medium">
+            Tournament name
+          </label>
+
           <input
             value={tournamentName}
             onChange={(e) => onNameChange(e.target.value)}
@@ -120,7 +187,10 @@ function TeamsForm({
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium">Number of teams</label>
+          <label className="mb-1 block text-sm font-medium">
+            Number of teams
+          </label>
+
           <div className="flex flex-wrap gap-2">
             {TEAM_COUNT_OPTIONS.map((count) => (
               <button
@@ -138,6 +208,7 @@ function TeamsForm({
               </button>
             ))}
           </div>
+
           <p className="mt-2 text-xs theme-muted">
             {getFormatSummary(teamCount)} Everyone plays everyone in their group first.
           </p>
@@ -145,16 +216,20 @@ function TeamsForm({
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {teams.map((team, index) => (
-            <div key={team.id} className="space-y-3 rounded-lg border theme-border p-3">
+            <div
+              key={team.id}
+              className="space-y-3 rounded-lg border theme-border p-3"
+            >
               <div className="flex items-center justify-between">
                 <label className="block text-sm font-bold">
                   Team {index + 1}
+
                   <span className="ml-2 text-xs font-normal theme-muted">
                     Group {getGroupLabel(index, teamCount)}
                   </span>
                 </label>
 
-                {/* Edit mode only: remove this team (the list closes the gap) */}
+                {/* Edit mode only: remove this team */}
                 {isEdit && (
                   <button
                     type="button"
@@ -167,17 +242,23 @@ function TeamsForm({
                   </button>
                 )}
               </div>
+
               <input
                 value={team.player1}
                 disabled={saving}
-                onChange={(e) => onTeamChange(team.id, 'player1', e.target.value)}
+                onChange={(e) =>
+                  onTeamChange(team.id, 'player1', e.target.value)
+                }
                 placeholder="Player 1"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
+
               <input
                 value={team.player2}
                 disabled={saving}
-                onChange={(e) => onTeamChange(team.id, 'player2', e.target.value)}
+                onChange={(e) =>
+                  onTeamChange(team.id, 'player2', e.target.value)
+                }
                 placeholder="Player 2"
                 className="theme-input w-full rounded-md p-2 text-sm"
               />
@@ -185,7 +266,11 @@ function TeamsForm({
           ))}
         </div>
 
-        {error && <p role="alert" className="text-sm text-red-500">{error}</p>}
+        {error && (
+          <p role="alert" className="text-sm text-red-500">
+            {error}
+          </p>
+        )}
       </div>
 
       <div className="flex justify-end gap-3 border-t theme-border p-5">
@@ -197,43 +282,97 @@ function TeamsForm({
         >
           Cancel
         </button>
+
         <button
           type="submit"
           disabled={saving}
           className="theme-accent rounded-lg border border-transparent px-5 py-2 font-semibold disabled:opacity-50"
         >
-          {saving ? 'Saving...' : isEdit ? 'Save changes' : 'Generate groups'}
+          {saving
+            ? 'Saving...'
+            : isEdit
+              ? 'Save changes'
+              : 'Generate groups'}
         </button>
       </div>
     </form>
   )
 }
 
+// =====================================================
+// MAIN COMPONENT
+// =====================================================
+
 export const Top2_Brackets = () => {
   const navigate = useNavigate()
 
-  // EDIT MODE: the bracket page sends { edit: true, tournamentId, tournamentName, teams }
-  // through the router state. Without it (or after a page refresh) this is the normal
-  // "create" form.
+  // EDIT MODE
   const { state } = useLocation()
-  const isEdit = !!(state?.edit && state.tournamentId && state.teams?.length)
+
+  const isEdit = !!(
+    state?.edit &&
+    state.tournamentId &&
+    state.teams?.length
+  )
+
   const tournamentId = isEdit ? state.tournamentId : null
 
+  // =====================================================
+  // LOCAL STORAGE CACHE INITIALIZATION
+  // =====================================================
+
+  const draftKey = getCacheKey(
+    isEdit ? tournamentId : 'new'
+  )
+
+  // STEP 1: Read cache immediately
+  const [savedDraft] = useState(() => readCache(draftKey))
+
+  // STEP 2: Restore cached teams or use original data
   const [teams, setTeams] = useState(() =>
-    isEdit
+    savedDraft?.teams ||
+    (isEdit
       ? state.teams.map((t, i) => ({
-          id: i + 1, // local form id
-          pairId: t.pairId ?? t.id, // database id (kept so scores stay linked)
+          id: i + 1,
+          pairId: t.pairId ?? t.id,
           name: `Team ${i + 1}`,
           player1: t.player1 || '',
           player2: t.player2 || '',
         }))
-      : createEmptyTeams(DEFAULT_TEAM_COUNT)
+      : createEmptyTeams(DEFAULT_TEAM_COUNT))
   )
-  const [teamCount, setTeamCount] = useState(teams.length)
-  const [tournamentName, setTournamentName] = useState(isEdit ? state.tournamentName || '' : '')
+
+  const [teamCount, setTeamCount] = useState(
+    () =>
+      savedDraft?.teamCount ??
+      (savedDraft?.teams?.length ||
+        (isEdit ? state.teams.length : DEFAULT_TEAM_COUNT))
+  )
+
+  const [tournamentName, setTournamentName] = useState(
+    () =>
+      savedDraft?.tournamentName ??
+      (isEdit ? state.tournamentName || '' : '')
+  )
+
   const [error, setError] = useState('')
   const [saving, setSaving] = useState(false)
+
+  // =====================================================
+  // AUTOMATIC LOCAL STORAGE SAVING
+  // =====================================================
+
+  useEffect(() => {
+    saveCache(draftKey, {
+      tournamentName,
+      teamCount,
+      teams,
+    })
+  }, [draftKey, tournamentName, teamCount, teams])
+
+  // =====================================================
+  // FORM HANDLERS
+  // =====================================================
 
   const changeTeamCount = (count) => {
     setTeamCount(count)
@@ -242,20 +381,35 @@ export const Top2_Brackets = () => {
   }
 
   const updateTeam = (id, field, value) => {
-    setTeams((prev) => prev.map((t) => (t.id === id ? { ...t, [field]: value } : t)))
+    setTeams((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, [field]: value } : t
+      )
+    )
   }
 
-  // Edit mode: remove one team, wherever it is in the list
+  // Edit mode: remove one team
   const removeTeam = (id) => {
     const next = teams.filter((t) => t.id !== id)
+
     setTeams(next)
     setTeamCount(next.length)
     setError('')
   }
 
-  // ---- CREATE: new tournament ----
+  // =====================================================
+  // CREATE: NEW TOURNAMENT
+  // =====================================================
+
   const createTournament = async (name, cleanTeams) => {
-    const { data } = await api.post('/tournaments', { name, type: 'top2', teams: cleanTeams })
+    const { data } = await api.post('/tournaments', {
+      name,
+      type: 'top2',
+      teams: cleanTeams,
+    })
+
+    // Clear cache after successful creation
+    clearCache(draftKey)
 
     const savedTeams = cleanTeams.map((team) => ({
       ...team,
@@ -274,17 +428,29 @@ export const Top2_Brackets = () => {
     })
   }
 
-  // ---- EDIT: update the existing tournament ----
+  // =====================================================
+  // EDIT: UPDATE EXISTING TOURNAMENT
+  // =====================================================
+
   const updateTournament = async (name, cleanTeams) => {
-    // Does this change the group structure? (a team was added or removed)
-    const oldIds = state.teams.map((t) => String(t.pairId ?? t.id))
-    const keptIds = cleanTeams.filter((t) => t.pairId != null).map((t) => String(t.pairId))
+    // Does this change the group structure?
+    const oldIds = state.teams.map((t) =>
+      String(t.pairId ?? t.id)
+    )
+
+    const keptIds = cleanTeams
+      .filter((t) => t.pairId != null)
+      .map((t) => String(t.pairId))
+
     const structureChanged =
-      cleanTeams.some((t) => t.pairId == null) || oldIds.some((id) => !keptIds.includes(id))
+      cleanTeams.some((t) => t.pairId == null) ||
+      oldIds.some((id) => !keptIds.includes(id))
 
     if (
       structureChanged &&
-      !window.confirm('Adding or removing teams rebuilds the groups and clears ALL scores. Continue?')
+      !window.confirm(
+        'Adding or removing teams rebuilds the groups and clears ALL scores. Continue?'
+      )
     ) {
       return false
     }
@@ -292,15 +458,17 @@ export const Top2_Brackets = () => {
     await api.put(`/top2/${tournamentId}/teams`, {
       name,
       teams: cleanTeams.map((t) => ({
-        pairId: t.pairId ?? null, // null = new team
+        pairId: t.pairId ?? null,
         player1: t.player1,
         player2: t.player2,
       })),
     })
 
-    // Reload the saved tournament so new teams get their real ids and the
-    // scores that were kept (or cleared) are exactly what the server has
+    // Reload saved tournament
     const { data } = await api.get(`/top2/${tournamentId}`)
+
+    // Clear cache after successful update
+    clearCache(draftKey)
 
     navigate(DASH_ROUTE, {
       state: {
@@ -311,33 +479,53 @@ export const Top2_Brackets = () => {
         matches: data.matches ?? [],
       },
     })
+
     return true
   }
 
+  // =====================================================
+  // SUBMIT TOURNAMENT
+  // =====================================================
+
   const generateBracket = async (e) => {
     e.preventDefault()
+
     if (saving) return
 
-    const cleanTeams = teams.map((t, i) => trimTeam(autoName(t, i)))
+    const cleanTeams = teams.map((t, i) =>
+      trimTeam(autoName(t, i))
+    )
+
     const name = tournamentName.trim()
+
     const problem = validateTournament(name, cleanTeams)
+
     if (problem) return setError(problem)
 
     setError('')
     setSaving(true)
+
     try {
       const done = isEdit
         ? await updateTournament(name, cleanTeams)
         : (await createTournament(name, cleanTeams), true)
-      if (!done) setSaving(false) // user cancelled the confirm
+
+      if (!done) setSaving(false)
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          (isEdit ? 'Could not update the tournament.' : 'Could not save the tournament.')
+          (isEdit
+            ? 'Could not update the tournament.'
+            : 'Could not save the tournament.')
       )
+
       setSaving(false)
     }
   }
+
+  // =====================================================
+  // RENDER
+  // =====================================================
 
   return (
     <div className="w-full flex flex-col gap-10">
@@ -350,9 +538,11 @@ export const Top2_Brackets = () => {
           <ArrowLeft />
         </button>
 
-        <h1 className="font-bold text-lg">{isEdit ? 'Edit Tournament' : 'Standard Tournament'}</h1>
+        <h1 className="font-bold text-lg">
+          {isEdit ? 'Edit Tournament' : 'Standard Tournament'}
+        </h1>
 
-        {/* Empty spacer, same width as the back button, so the title stays centered */}
+        {/* Empty spacer keeps the title centered */}
         <div className="w-10" />
       </header>
 
@@ -367,7 +557,11 @@ export const Top2_Brackets = () => {
         onRemoveTeam={removeTeam}
         error={error}
         onSubmit={generateBracket}
-        onCancel={() => (isEdit ? navigate(-1) : navigate(DASH_ROUTE))}
+        onCancel={() =>
+          isEdit
+            ? navigate(-1)
+            : navigate(DASH_ROUTE)
+        }
         saving={saving}
       />
     </div>
