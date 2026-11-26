@@ -252,8 +252,7 @@ export const Overview = () => {
           <span>- Add confirmation popup in the delete and signout buttons</span>
           <span>- Add loading components</span>
           <span>- Implement Open Play backend and frontend</span>
-          <span>- Add delay animation to this website</span>
-
+          
         </h1>
 
       </div>
