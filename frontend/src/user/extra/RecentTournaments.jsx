@@ -217,7 +217,7 @@ export const RecentTournaments = ({ onNavigate }) => {
     <div className="mt-20 pb-10 space-y-3 animate-fade-in animation-delay-100">
 
       {/* Section heading */}
-      <p className="text-xs font-semibold text-left items-center flex flex-row gap-1 pb-5">
+      <p className="text-xs font-semibold text-left  flex flex-row gap-1 pb-5">
         <img
           src="https://img.icons8.com/?size=100&id=kuU7I7uPlHfo&format=png&color=000000"
           alt="trophy"
