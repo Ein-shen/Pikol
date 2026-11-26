@@ -105,7 +105,7 @@ export const About_components = () => {
     </header>
 
     {/* Only this section scrolls */}
-    <div className="min-h-0 flex-1 overflow-y-auto">
+    <div className="min-h-0 flex-1 overflow-y-auto -mr-3.5">
       <div className="mx-auto flex w-full animate-fade-in animation-delay-100 flex-col gap-6 pb-6 sm:gap-8">
         {about_matching.map((format) => (
           <article
