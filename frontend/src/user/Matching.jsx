@@ -116,25 +116,32 @@ export const Matching = () => {
   const hasTournaments = dataTournament.length > 0
 
   return (
-    <div className="w-full flex flex-col gap-10">
+    <div className="w-full flex flex-col gap-10  animate-fade-in animation-delay-100 ">
 
       {/* HEADER */}
-      <header className="flex flex-row items-center justify-between">
+      <header className="flex flex-col  text-left  ">
 
         <div className="w-10 shrink-0" />
 
-        <h1 className="text-lg font-bold">
-          Matching tournaments
-        </h1>
+         
 
-        <button
-          type="button"
-          onClick={() => setShow(true)}
-          className="opacity-60 transition hover:opacity-100 rounded-md p-2"
-          aria-label="Create tournament"
-        >
-          <Plus size={24} />
-        </button>
+        <div className='flex flex-row items-center justify-between'>
+
+          <h2 className="text-lg font-bold   ">
+            Select match for a tournament
+          </h2>
+
+           
+
+          <button
+             onClick={() => setShow(true)}
+              className="theme-accent flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold sm:gap-2 sm:px-4"
+               >
+              <Plus size={16} />
+               <span className="hidden sm:inline">Create Tournament</span>
+               </button>
+        </div>
+        
 
       </header>
 
@@ -184,9 +191,7 @@ export const Matching = () => {
       {!loading && hasTournaments && (
         <div className="flex flex-col gap-6">
 
-          <h2 className="text-lg animate-fade-in animation-delay-100 font-bold">
-            Used match for tournaments
-          </h2>
+          
 
           <div className="flex w-full animate-fade-in animation-delay-200 flex-col flex-wrap gap-4 pt-5">
 
